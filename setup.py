@@ -14,5 +14,4 @@ setup(name='dace',
           "License :: OSI Approved :: BSD License",
           "Operating System :: OS Independent",
       ],
-      python_requires='>=3.6',
-      install_requires=[ 'numpy', "pygount", "sqlite3"])
+      python_requires='>=3.6')
