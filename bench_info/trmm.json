@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "Triangular matrix-multiply",
+        "short_name": "trmm",
+        "relative_path": "polybench/trmm",
+        "module_name": "trmm",
+        "func_name": "kernel",
+        "kind": "microbench",
+        "domain": "LinAlg",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S": { "M": 1000, "N": 1200 },
+            "M": { "M": 1000, "N": 1200 },
+            "L": { "M": 1000, "N": 1200 },
+            "XL": { "M": 1000, "N": 1200 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["M", "N"],
+            "output_args": ["alpha", "A", "B"]
+        },
+        "input_args": ["alpha", "A", "B"],
+        "array_args": ["A", "B"],
+        "output_args": ["B"]
+    }
+}

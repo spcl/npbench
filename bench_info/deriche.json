@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "Deriche Edge Detector",
+        "short_name": "deriche",
+        "relative_path": "polybench/deriche",
+        "module_name": "deriche",
+        "func_name": "kernel",
+        "kind": "microapp",
+        "domain": "Signals",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S": { "W": 7680, "H": 4320 },
+            "M": { "W": 7680, "H": 4320 },
+            "L": { "W": 7680, "H": 4320 },
+            "XL": { "W": 7680, "H": 4320 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["W", "H"],
+            "output_args": ["alpha", "imgIn"]
+        },
+        "input_args": ["alpha", "imgIn"],
+        "array_args": ["imgIn"],
+        "output_args": []
+    }
+}

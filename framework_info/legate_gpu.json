@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "legate_gpu",
+        "full_name": "Legate GPU",
+        "prefix": "lg",
+        "postfix": "legate",
+        "class": "LegateFramework",
+        "arch": "gpu"
+    }
+}

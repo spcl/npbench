@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "legate_cpu",
+        "full_name": "Legate CPU",
+        "prefix": "lg",
+        "postfix": "legate",
+        "class": "LegateFramework",
+        "arch": "cpu"
+    }
+}

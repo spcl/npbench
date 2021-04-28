@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "pythran",
+        "full_name": "Pythran",
+        "prefix": "pt",
+        "postfix": "pythran",
+        "class": "PythranFramework",
+        "arch": "cpu"
+    }
+}

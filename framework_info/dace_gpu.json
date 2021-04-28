@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "dace_gpu",
+        "full_name": "DaCe GPU",
+        "prefix": "dc",
+        "postfix": "dace",
+        "class": "DaceFramework",
+        "arch": "gpu"
+    }
+}

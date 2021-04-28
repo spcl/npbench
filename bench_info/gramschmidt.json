@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "Gram-Schmidt decomposition",
+        "short_name": "gramschm",
+        "relative_path": "polybench/gramschmidt",
+        "module_name": "gramschmidt",
+        "func_name": "kernel",
+        "kind": "microbench",
+        "domain": "Solver",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S": { "M": 240, "N": 200 },
+            "M": { "M": 240, "N": 200 },
+            "L": { "M": 240, "N": 200 },
+            "XL": { "M": 240, "N": 200 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["M", "N"],
+            "output_args": ["A"]
+        },
+        "input_args": ["A"],
+        "array_args": ["A"],
+        "output_args": ["A"]
+    }
+}

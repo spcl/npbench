@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "numpy",
+        "full_name": "NumPy",
+        "prefix": "np",
+        "postfix": "numpy",
+        "class": "Framework",
+        "arch": "cpu"
+    }
+}

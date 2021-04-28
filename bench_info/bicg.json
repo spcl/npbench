@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "Bincojugate Gradient Method",
+        "short_name": "bicg",
+        "relative_path": "polybench/bicg",
+        "module_name": "bicg",
+        "func_name": "kernel",
+        "kind": "microbench",
+        "domain": "Solver",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S": { "M": 18000, "N": 22000 },
+            "M": { "M": 18000, "N": 22000 },
+            "L": { "M": 18000, "N": 22000 },
+            "XL": { "M": 18000, "N": 22000 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["M", "N"],
+            "output_args": ["A", "p", "r"]
+        },
+        "input_args": ["A", "p", "r"],
+        "array_args": ["A", "p", "r"],
+        "output_args": []
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "CRC-16",
+        "short_name": "crc16",
+        "relative_path": "crc16",
+        "module_name": "crc16",
+        "func_name": "crc16",
+        "kind": "microbench",
+        "domain": "Other",
+        "dwarf": "combinatorial",
+        "parameters": {
+            "S": { "N": 100000 },
+            "M": { "N": 1000000 },
+            "L": { "N": 10000000 },
+            "XL": { "N": 100000000 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["N"],
+            "output_args": ["data"]
+        },
+        "input_args": ["data"],
+        "array_args": ["data"],
+        "output_args": []
+    }
+}

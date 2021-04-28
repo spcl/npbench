@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "Toeplitz system solver",
+        "short_name": "durbin",
+        "relative_path": "polybench/durbin",
+        "module_name": "durbin",
+        "func_name": "kernel",
+        "kind": "microbench",
+        "domain": "Solver",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S": { "N": 16000 },
+            "M": { "N": 16000 },
+            "L": { "N": 16000 },
+            "XL": { "N": 16000 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["N"],
+            "output_args": ["r"]
+        },
+        "input_args": ["r"],
+        "array_args": ["r"],
+        "output_args": []
+    }
+}

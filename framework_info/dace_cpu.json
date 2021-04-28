@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "dace_cpu",
+        "full_name": "DaCe CPU",
+        "prefix": "dc",
+        "postfix": "dace",
+        "class": "DaceFramework",
+        "arch": "cpu"
+    }
+}

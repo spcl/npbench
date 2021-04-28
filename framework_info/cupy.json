@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "cupy",
+        "full_name": "CuPy",
+        "prefix": "cp",
+        "postfix": "cupy",
+        "class": "CupyFramework",
+        "arch": "gpu"
+    }
+}

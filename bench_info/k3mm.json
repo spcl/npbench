@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "3 Matrix Multiplications",
+        "short_name": "3mm",
+        "relative_path": "polybench/k3mm",
+        "module_name": "k3mm",
+        "func_name": "kernel",
+        "kind": "microbench",
+        "domain": "LinAlg",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S": { "NI": 3200, "NJ": 3600, "NK": 4000, "NL": 4400, "NM": 4800 },
+            "M": { "NI": 3200, "NJ": 3600, "NK": 4000, "NL": 4400, "NM": 4800 },
+            "L": { "NI": 3200, "NJ": 3600, "NK": 4000, "NL": 4400, "NM": 4800 },
+            "XL": { "NI": 3200, "NJ": 3600, "NK": 4000, "NL": 4400, "NM": 4800 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["NI", "NJ", "NK", "NL", "NM"],
+            "output_args": ["A", "B", "C", "D"]
+        },
+        "input_args": ["A", "B", "C", "D"],
+        "array_args": ["A", "B", "C", "D"],
+        "output_args": []
+    }
+}
