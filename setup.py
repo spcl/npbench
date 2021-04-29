@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 
-setup(name='dace',
+setup(name='npbench',
       version='0.1',
       url='https://https://github.com/spcl/npbench',
       author='SPCL @ ETH Zurich',
