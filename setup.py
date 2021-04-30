@@ -14,4 +14,5 @@ setup(name='npbench',
           "License :: OSI Approved :: BSD License",
           "Operating System :: OS Independent",
       ],
+      packages=['npbench', 'npbench.infrastructure'],
       python_requires='>=3.6')
