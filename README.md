@@ -15,7 +15,23 @@ The available benchmarks are listed in the `bench_info` folder. The available fr
 ```
 python run_benchmark.py -b adi -f numpy
 ```
-Please note that the NPBench setup only installs NumPy. To run benchmarks with other frameworks, you have to install them separately.
+You can run all the available benchmarks with a specific framework using:
+```
+python run_framework.py -f <framework>
+```
+Please note that the NPBench setup only installs NumPy. To run benchmarks with other frameworks, you have to install them separately.  
+
+After running some benchmarks with different frameworks, you can generate plots of the speedups and line-count differences against NumPy:
+```
+python plot_results.py
+python plot_lines.py
+```
+We provide a quickstart script that runs a few benchmarks with NumPy and Numba and then plots the results:
+```
+python -m pip install numba
+python quickstart.py
+python plot_results.py
+```
 
 ## Supported Frameworks
 
