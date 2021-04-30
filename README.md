@@ -11,7 +11,7 @@ You can then run benchmarks with:
 ```
 python run_benchmark.py -b <benchmark> -f <framework>
 ```
-The available benchmarks are listed in the `bench_info` folder. The available frameworks are listed in the `framework_info` folder. For example, to run ADI with NumPy, execute the following:
+The available benchmarks are listed in the `bench_info` folder. The supported frameworks are listed in the `framework_info` folder. For example, to run ADI with NumPy, execute the following:
 ```
 python run_benchmark.py -b adi -f numpy
 ```
