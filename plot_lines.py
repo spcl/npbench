@@ -127,4 +127,4 @@ plt.setp(ax0.get_xticklabels(),
 
 plt.tight_layout()
 plt.savefig("plot2.pdf", dpi=600)
-# plt.show()
+plt.show()
