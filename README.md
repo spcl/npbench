@@ -4,7 +4,7 @@
 
 To install NPBench, simply execute:
 ```
-python -m pip -r requirements.txt
+python -m pip install -r requirements.txt
 python -m pip install .
 ```
 You can then run benchmarks with:
