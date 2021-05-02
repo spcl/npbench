@@ -9,10 +9,10 @@
         "domain": "Learning",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "N": 8, "C_in": 3, "C_out": 16, "K": 20, "H": 256, "W": 256 },
-            "M": { "N": 8, "C_in": 3, "C_out": 16, "K": 20, "H": 256, "W": 256 },
-            "L": { "N": 8, "C_in": 3, "C_out": 16, "K": 20, "H": 256, "W": 256 },
-            "XL": { "N": 8, "C_in": 3, "C_out": 16, "K": 20, "H": 256, "W": 256 }
+            "S": { "N": 8, "C_in": 3, "C_out": 16, "K": 2, "H": 32, "W": 32 },
+            "M": { "N": 8, "C_in": 3, "C_out": 8, "K": 5, "H": 64, "W": 64 },
+            "L": { "N": 8, "C_in": 3, "C_out": 8, "K": 10, "H": 128, "W": 128 },
+            "paper": { "N": 8, "C_in": 3, "C_out": 16, "K": 20, "H": 256, "W": 256 }
         },
         "init": {
             "func_name": "initialize",

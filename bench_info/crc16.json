@@ -9,10 +9,10 @@
         "domain": "Other",
         "dwarf": "combinatorial",
         "parameters": {
-            "S": { "N": 100000 },
-            "M": { "N": 1000000 },
-            "L": { "N": 10000000 },
-            "XL": { "N": 100000000 }
+            "S": { "N": 1600 },
+            "M": { "N": 16000 },
+            "L": { "N": 160000 },
+            "paper": { "N": 1000000 }
         },
         "init": {
             "func_name": "initialize",

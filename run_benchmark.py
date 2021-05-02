@@ -34,7 +34,7 @@ if __name__ == "__main__":
                         default=200.0)
     args = vars(parser.parse_args())
 
-    print(args)
+    # print(args)
 
     bench = Benchmark(args["benchmark"])
     frmwrk = generate_framework(args["framework"])

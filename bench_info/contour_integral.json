@@ -9,10 +9,10 @@
         "domain": "Physics",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "NR": 500, "NM": 1000, "slab_per_bc": 2, "num_int_pts": 32 },
-            "M": { "NR": 500, "NM": 1000, "slab_per_bc": 2, "num_int_pts": 32 },
-            "L": { "NR": 500, "NM": 1000, "slab_per_bc": 2, "num_int_pts": 32 },
-            "XL": { "NR": 500, "NM": 1000, "slab_per_bc": 2, "num_int_pts": 32 }
+            "S": { "NR": 50, "NM": 150, "slab_per_bc": 2, "num_int_pts": 32 },
+            "M": { "NR": 200, "NM": 400, "slab_per_bc": 2, "num_int_pts": 32 },
+            "L": { "NR": 600, "NM": 1000, "slab_per_bc": 2, "num_int_pts": 32 },
+            "paper": { "NR": 500, "NM": 1000, "slab_per_bc": 2, "num_int_pts": 32 }
         },
         "init": {
             "func_name": "initialize",

@@ -9,10 +9,10 @@
         "domain": "Chemistry",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "NR": 220, "NQ": 250, "NP": 270 },
-            "M": { "NR": 220, "NQ": 250, "NP": 270 },
-            "L": { "NR": 220, "NQ": 250, "NP": 270 },
-            "XL": { "NR": 220, "NQ": 250, "NP": 270}
+            "S": { "NR": 60, "NQ": 60, "NP": 128 },
+            "M": { "NR": 110, "NQ": 125, "NP": 256 },
+            "L": { "NR": 220, "NQ": 250, "NP": 512 },
+            "paper": { "NR": 220, "NQ": 250, "NP": 270}
         },
         "init": {
             "func_name": "initialize",

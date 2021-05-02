@@ -9,10 +9,10 @@
         "domain": "Others",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "M": 500, "N": 500 },
-            "M": { "M": 1000, "N": 1000 },
-            "L": { "M": 3500, "N": 3500 },
-            "XL": { "M": 10000, "N": 10000 }
+            "S": { "N": 2000 },
+            "M": { "N": 6000 },
+            "L": { "N": 20000 },
+            "paper": { "N": 12500 }
         },
         "init": {
             "func_name": "initialize",

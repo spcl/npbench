@@ -9,10 +9,10 @@
         "domain": "Physics",
         "dwarf": "structured_grids",
         "parameters": {
-            "S": { "TMAX": 500, "NX": 1000, "NY": 1200 },
-            "M": { "TMAX": 500, "NX": 1000, "NY": 1200 },
-            "L": { "TMAX": 500, "NX": 1000, "NY": 1200 },
-            "XL": { "TMAX": 500, "NX": 1000, "NY": 1200 }
+            "S": { "TMAX": 20, "NX": 200, "NY": 220 },
+            "M": { "TMAX": 60, "NX": 400, "NY": 450 },
+            "L": { "TMAX": 150, "NX": 800, "NY": 900 },
+            "paper": { "TMAX": 500, "NX": 1000, "NY": 1200 }
         },
         "init": {
             "func_name": "initialize",

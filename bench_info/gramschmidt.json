@@ -9,10 +9,10 @@
         "domain": "Solver",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "M": 240, "N": 200 },
-            "M": { "M": 240, "N": 200 },
-            "L": { "M": 240, "N": 200 },
-            "XL": { "M": 240, "N": 200 }
+            "S": { "M": 70, "N": 60 },
+            "M": { "M": 220, "N": 180 },
+            "L": { "M": 600, "N": 500 },
+            "paper": { "M": 240, "N": 200 }
         },
         "init": {
             "func_name": "initialize",

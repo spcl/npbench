@@ -9,10 +9,10 @@
         "domain": "LinAlg",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "NI": 2000, "NJ": 2300, "NK": 2600 },
-            "M": { "NI": 2000, "NJ": 2300, "NK": 2600 },
-            "L": { "NI": 2000, "NJ": 2300, "NK": 2600 },
-            "XL": { "NI": 2000, "NJ": 2300, "NK": 2600 }
+            "S": { "NI": 1000, "NJ": 1100, "NK": 1200 },
+            "M": { "NI": 2500, "NJ": 2750, "NK": 3000 },
+            "L": { "NI": 7000, "NJ": 7500, "NK": 8000 },
+            "paper": { "NI": 2000, "NJ": 2300, "NK": 2600 }
         },
         "init": {
             "func_name": "initialize",

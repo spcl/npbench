@@ -24,7 +24,7 @@ if __name__ == "__main__":
                         default=10.0)
     args = vars(parser.parse_args())
 
-    print(args)
+    # print(args)
 
     benchmarks = [
         'adi', 'arc_distance', 'atax', 'bicg', 'cholesky2', 'compute',

@@ -9,10 +9,10 @@
         "domain": "Signals",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "W": 7680, "H": 4320 },
-            "M": { "W": 7680, "H": 4320 },
-            "L": { "W": 7680, "H": 4320 },
-            "XL": { "W": 7680, "H": 4320 }
+            "S": { "W": 400, "H": 200 },
+            "M": { "W": 1500, "H": 1000 },
+            "L": { "W": 6000, "H": 3000 },
+            "paper": { "W": 7680, "H": 4320 }
         },
         "init": {
             "func_name": "initialize",

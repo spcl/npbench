@@ -24,8 +24,8 @@ class Test(object):
             copy = frmwrk.copy_func()
             setup_str = frmwrk.setup_str(self.bench, impl)
             exec_str = frmwrk.exec_str(self.bench, impl)
-            print(setup_str)
-            print(exec_str)
+            # print(setup_str)
+            # print(exec_str)
         except Exception as e:
             print("Failed to load the {} implementation.".format(report_str))
             print(e)
@@ -151,6 +151,6 @@ class Test(object):
                 'time': d["time"]
             }
             result = tuple(new_d.values())
-            print(result)
+            # print(result)
             util.create_result(conn, util.sql_insert_into_results_table,
                                result)
