@@ -31,7 +31,7 @@ if __name__ == "__main__":
                         default=200.0)
     args = vars(parser.parse_args())
 
-    print(args)
+    # print(args)
 
     frmwrk = generate_framework(args["framework"])
     numpy = generate_framework("numpy")
@@ -39,8 +39,10 @@ if __name__ == "__main__":
     parent_folder = pathlib.Path(__file__).parent.absolute()
     bench_dir = parent_folder.joinpath("bench_info")
     pathlist = pathlib.Path(bench_dir).rglob('*.json')
-    for path in pathlist:
-        benchname = os.path.basename(path)[:-5]
+    benchnames = [os.path.basename(path)[:-5] for path in pathlist]
+    benchnames.sort()
+    for benchname in benchnames:
+        # benchname = os.path.basename(path)[:-5]
         bench = Benchmark(benchname)
         lcount = LineCount(bench, frmwrk, numpy)
         lcount.count()
