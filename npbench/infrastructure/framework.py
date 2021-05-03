@@ -24,7 +24,7 @@ class Framework(object):
         try:
             with open(frmwrk_path) as json_file:
                 self.info = json.load(json_file)["framework"]
-                print(self.info)
+                # print(self.info)
         except Exception as e:
             print("Framework JSON file {f} could not be opened.".format(
                 f=frmwrk_filename))
@@ -182,7 +182,7 @@ def generate_framework(fname: str) -> Framework:
     try:
         with open(frmwrk_path) as json_file:
             info = json.load(json_file)["framework"]
-            print(info)
+            # print(info)
     except Exception as e:
         print("Framework JSON file {f} could not be opened.".format(
             f=frmwrk_filename))

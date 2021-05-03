@@ -23,7 +23,7 @@ class Benchmark(object):
         try:
             with open(bench_path) as json_file:
                 self.info = json.load(json_file)["benchmark"]
-                print(self.info)
+                # print(self.info)
         except Exception as e:
             print("Benchmark JSON file {b} could not be opened.".format(
                 b=bench_filename))

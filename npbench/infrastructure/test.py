@@ -61,6 +61,7 @@ class Test(object):
         :param validate: If true, it validates the output against NumPy.
         :param repeat: The number of repeatitions.
         """
+        print("***** Testing {f} with {b} on the {p} dataset *****".format(b=self.bench.bname, f=self.frmwrk.info["full_name"], p=preset))
 
         bdata = self.bench.get_data(preset)
 

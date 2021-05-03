@@ -56,7 +56,7 @@ class LineCount(object):
             try:
                 frmwrk_analysis = SourceAnalysis.from_file(
                     impl_file, "pygount")
-                print(frmwrk_analysis.code_count)
+                # print(frmwrk_analysis.code_count)
                 if np_analysis:
                     text1 = open(np_file).readlines()
                     text2 = open(impl_file).readlines()
