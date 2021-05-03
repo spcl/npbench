@@ -17,18 +17,16 @@ if __name__ == "__main__":
                         nargs="?",
                         default=True)
     parser.add_argument("-r", "--repeat", type=int, nargs="?", default=10)
-    parser.add_argument("-t",
-                        "--timeout",
-                        type=float,
-                        nargs="?",
-                        default=10.0)
+    parser.add_argument("-t", "--timeout", type=float, nargs="?", default=10.0)
     args = vars(parser.parse_args())
 
     # print(args)
 
     benchmarks = [
-        'adi', 'arc_distance', 'atax', 'bicg', 'cholesky2', 'compute',
-        'doitgen', 'gemm', 'gemver', 'gesummv', 'go_fast', 'hdiff'
+        'adi', 'arc_distance', 'atax', 'azimint_hist', 'bicg', 'cavity_flow',
+        'cholesky2', 'compute', 'doitgen', 'floyd_warshall', 'gemm', 'gemver',
+        'gesummv', 'go_fast', 'hdiff', 'jacobi_2d', 'lenet', 'syr2k', 'trmm',
+        'vadv'
     ]
     numpy = generate_framework("numpy")
     numba = generate_framework("numba")
