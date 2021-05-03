@@ -16,7 +16,7 @@ if __name__ == "__main__":
                         "--preset",
                         choices=['S', 'M', 'L', 'paper'],
                         nargs="?",
-                        default='L')
+                        default='S')
     parser.add_argument("-m", "--mode", type=str, nargs="?", default="main")
     parser.add_argument("-v",
                         "--validate",
