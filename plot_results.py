@@ -1,3 +1,4 @@
+import argparse
 import math
 import pandas as pd
 import numpy as np
@@ -74,6 +75,15 @@ def bootstrap_ci(data, statfunction=np.median, alpha=0.05, n_samples=300):
     return stat[nvals][1] - stat[nvals][0]
 
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p",
+                        "--preset",
+                        choices=['S', 'M', 'L', 'paper'],
+                        nargs="?",
+                        default='S')
+    args = vars(parser.parse_args())
+
 # create a database connection
 database = r"npbench.db"
 conn = util.create_connection(database)
@@ -89,6 +99,10 @@ data = data[data["domain"] != ""]
 # remove everything that does not validate, then get rid of validated column
 data = data[data['validated'] == True]
 data = data.drop(['validated'], axis=1).reset_index(drop=True)
+
+# Filter by preset
+data = data[data['preset'] == args['preset']]
+data = data.drop(['preset'], axis=1).reset_index(drop=True)
 
 # for each framework and benchmark, choose only the best details,mode (based on median runtime), then get rid of those
 aggdata = data.groupby(["benchmark", "domain", "framework", "mode", "details"],
