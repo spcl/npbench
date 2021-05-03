@@ -71,7 +71,7 @@ python run_benchmark.py -b <benchmark> -f <framework>
 The available benchmarks are listed in the `bench_info` folder.
 The supported frameworks are listed in the `framework_info` folder.
 Please use the corresponding JSON filenames.
-For example, to run ADI with NumPy, execute the following:
+For example, to run `adi` with NumPy, execute the following:
 ```
 python run_benchmark.py -b adi -f numpy
 ```
@@ -86,6 +86,8 @@ Each benchmark has four different presets; `S`, `M`, `L`, and `paper`.
 The `S`, `M`, and `L` presets have been selected so that NumPy finishes execution
 in about 10, 100, and 1000ms respectively in a machine with two 16-core Intel Xeon
 Gold 6130 processors.
+Exception to that are `atax`, `bicg`, `mlp`, `mvt`, and `trisolv`, which have been
+tuned for 5, 20 and 100ms approximately due to very high memory requirements.
 The `paper` preset is the problem sizes used in the NPBench paper.
 TODO: Add link to paper.
 By default, the provided python scripts execute the benchmarks using the `S` preset.
