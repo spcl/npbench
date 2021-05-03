@@ -50,7 +50,7 @@ def my_runtime_abbr(x):
 
 def bootstrap_ci(data, statfunction=np.median, alpha=0.05, n_samples=300):
     """inspired by https://github.com/cgevans/scikits-bootstrap"""
-    import warnings
+    # import warnings
 
     def bootstrap_ids(data, n_samples=100):
         for _ in range(n_samples):
@@ -58,10 +58,10 @@ def bootstrap_ci(data, statfunction=np.median, alpha=0.05, n_samples=300):
 
     alphas = np.array([alpha / 2, 1 - alpha / 2])
     nvals = np.round((n_samples - 1) * alphas).astype(int)
-    if np.any(nvals < 10) or np.any(nvals >= n_samples - 10):
-        warnings.warn(
-            "Some values used extremal samples; results are probably unstable. "
-            "Try to increase n_samples")
+    # if np.any(nvals < 10) or np.any(nvals >= n_samples - 10):
+    #     warnings.warn(
+    #         "Some values used extremal samples; results are probably unstable. "
+    #         "Try to increase n_samples")
 
     data = np.array(data)
     if np.prod(data.shape) != max(data.shape):
