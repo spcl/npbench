@@ -9,10 +9,10 @@
         "domain": "Chemistry",
         "dwarf": "dynamic_programming",
         "parameters": {
-            "S": { "N": 500 },
-            "M": { "N": 500 },
-            "L": { "N": 500 },
-            "XL": { "N": 500 }
+            "S": { "N": 40 },
+            "M": { "N": 90 },
+            "L": { "N": 200 },
+            "paper": { "N": 500 }
         },
         "init": {
             "func_name": "initialize",

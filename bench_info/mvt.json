@@ -9,10 +9,10 @@
         "domain": "LinAlg",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "N": 16000 },
-            "M": { "N": 16000 },
-            "L": { "N": 16000 },
-            "XL": { "N": 16000 }
+            "S": { "N": 5500 },
+            "M": { "N": 11000 },
+            "L": { "N": 22000 },
+            "paper": { "N": 16000 }
         },
         "init": {
             "func_name": "initialize",

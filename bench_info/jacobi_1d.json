@@ -9,10 +9,10 @@
         "domain": "Physics",
         "dwarf": "structured_grids",
         "parameters": {
-            "S": { "TSTEPS": 4000, "N": 32000 },
-            "M": { "TSTEPS": 4000, "N": 32000 },
-            "L": { "TSTEPS": 4000, "N": 32000 },
-            "XL": { "TSTEPS": 4000, "N": 32000 }
+            "S": { "TSTEPS": 800, "N": 3200 },
+            "M": { "TSTEPS": 3000, "N": 12000 },
+            "L": { "TSTEPS": 8500, "N": 34000 },
+            "paper": { "TSTEPS": 4000, "N": 32000 }
         },
         "init": {
             "func_name": "initialize",

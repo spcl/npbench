@@ -9,10 +9,10 @@
         "domain": "Solver",
         "dwarf": "structured_grids",
         "parameters": {
-            "S": { "TSTEPS": 100, "N": 400 },
-            "M": { "TSTEPS": 100, "N": 400 },
-            "L": { "TSTEPS": 100, "N": 400 },
-            "XL": { "TSTEPS": 100, "N": 400 }
+            "S": { "TSTEPS": 8, "N": 50 },
+            "M": { "TSTEPS": 15, "N": 100 },
+            "L": { "TSTEPS": 40, "N": 200 },
+            "paper": { "TSTEPS": 100, "N": 400 }
         },
         "init": {
             "func_name": "initialize",

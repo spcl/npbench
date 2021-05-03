@@ -9,10 +9,10 @@
         "domain": "Other",
         "dwarf": "spectral_methods",
         "parameters": {
-            "S": { "R":  4, "K": 10 },
-            "M": { "R":  4, "K": 10 },
-            "L": { "R":  4, "K": 10 },
-            "XL": { "R":  4, "K": 10 }
+            "S": { "R":  2, "K": 15 },
+            "M": { "R":  2, "K": 18 },
+            "L": { "R":  2, "K": 21 },
+            "paper": { "R":  4, "K": 10 }
         },
         "init": {
             "func_name": "initialize",
