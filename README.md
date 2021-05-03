@@ -1,4 +1,5 @@
-<h1><img src="npbench.svg" alt="npbench-logo" width="100"/>NPBench</h1>
+<img src="npbench.svg" alt="npbench-logo" width="100"/>
+<h1>NPBench</h1>
 
 ## Quickstart
 
