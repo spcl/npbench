@@ -144,6 +144,7 @@ class Test(object):
                 'kind': kind,
                 'domain': domain,
                 'dwarf': dwarf,
+                'preset': preset,
                 'mode': "main",
                 'framework': self.frmwrk.info["simple_name"],
                 'version': version,

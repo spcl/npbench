@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS results (
     kind text,
     domain text,
     dwarf text,
+    preset text NOT NULL,
     mode text NOT NULL,
     framework text NOT NULL,
     version text NOT NULL,
@@ -92,9 +93,9 @@ CREATE TABLE IF NOT EXISTS results (
 
 sql_insert_into_results_table = """
 INSERT INTO results(
-    timestamp, benchmark, kind, domain, dwarf, mode,
+    timestamp, benchmark, kind, domain, dwarf, preset, mode,
     framework, version, details, validated, time
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 """
 
 sql_create_lcounts_table = """
