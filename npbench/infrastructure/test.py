@@ -57,7 +57,7 @@ class Test(object):
             repeat: int,
             timeout: float = 200.0):
         """ Tests the framework against the benchmark.
-        :param preset: The preset to use for testing (S, M, L, XL).
+        :param preset: The preset to use for testing (S, M, L, paper).
         :param validate: If true, it validates the output against NumPy.
         :param repeat: The number of repeatitions.
         """

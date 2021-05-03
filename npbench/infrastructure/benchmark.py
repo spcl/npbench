@@ -31,7 +31,7 @@ class Benchmark(object):
 
     def get_data(self, preset: str = 'L') -> Dict[str, Any]:
         """ Initializes the benchmark data.
-        :param preset: The data-size preset (S, M, L, XL).
+        :param preset: The data-size preset (S, M, L, paper).
         """
 
         if preset in self.bdata.keys():
