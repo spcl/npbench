@@ -109,3 +109,23 @@ python plot_lines.py
 
 It is possible to use the NPBench infrastructure with your own benchmarks and frameworks.
 For more information on this functionality please read the documentation for [benchmarks](benchmarks.md) and [frameworks](frameworks.md).
+
+## Acknowledgements
+
+NPBench is a collection of scientific Python/NumPy codes from various domains that we adapted from the following sources:
+- Azimuthal Integration from [pyFAI](https://github.com/silx-kit/pyFAI)
+- Navier-Stokes from  [CFD Python](https://github.com/barbagroup/CFDPython)
+- Cython [tutorial](https://cython.readthedocs.io/en/latest/src/userguide/numpy_tutorial.html) for NumPy users
+- Quantum Transport simulation from [OMEN](https://nano-tcad.ee.ethz.ch/research/computational-nanoelectronics.html)
+- CRC-16-CCITT algorithm from [oysstu](https://gist.github.com/oysstu/68072c44c02879a2abf94ef350d1c7c6)
+- Numba [tutorial](https://numba.readthedocs.io/en/stable/user/5minguide.html)
+- Mandelbrot codes [From Python to Numpy](https://github.com/rougier/from-python-to-numpy)
+- N-Body simulation from [nbody-python](https://github.com/pmocz/nbody-python)
+- [PolyBench/C](http://web.cse.ohio-state.edu/~pouchet.2/software/polybench/)
+- Pythran [benchmarks](https://github.com/serge-sans-paille/numpy-benchmarks/)
+- [Stockham-FFT](http://urn.kb.se/resolve?urn=urn:nbn:se:kth:diva-287731)
+- Weather stencils from [gt4py](https://github.com/GridTools/gt4py)
+
+
+
+

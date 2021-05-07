@@ -9,7 +9,7 @@ data initialization methods needed for running the benchmark.
 The second file is the reference Python/NumPy implementation and must be named
 `<benchmark-name>_numpy.py`.
 Implementations for other frameworks can also be added.
-In general, those impelementations should be placed in files named
+In general, those implementations should be placed in files named
 `<benchmark-name>_<framework-name>.py`.
 For example, the CuPy implementation for a benchmark called `mybench` should be
 placed in a file with the name `mybench_cupy.py`.
