@@ -35,4 +35,7 @@ Some typical scenarios where you want to do so are:
 - Your framework has multiple implementations for each benchmark (see [`npbench/infrastructure/numba_framework.py`](npbench/infrastructure/numba_framework.py))
 - Your framework needs some kind of synchronization before and after executing a benchmark. Therefore, you need to specialize the setup and execution string (see [`npbench/infrastructure/cupy_framework.py`](npbench/infrastructure/cupy_framework.py)).
 
-If you create a `Framework` subclass, remember to also to add a line in `npbench/infrastructure/__init__.py`: `from <framework-subclass-filename> import *`.
+If you create a `Framework` subclass, remember to also to add a line in [`npbench/infrastructure/__init__.py`](npbench/infrastructure/__init__.py):
+```python
+from <framework-subclass-filename> import *
+```
