@@ -2,7 +2,7 @@
 
 ## Adding Benchmarks
 
-To add a new benchmark, one must create a subfolder under `npbench/benchmarks`.
+To add a new benchmark, one must create a subfolder under [`npbench/benchmarks`](npbench/benchmarks).
 This folder must include at least two files.
 The first must be called `<benchmark-name>.py` and should contain any
 data initialization methods needed for running the benchmark.
@@ -26,7 +26,7 @@ iterator in potentially parallel for-loops with `numba.prange`.
 ## Enabling Benchmarks
 
 After adding the above files, one must enable a new benchmark by creating a
-`<benchmark-name>.json` file in the `bench_info` folder.
+`<benchmark-name>.json` file in the [`bench_info`](bench_info) folder.
 The file must be writte in valid JSON and contain the following information:
 - name: Name/Description of the benchmark.
 - short_name: A short string that is used as the benchmark ID in the result database and heatmaps.

@@ -105,10 +105,7 @@ python plot_results.py
 python plot_lines.py
 ```
 
-## Adding Benchmarks
+## Customization
 
-TODO
-
-## Adding Frameworks
-
-TODO
+It is possible to use the NPBench infrastructure with your own benchmarks and frameworks.
+For more information on this functionality please read the documentation for [benchmarks](benchmarks.md) and [frameworks](frameworks.md).
