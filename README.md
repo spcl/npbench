@@ -20,10 +20,13 @@ python plot_results.py
 
 Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
-- DaCe (CPU and GPU)
 - Numba
 - NumPy
 - Pythran
+
+Support will also be added shortly for:
+- DaCe
+- Legate
 
 Please note that the NPBench setup only installs NumPy.
 To run benchmarks with other frameworks, you have to install them separately.
@@ -40,10 +43,6 @@ For example, if you have CUDA 11.1, then you should install CuPy with:
 python -m pip install cupy-cuda111
 ```
 For more installation options, consult the CuPy [installation guide](https://docs.cupy.dev/en/stable/install.html#install-cupy).
-
-### DaCe
-
-TODO
 
 ### Numba
 
@@ -88,8 +87,7 @@ in about 10, 100, and 1000ms respectively in a machine with two 16-core Intel Xe
 Gold 6130 processors.
 Exception to that are `atax`, `bicg`, `mlp`, `mvt`, and `trisolv`, which have been
 tuned for 5, 20 and 100ms approximately due to very high memory requirements.
-The `paper` preset is the problem sizes used in the NPBench paper.
-TODO: Add link to paper.
+The `paper` preset is the problem sizes used in the NPBench [paper](http://spcl.inf.ethz.ch/Publications/index.php?pub=412).
 By default, the provided python scripts execute the benchmarks using the `S` preset.
 You can select a different preset with the optional `-p` flag:
 ```
