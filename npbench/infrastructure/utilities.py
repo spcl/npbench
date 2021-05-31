@@ -138,7 +138,8 @@ def benchmark(stmt,
               out_text="",
               repeat=1,
               context={},
-              output=None):
+              output=None,
+              verbose=True):
 
     timeit.template = timeit_tmpl.format(init='{init}',
                                          setup='{setup}',
@@ -155,7 +156,8 @@ def benchmark(stmt,
     raw_time_list = [a for a, _ in output]
     raw_time = np.median(raw_time_list)
     ms_time = time_to_ms(raw_time)
-    print("{}: {}ms".format(out_text, ms_time))
+    if verbose:
+        print("{}: {}ms".format(out_text, ms_time))
     return res, raw_time_list
 
 
