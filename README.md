@@ -21,12 +21,12 @@ python plot_results.py
 
 Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
+- DaCe
 - Numba
 - NumPy
 - Pythran
 
 Support will also be added shortly for:
-- DaCe
 - Legate
 
 Please note that the NPBench setup only installs NumPy.
@@ -44,6 +44,16 @@ For example, if you have CUDA 11.1, then you should install CuPy with:
 python -m pip install cupy-cuda111
 ```
 For more installation options, consult the CuPy [installation guide](https://docs.cupy.dev/en/stable/install.html#install-cupy).
+
+### DaCe
+
+DaCe can be install with pip:
+```
+python -m pip install dace
+```
+However, you may want to install the latest version from the [GitHub repository](https://github.com/spcl/dace).
+To run NPBench with DaCe, you have to select as framework (see details below)
+either `dace_cpu` or `dace_gpu`.
 
 ### Numba
 
