@@ -2,7 +2,7 @@ import argparse
 import os
 import pathlib
 
-from multiprocessing import Process, Value
+from multiprocessing import Process
 from npbench.infrastructure import (Benchmark, generate_framework, LineCount,
                                     Test, utilities as util)
 

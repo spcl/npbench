@@ -8,10 +8,11 @@ To install NPBench, simply execute:
 python -m pip install -r requirements.txt
 python -m pip install .
 ```
-You can then run a subset of the benchmarks with NumPy and Numba and plot the
-speedup of Numba against NumPy:
+You can then run a subset of the benchmarks with NumPy, Numba, and DaCe and plot
+the speedup of DaCe and Numba against NumPy:
 ```
 python -m pip install numba
+python -m pip install dace
 python quickstart.py
 python plot_results.py
 ```
