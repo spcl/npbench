@@ -2,6 +2,7 @@ import argparse
 import os
 import pathlib
 
+from multiprocessing import Process, Value
 from npbench.infrastructure import (Benchmark, generate_framework, LineCount,
                                     Test, utilities as util)
 
@@ -31,10 +32,14 @@ if __name__ == "__main__":
                         default=200.0)
     args = vars(parser.parse_args())
 
-    # print(args)
-
-    frmwrk = generate_framework(args["framework"])
-    numpy = generate_framework("numpy")
+    def run_benchmark(benchname, fname, preset, validate, repeat, timeout):
+        frmwrk = generate_framework(fname)
+        numpy = generate_framework("numpy")
+        bench = Benchmark(benchname)
+        lcount = LineCount(bench, frmwrk, numpy)
+        lcount.count()
+        test = Test(bench, frmwrk, numpy)
+        test.run(preset, validate, repeat, timeout)
 
     parent_folder = pathlib.Path(__file__).parent.absolute()
     bench_dir = parent_folder.joinpath("bench_info")
@@ -42,13 +47,10 @@ if __name__ == "__main__":
     benchnames = [os.path.basename(path)[:-5] for path in pathlist]
     benchnames.sort()
     for benchname in benchnames:
-        # benchname = os.path.basename(path)[:-5]
-        bench = Benchmark(benchname)
-        lcount = LineCount(bench, frmwrk, numpy)
-        lcount.count()
-        test = Test(bench, frmwrk, numpy)
-        try:
-            test.run(args["preset"], args["validate"], args["repeat"],
-                     args["timeout"])
-        except:
-            continue
+        p = Process(
+            target=run_benchmark,
+            args=(benchname, args["framework"], args["preset"],
+                  args["validate"], args["repeat"], args["timeout"])
+        )
+        p.start()
+        p.join()
