@@ -4,6 +4,15 @@ from multiprocessing import Process
 from npbench.infrastructure import (Benchmark, generate_framework, LineCount,
                                     Test, utilities as util)
 
+def run_benchmark(benchname, fname, preset, validate, repeat, timeout):
+        frmwrk = generate_framework(fname)
+        numpy = generate_framework("numpy")
+        bench = Benchmark(benchname)
+        lcount = LineCount(bench, frmwrk, numpy)
+        lcount.count()
+        test = Test(bench, frmwrk, numpy)
+        test.run(preset, validate, repeat, timeout)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p",
@@ -21,15 +30,6 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--timeout", type=float, nargs="?", default=10.0)
     parser.add_argument("-d", "--dace", type=util.str2bool, nargs="?", default=True)
     args = vars(parser.parse_args())
-
-    def run_benchmark(benchname, fname, preset, validate, repeat, timeout):
-        frmwrk = generate_framework(fname)
-        numpy = generate_framework("numpy")
-        bench = Benchmark(benchname)
-        lcount = LineCount(bench, frmwrk, numpy)
-        lcount.count()
-        test = Test(bench, frmwrk, numpy)
-        test.run(preset, validate, repeat, timeout)
 
     benchmarks = [
         'adi', 'arc_distance', 'atax', 'azimint_naive', 'bicg', 'cavity_flow',
