@@ -25,4 +25,4 @@ jobs:
         python -m pip install numba==0.54
     - name: Test
       run: |
-        python run_framework.py -f numba -r 1 --no-ignore-errors
+        python run_framework.py -f numba -r 1 --ignore-errors=0
