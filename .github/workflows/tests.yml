@@ -26,4 +26,4 @@ jobs:
         python -m pip install dace
     - name: Test
       run: |
-        python run_framework.py -f numba -r 1
+        python run_framework.py -f numba -r 1 --no-ignore-errors
