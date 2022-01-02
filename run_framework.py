@@ -41,10 +41,10 @@ if __name__ == "__main__":
                         type=float,
                         nargs="?",
                         default=200.0)
-    parser.add_argument('--no-ignore-errors',
-                        dest='ignore_errors',
-                        action='store_false')
-    parser.set_defaults(ignore_errors=True)
+    parser.add_argument("--ignore-errors",
+                        type=util.str2bool,
+                        nargs="?",
+                        default=True)
     args = vars(parser.parse_args())
 
     parent_folder = pathlib.Path(__file__).parent.absolute()
