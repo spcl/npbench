@@ -22,7 +22,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
         python -m pip install .
-        python -m pip install numba==0.53
+        python -m pip install numba==0.54
         python -m pip install dace
     - name: Test
       run: |
