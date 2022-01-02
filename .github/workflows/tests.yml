@@ -23,7 +23,6 @@ jobs:
         python -m pip install -r requirements.txt
         python -m pip install .
         python -m pip install numba==0.54
-        python -m pip install dace
     - name: Test
       run: |
         python run_framework.py -f numba -r 1 --no-ignore-errors
