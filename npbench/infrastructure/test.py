@@ -115,14 +115,14 @@ class Test(object):
             valid = True
             if validate and np_out is not None:
                 try:
-                    valid = util.validate(np_out, frmwrk_out,
-                                          self.frmwrk.info["full_name"])
+                    frmwrk_name = self.frmwrk.info["full_name"]
+                    valid = util.validate(np_out, frmwrk_out, frmwrk_name)
                     if valid:
                         print("{} - {} - validation: SUCCESS".format(
-                            self.frmwrk.info["full_name"], impl_name))
+                            frmwrk_name, impl_name))
                     elif not ignore_errors:
                         raise ValueError("{} did not validate!"
-                            .format(self.frmwrk.info["full_name"]))
+                            .format(frmwrk_name))
                 except Exception:
                     print("Failed to run {} validation.".format(
                         self.frmwrk.info["full_name"]))
