@@ -119,6 +119,25 @@ python plot_lines.py
 It is possible to use the NPBench infrastructure with your own benchmarks and frameworks.
 For more information on this functionality please read the documentation for [benchmarks](benchmarks.md) and [frameworks](frameworks.md).
 
+## Publication
+
+Please cite NPBench as follows:
+
+```bibtex
+@inproceedings{
+    npbench,
+    author = {Ziogas, Alexandros Nikolaos and Ben-Nun, Tal and Schneider, Timo and Hoefler, Torsten},
+    title = {NPBench: A Benchmarking Suite for High-Performance NumPy},
+    year = {2021},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3447818.3460360},
+    doi = {10.1145/3447818.3460360},
+    booktitle = {Proceedings of the ACM International Conference on Supercomputing},
+    series = {ICS '21}
+}
+```
+
 ## Acknowledgements
 
 NPBench is a collection of scientific Python/NumPy codes from various domains that we adapted from the following sources:
