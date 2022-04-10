@@ -67,5 +67,6 @@ if __name__ == "__main__":
             failed.append(benchname)
 
     if len(failed) != 0:
-        sys.exit("Failed: {} out of {}\n{}".format(len(failed), len(benchnames),
-                                                   "\n".join(failed)))
+        print(f"Failed: {len(failed)} out of {len(benchnames)}")
+        for bench in failed:
+            print(bench)
