@@ -110,13 +110,12 @@ class DaceFramework(Framework):
 
         def parallelize(sdfg):
             from dace.sdfg import propagation
-            strict_xforms = dace.transformation.strict_transformations()
+            strict_xforms = dace.transformation.simplification_transformations()
 
             for sd in sdfg.all_sdfgs_recursive():
                 propagation.propagate_states(sd)
             sdfg.apply_transformations_repeated([LoopToMap, MapCollapse] +
-                                                strict_xforms,
-                                                strict=True)
+                                                strict_xforms)
 
         try:
             parallel_sdfg = copy.deepcopy(fusion_sdfg)
@@ -241,7 +240,7 @@ class DaceFramework(Framework):
                         out_text="DaCe GPU transformation time2",
                         context=locals(), verbose=False)
                     _, gpu_time3 = util.benchmark(
-                        "sdfg.apply_strict_transformations()",
+                        "sdfg.simplify()",
                         out_text="DaCe GPU transformation time3",
                         context=locals(), verbose=False)
                     # NOTE: to be fair, allow one additional greedy MapFusion after GPU trafos
