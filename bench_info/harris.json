@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "harris",
+        "short_name": "harris",
+        "relative_path": "image_processing/harris",
+        "module_name": "harris",
+        "func_name": "harris",
+        "kind": "microbench",
+        "domain": "Image Processing",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S":  { "image_path": "npbench/benchmarks/image_processing/images/rgb.png" },
+            "M":  { "image_path": "npbench/benchmarks/image_processing/images/rgb.png" },
+            "L":  { "image_path": "npbench/benchmarks/image_processing/images/rgb.png" },
+            "paper": { "image_path": "npbench/benchmarks/image_processing/images/rgb.png" }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["image_path"],
+            "output_args": ["image", "output"]
+        },
+        "input_args": ["image", "output"],
+        "array_args": ["image", "output"],
+        "output_args": ["output"]
+    }
+}
