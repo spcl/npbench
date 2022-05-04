@@ -17,8 +17,8 @@ class Test(object):
         self.numpy = npfrmwrk
 
     def _execute(self, frmwrk: Framework, impl: Callable, impl_name: str,
-                 mode: str, bdata: Dict[str, Any],
-                 repeat: int) -> Tuple[Any, Sequence[float]]:
+                 mode: str, bdata: Dict[str, Any], repeat: int,
+                 ignore_erros: bool) -> Tuple[Any, Sequence[float]]:
         report_str = frmwrk.info["full_name"] + " - " + impl_name
         try:
             copy = frmwrk.copy_func()
@@ -29,6 +29,8 @@ class Test(object):
         except Exception as e:
             print("Failed to load the {} implementation.".format(report_str))
             print(e)
+            if not ignore_erros:
+                raise
             return None, None
         ldict = {'__npb_impl': impl, '__npb_copy': copy, **bdata}
         try:
@@ -39,6 +41,8 @@ class Test(object):
             print(
                 "Failed to execute the {} implementation.".format(report_str))
             print(e)
+            if not ignore_erros:
+                raise
             return None, None
         if out is not None:
             if isinstance(out, (tuple, list)):
@@ -55,7 +59,8 @@ class Test(object):
             preset: str,
             validate: bool,
             repeat: int,
-            timeout: float = 200.0):
+            timeout: float = 200.0,
+            ignore_errors: bool = True):
         """ Tests the framework against the benchmark.
         :param preset: The preset to use for testing (S, M, L, paper).
         :param validate: If true, it validates the output against NumPy.
@@ -69,7 +74,7 @@ class Test(object):
         if validate and self.frmwrk.fname != "numpy" and self.numpy:
             np_impl, np_impl_name = self.numpy.implementations(self.bench)[0]
             np_out, _ = self._execute(self.numpy, np_impl, np_impl_name,
-                                      "validation", bdata, 1)
+                                      "validation", bdata, 1, ignore_errors)
         else:
             validate = False
             np_out = None
@@ -89,7 +94,7 @@ class Test(object):
         @tout.exit_after(timeout)
         def first_execution(impl, impl_name):
             return self._execute(self.frmwrk, impl, impl_name,
-                                 "first/validation", context, 1)
+                                 "first/validation", context, 1, ignore_errors)
 
         bvalues = []
         context = {**bdata, **self.frmwrk.imports()}
@@ -102,23 +107,30 @@ class Test(object):
                       flush=True)
                 continue
             except Exception:
+                if not ignore_errors:
+                    raise
                 continue
 
             # Validation
             valid = True
             if validate and np_out is not None:
                 try:
-                    valid = util.validate(np_out, frmwrk_out,
-                                          self.frmwrk.info["full_name"])
+                    frmwrk_name = self.frmwrk.info["full_name"]
+                    valid = util.validate(np_out, frmwrk_out, frmwrk_name)
                     if valid:
                         print("{} - {} - validation: SUCCESS".format(
-                            self.frmwrk.info["full_name"], impl_name))
+                            frmwrk_name, impl_name))
+                    elif not ignore_errors:
+                        raise ValueError("{} did not validate!"
+                            .format(frmwrk_name))
                 except Exception:
                     print("Failed to run {} validation.".format(
                         self.frmwrk.info["full_name"]))
+                    if not ignore_errors:
+                        raise
             # Main execution
             _, timelist = self._execute(self.frmwrk, impl, impl_name, "median",
-                                        context, repeat)
+                                        context, repeat, ignore_errors)
             if timelist:
                 for t in timelist:
                     bvalues.append(
