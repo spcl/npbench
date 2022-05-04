@@ -15,7 +15,7 @@ def blur(image, output):
     for x in range(blur_y.shape[1]):
         blur_y[:, x] = np.convolve(blur_x[:, x], filter, mode='valid')
 
-    output = np.clip(blur_y, 0.0, 255.0).astype(np.uint8)
+    output[:,:] = np.clip(blur_y, 0.0, 255.0).astype(np.uint8)
 
     # img = Image.fromarray(output)
     # img.save("blur_output.png")

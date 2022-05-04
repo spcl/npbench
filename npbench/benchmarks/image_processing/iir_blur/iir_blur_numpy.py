@@ -22,7 +22,7 @@ def iir_blur(image, output):
     blur_y = blur_cols_transpose(image, alpha)
     blur = blur_cols_transpose(blur_y, alpha)
 
-    output = np.clip(blur, 0, 255).astype(np.uint8)
+    output[:,:,:] = np.clip(blur, 0, 255).astype(np.uint8)
 
     # img = Image.fromarray(output)
     # img.save("iir_blur_output.png")

@@ -17,4 +17,4 @@ def blur(image: dc.uint8[2560, 1536], output: dc.uint8[2558, 1534]):
 
     blur_y[blur_y < 0.0] = 0.0
     blur_y[blur_y > 255.0] = 255.0
-    output = blur_y.astype(np.uint8)
+    output[:,:] = blur_y.astype(np.uint8)
