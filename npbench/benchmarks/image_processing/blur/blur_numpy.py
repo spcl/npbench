@@ -19,5 +19,3 @@ def blur(image, output):
 
     # img = Image.fromarray(output)
     # img.save("blur_output.png")
-
-    return output
