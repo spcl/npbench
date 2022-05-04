@@ -26,5 +26,3 @@ def iir_blur(image, output):
 
     # img = Image.fromarray(output)
     # img.save("iir_blur_output.png")
-
-    return output

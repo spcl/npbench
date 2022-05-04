@@ -28,5 +28,3 @@ def iir_blur(image: dace.uint8[2560, 1536, 3], output: dace.uint8[2560, 1536, 3]
     blur[blur < 0] = 0
     blur[blur > 255] = 255
     output = blur.astype(np.uint8)
-
-    return output
