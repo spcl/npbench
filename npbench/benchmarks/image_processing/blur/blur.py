@@ -5,7 +5,7 @@ from PIL import Image
 from pathlib import Path
 
 def initialize():
-    image_path = Path(__file__).parent.parent / "images" / "gray.png"
+    image_path = Path(__file__).parent.parent.parent.parent.parent / "data/image_processing" / "gray.png"
     image = np.array(Image.open(image_path), dtype=np.uint8)
     output = np.empty((image.shape[0] - 2, image.shape[1] - 2), dtype=np.uint8)
 
