@@ -6,14 +6,5 @@ class Metric(ABC):
         super().__init__()
 
     @abstractmethod
-    def benchmark(
-        self,
-        stmt,
-        setup="pass",
-        out_text="",
-        repeat=1,
-        context={},
-        output=None,
-        verbose=True
-    ):
+    def execute(self, **kwargs):
         pass

@@ -90,6 +90,12 @@ You can run all the available benchmarks with a specific framework using the `ru
 python run_framework.py -f <framework>
 ```
 
+### Likwid Instrumentation
+
+```
+likwid-perfctr -C 0 -g <group> -m python run_benchmark.py -b <benchmark> -f <framework>
+```
+
 ### Presets
 
 Each benchmark has four different presets; `S`, `M`, `L`, and `paper`.

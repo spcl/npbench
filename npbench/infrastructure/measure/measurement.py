@@ -3,10 +3,8 @@ import time
 
 from npbench.infrastructure import (Benchmark, Framework, timeout_decorator as
                                     tout, utilities as util)
-from typing import Any, Callable, Dict, Sequence, Tuple
 
 from npbench.infrastructure.measure.metric import Metric
-from npbench.infrastructure.measure.timer import Timer
 from npbench.infrastructure.measure.validate import validate as validator
 
 
@@ -15,46 +13,12 @@ class Measurement(object):
     def __init__(self,
                  bench: Benchmark,
                  frmwrk: Framework,
+                 metric: Metric,
                  npfrmwrk: Framework = None):
         self.bench = bench
+        self.metric = metric
         self.frmwrk = frmwrk
-        self.metric = Timer()
         self.numpy = npfrmwrk
-
-    def _execute(self, frmwrk: Framework, impl: Callable, impl_name: str,
-                 mode: str, bdata: Dict[str, Any],
-                 repeat: int) -> Tuple[Any, Sequence[float]]:
-        report_str = frmwrk.info["full_name"] + " - " + impl_name
-        try:
-            copy = frmwrk.copy_func()
-            setup_str = frmwrk.setup_str(self.bench, impl)
-            exec_str = frmwrk.exec_str(self.bench, impl)
-            #print(setup_str)
-            #print(exec_str)
-        except Exception as e:
-            print("Failed to load the {} implementation.".format(report_str))
-            print(e)
-            return None, None
-        ldict = {'__npb_impl': impl, '__npb_copy': copy, **bdata}
-        try:
-            out, timelist = self.metric.benchmark(exec_str, setup_str,
-                                           report_str + " - " + mode, repeat,
-                                           ldict, '__npb_result')
-        except Exception as e:
-            print(
-                "Failed to execute the {} implementation.".format(report_str))
-            print(e)
-            return None, None
-        if out is not None:
-            if isinstance(out, (tuple, list)):
-                out = list(out)
-            else:
-                out = [out]
-        else:
-            out = []
-        if "out_args" in self.bench.info.keys():
-            out += [ldict[a] for a in self.frmwrk.args(self.bench)]
-        return out, timelist
 
     def run(self,
             preset: str,
@@ -73,8 +37,7 @@ class Measurement(object):
         # Run NumPy for validation
         if validate and self.frmwrk.fname != "numpy" and self.numpy:
             np_impl, np_impl_name = self.numpy.implementations(self.bench)[0]
-            np_out, _ = self._execute(self.numpy, np_impl, np_impl_name,
-                                      "validation", bdata, 1)
+            np_out, _ = self.metric.execute(bench=self.bench, frmwrk=self.numpy, impl=np_impl, impl_name=np_impl_name, mode="validation", bdata=bdata, repeat=1)
         else:
             validate = False
             np_out = None
@@ -93,8 +56,7 @@ class Measurement(object):
 
         @tout.exit_after(timeout)
         def first_execution(impl, impl_name):
-            return self._execute(self.frmwrk, impl, impl_name,
-                                 "first/validation", context, 1)
+            return self.metric.execute(bench=self.bench, frmwrk=self.frmwrk, impl=impl, impl_name=impl_name, mode="first/validation", bdata=context, repeat=1)
 
         bvalues = []
         context = {**bdata, **self.frmwrk.imports()}
@@ -122,8 +84,7 @@ class Measurement(object):
                     print("Failed to run {} validation.".format(
                         self.frmwrk.info["full_name"]))
             # Main execution
-            _, timelist = self._execute(self.frmwrk, impl, impl_name, "median",
-                                        context, repeat)
+            _, timelist = self.metric.execute(bench=self.bench, frmwrk=self.frmwrk, impl=impl, impl_name=impl_name, mode="median", bdata=context, repeat=repeat)
             if timelist:
                 for t in timelist:
                     bvalues.append(

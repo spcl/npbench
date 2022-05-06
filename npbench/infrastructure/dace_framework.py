@@ -2,7 +2,7 @@
 import pkg_resources
 import traceback
 
-from npbench.infrastructure import Benchmark, Framework, utilities as util
+from npbench.infrastructure import Benchmark, Framework
 from typing import Callable, Sequence, Tuple
 
 from npbench.infrastructure.measure import Timer
@@ -100,6 +100,8 @@ class DaceFramework(Framework):
                 "fusion_sdfg.apply_strict_transformations()",
                 out_text="DaCe Strict Transformations time",
                 context=locals(), verbose=False)
+
+
             sdfg_list.append(fusion_sdfg)
             # time_list.append(time_list[-1] + fusion_time1[0] + fusion_time2[0])
             time_list.append(parse_time[0] + fusion_time1[0] + fusion_time2[0])
@@ -131,6 +133,7 @@ class DaceFramework(Framework):
                 "parallel_sdfg.apply_transformations_repeated([MapFusion])",
                 out_text="DaCe LoopToMap time2",
                 context=locals(), verbose=False)
+
             sdfg_list.append(parallel_sdfg)
             time_list.append(time_list[-1] + ptime1[0] + ptime2[0])
 
@@ -261,6 +264,7 @@ class DaceFramework(Framework):
                     out_text="DaCe compilation time",
                     context=locals(),
                     output='__npb_result', verbose=False)
+
                 implementations.append((dc_exec, sdfg._name))
             except Exception as e:
                 print("Failed to compile DaCe {a} {s} implementation.".format(

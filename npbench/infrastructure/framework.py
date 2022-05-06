@@ -169,7 +169,6 @@ class Framework(object):
         # param_str = self.param_str(bench, impl)
         return "__npb_result = __npb_impl({a})".format(a=arg_str)
 
-
 def generate_framework(fname: str) -> Framework:
     """ Generates a framework object with the correct class.
     :param fname: The framework name.

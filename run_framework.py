@@ -43,6 +43,7 @@ if __name__ == "__main__":
                         type=float,
                         nargs="?",
                         default=200.0)
+    parser.add_argument("-M", "--metric", type=str, nargs="?", choices=['runtime', 'likwid'], default="runtime")    
     args = vars(parser.parse_args())
 
 
@@ -55,7 +56,7 @@ if __name__ == "__main__":
         p = Process(
             target=run_benchmark,
             args=(benchname, args["framework"], args["preset"],
-                  args["validate"], args["repeat"], args["timeout"])
+                  args["validate"], args["repeat"], args["timeout"], args["metric"])
         )
         p.start()
         p.join()
