@@ -5,8 +5,12 @@ from npbench.infrastructure import (Benchmark, Framework, timeout_decorator as
                                     tout, utilities as util)
 from typing import Any, Callable, Dict, Sequence, Tuple
 
+from npbench.infrastructure.measure.metric import Metric
+from npbench.infrastructure.measure.timer import Timer
+from npbench.infrastructure.measure.validate import validate as validator
 
-class Test(object):
+
+class Measurement(object):
     """ A class for testing a framework on a benchmark. """
     def __init__(self,
                  bench: Benchmark,
@@ -14,6 +18,7 @@ class Test(object):
                  npfrmwrk: Framework = None):
         self.bench = bench
         self.frmwrk = frmwrk
+        self.metric = Timer()
         self.numpy = npfrmwrk
 
     def _execute(self, frmwrk: Framework, impl: Callable, impl_name: str,
@@ -24,15 +29,15 @@ class Test(object):
             copy = frmwrk.copy_func()
             setup_str = frmwrk.setup_str(self.bench, impl)
             exec_str = frmwrk.exec_str(self.bench, impl)
-            # print(setup_str)
-            # print(exec_str)
+            #print(setup_str)
+            #print(exec_str)
         except Exception as e:
             print("Failed to load the {} implementation.".format(report_str))
             print(e)
             return None, None
         ldict = {'__npb_impl': impl, '__npb_copy': copy, **bdata}
         try:
-            out, timelist = util.benchmark(exec_str, setup_str,
+            out, timelist = self.metric.benchmark(exec_str, setup_str,
                                            report_str + " - " + mode, repeat,
                                            ldict, '__npb_result')
         except Exception as e:
@@ -108,7 +113,7 @@ class Test(object):
             valid = True
             if validate and np_out is not None:
                 try:
-                    valid = util.validate(np_out, frmwrk_out,
+                    valid = validator(np_out, frmwrk_out,
                                           self.frmwrk.info["full_name"])
                     if valid:
                         print("{} - {} - validation: SUCCESS".format(

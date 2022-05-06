@@ -6,6 +6,7 @@ import tempfile
 from npbench.infrastructure import Benchmark, Framework, utilities as util
 from typing import Callable, Sequence, Tuple
 
+from npbench.infrastructure.measure import Timer
 
 class PythranFramework(Framework):
     """ A class for reading and processing framework information. """
@@ -34,8 +35,11 @@ class PythranFramework(Framework):
         compile_str = (
             "os.system(\"pythran -DUSE_XSIMD -fopenmp -march=native " +
             "-ffast-math {pp} -o {sp}\")".format(pp=pymod_path, sp=somod_path))
+        
+        timer = Timer()
+
         try:
-            _, compile_time = util.benchmark(
+            _, compile_time = timer.benchmark(
                 compile_str,
                 out_text="Pythran compilation time",
                 context=globals())

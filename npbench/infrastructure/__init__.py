@@ -2,7 +2,7 @@
 from .benchmark import *
 from .framework import *
 from .line_count import *
-from .test import *
+from .measure.measurement import *
 from .utilities import *
 
 from .cupy_framework import *

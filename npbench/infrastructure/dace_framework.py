@@ -5,6 +5,7 @@ import traceback
 from npbench.infrastructure import Benchmark, Framework, utilities as util
 from typing import Callable, Sequence, Tuple
 
+from npbench.infrastructure.measure import Timer
 
 class DaceFramework(Framework):
     """ A class for reading and processing framework information. """
@@ -64,9 +65,11 @@ class DaceFramework(Framework):
             print("Failed to load the DaCe implementation.")
             raise (e)
 
+        timer = Timer()
+
         #########################################################
         # Prepare SDFGs
-        base_sdfg, parse_time = util.benchmark(
+        base_sdfg, parse_time = timer.benchmark(
             "__npb_result = ct_impl.to_sdfg(strict=False)",
             out_text="DaCe parsing time",
             context=locals(),
@@ -74,7 +77,7 @@ class DaceFramework(Framework):
         strict_sdfg = copy.deepcopy(base_sdfg)
         strict_sdfg._name = "strict"
         ldict['strict_sdfg'] = strict_sdfg
-        _, strict_time = util.benchmark(
+        _, strict_time = timer.benchmark(
             "strict_sdfg.apply_strict_transformations()",
             out_text="DaCe Strict Transformations time",
             context=locals(), verbose=False)
@@ -89,11 +92,11 @@ class DaceFramework(Framework):
             fusion_sdfg = copy.deepcopy(strict_sdfg)
             fusion_sdfg._name = "fusion"
             ldict['fusion_sdfg'] = fusion_sdfg
-            _, fusion_time1 = util.benchmark(
+            _, fusion_time1 = timer.benchmark(
                 "fusion_sdfg.apply_transformations_repeated([MapFusion])",
                 out_text="DaCe MapFusion time",
                 context=locals(), verbose=False)
-            _, fusion_time2 = util.benchmark(
+            _, fusion_time2 = timer.benchmark(
                 "fusion_sdfg.apply_strict_transformations()",
                 out_text="DaCe Strict Transformations time",
                 context=locals(), verbose=False)
@@ -121,10 +124,10 @@ class DaceFramework(Framework):
             parallel_sdfg = copy.deepcopy(fusion_sdfg)
             parallel_sdfg._name = "parallel"
             ldict['parallel_sdfg'] = parallel_sdfg
-            _, ptime1 = util.benchmark("parallelize(parallel_sdfg)",
+            _, ptime1 = timer.benchmark("parallelize(parallel_sdfg)",
                                        out_text="DaCe LoopToMap time1",
                                        context=locals(), verbose=False)
-            _, ptime2 = util.benchmark(
+            _, ptime2 = timer.benchmark(
                 "parallel_sdfg.apply_transformations_repeated([MapFusion])",
                 out_text="DaCe LoopToMap time2",
                 context=locals(), verbose=False)
@@ -159,7 +162,7 @@ class DaceFramework(Framework):
             device = dtypes.DeviceType.GPU if self.info[
                 "arch"] == "gpu" else dtypes.DeviceType.CPU
 
-            _, auto_time = util.benchmark(
+            _, auto_time = timer.benchmark(
                 f"autoopt(auto_opt_sdfg, device, symbols = locals())",
                 out_text="DaCe Auto - Opt",
                 context=locals(), verbose=False)
@@ -230,21 +233,21 @@ class DaceFramework(Framework):
                 opt.set_fast_implementations(sdfg, device)
             if self.info["arch"] == "gpu":
                 if sdfg._name in ['strict', 'parallel', 'fusion']:
-                    _, gpu_time1 = util.benchmark(
+                    _, gpu_time1 = timer.benchmark(
                         "copy_to_gpu(sdfg)",
                         out_text="DaCe GPU transformation time1",
                         context=locals(), verbose=False)
 
-                    _, gpu_time2 = util.benchmark(
+                    _, gpu_time2 = timer.benchmark(
                         "sdfg.apply_gpu_transformations()",
                         out_text="DaCe GPU transformation time2",
                         context=locals(), verbose=False)
-                    _, gpu_time3 = util.benchmark(
+                    _, gpu_time3 = timer.benchmark(
                         "sdfg.simplify()",
                         out_text="DaCe GPU transformation time3",
                         context=locals(), verbose=False)
                     # NOTE: to be fair, allow one additional greedy MapFusion after GPU trafos
-                    _, gpu_time4 = util.benchmark(
+                    _, gpu_time4 = timer.benchmark(
                         "sdfg.apply_transformations_repeated(MapFusion)",
                         out_text="DaCe GPU transformation time4",
                         context=locals(), verbose=False)
@@ -253,7 +256,7 @@ class DaceFramework(Framework):
                     gpu_time1 = [0]
                 fe_time += gpu_time1[0]
             try:
-                dc_exec, compile_time = util.benchmark(
+                dc_exec, compile_time = timer.benchmark(
                     "__npb_result = sdfg.compile()",
                     out_text="DaCe compilation time",
                     context=locals(),

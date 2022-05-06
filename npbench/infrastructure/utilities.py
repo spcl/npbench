@@ -1,11 +1,8 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 import argparse
-import numpy as np
 import sqlite3
-import timeit
 
-from numbers import Number
-from typing import Any, Dict, Union
+from typing import Union
 
 
 # From https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
@@ -18,15 +15,6 @@ def str2bool(v: Union[str, bool]) -> bool:
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
-
-
-def time_to_ms(raw: float) -> int:
-    return int(round(raw * 1000))
-
-
-def relative_error(ref: Union[Number, np.ndarray],
-                   val: Union[Number, np.ndarray]) -> float:
-    return np.linalg.norm(ref - val) / np.linalg.norm(ref)
 
 
 # Taken from shttps://www.sqlitetutorial.net/sqlite-python/create-tables/
@@ -121,67 +109,3 @@ INSERT INTO lcounts(
     framework, version, details, count, npdiff
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 """
-
-timeit_tmpl = """
-def inner(_it, _timer{init}):
-    {setup}
-    _t0 = _timer()
-    for _i in _it:
-        {stmt}
-    _t1 = _timer()
-    return _t1 - _t0, {output}
-"""
-
-
-def benchmark(stmt,
-              setup="pass",
-              out_text="",
-              repeat=1,
-              context={},
-              output=None,
-              verbose=True):
-
-    timeit.template = timeit_tmpl.format(init='{init}',
-                                         setup='{setup}',
-                                         stmt='{stmt}',
-                                         output=output)
-
-    ldict = {**context}
-    output = timeit.repeat(stmt,
-                           setup=setup,
-                           repeat=repeat,
-                           number=1,
-                           globals=ldict)
-    res = output[0][1]
-    raw_time_list = [a for a, _ in output]
-    raw_time = np.median(raw_time_list)
-    ms_time = time_to_ms(raw_time)
-    if verbose:
-        print("{}: {}ms".format(out_text, ms_time))
-    return res, raw_time_list
-
-
-def validate(ref, val, framework="Unknown"):
-    if not isinstance(ref, (tuple, list)):
-        ref = [ref]
-    if not isinstance(val, (tuple, list)):
-        val = [val]
-    valid = True
-    for r, v in zip(ref, val):
-        if not np.allclose(r, v):
-            try:
-                import cupy
-                if isinstance(v, cupy.ndarray):
-                    relerror = relative_error(r, cupy.asnumpy(v))
-                else:
-                    relerror = relative_error(r, v)
-            except Exception:
-                relerror = relative_error(r, v)
-            if relerror < 1e-05:
-                continue
-            valid = False
-            print("Relative error: {}".format(relerror))
-            # return False
-    if not valid:
-        print("{} did not validate!".format(framework))
-    return valid

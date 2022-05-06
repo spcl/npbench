@@ -3,18 +3,19 @@ import os
 import pathlib
 
 from multiprocessing import Process
-from npbench.infrastructure import (Benchmark, generate_framework, LineCount,
-                                    Test, utilities as util)
-
+from npbench.infrastructure import (Benchmark, generate_framework, LineCount, utilities as util)
+from npbench.infrastructure.measure import Measurement, Timer
 
 
 def run_benchmark(benchname, fname, preset, validate, repeat, timeout):
+    timer = Timer()
+    
     frmwrk = generate_framework(fname)
     numpy = generate_framework("numpy")
     bench = Benchmark(benchname)
     lcount = LineCount(bench, frmwrk, numpy)
     lcount.count()
-    test = Test(bench, frmwrk, numpy)
+    test = Measurement(bench, frmwrk, timer, numpy)
     test.run(preset, validate, repeat, timeout)
 
 

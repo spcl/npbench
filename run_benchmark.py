@@ -1,7 +1,7 @@
 import argparse
 
-from npbench.infrastructure import (Benchmark, generate_framework, LineCount,
-                                    Test, utilities as util)
+from npbench.infrastructure import (Benchmark, generate_framework, LineCount, utilities as util)
+from npbench.infrastructure.measure import Measurement
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -41,5 +41,5 @@ if __name__ == "__main__":
     numpy = generate_framework("numpy")
     lcount = LineCount(bench, frmwrk, numpy)
     lcount.count()
-    test = Test(bench, frmwrk, numpy)
+    test = Measurement(bench, frmwrk, numpy)
     test.run(args["preset"], args["validate"], args["repeat"], args["timeout"])
