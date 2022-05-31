@@ -90,12 +90,6 @@ You can run all the available benchmarks with a specific framework using the `ru
 python run_framework.py -f <framework>
 ```
 
-### Likwid Instrumentation
-
-```
-likwid-perfctr -C 0 -g <group> -m python run_benchmark.py -b <benchmark> -f <framework>
-```
-
 ### Presets
 
 Each benchmark has four different presets; `S`, `M`, `L`, and `paper`.
@@ -119,6 +113,21 @@ of the speedups and line-count differences (experimental) against NumPy:
 python plot_results.py
 python plot_lines.py
 ```
+
+### Instrumentation
+
+#### LIKWID
+
+[LIKWID](https://github.com/RRZE-HPC/likwid) support is experimental and it currently only supports measurements on a single-threaded CPU.
+The LIKWID integration is based on [pylikwid](https://github.com/RRZE-HPC/pylikwid) which needs to be built against the local LIKWID installation.
+
+```
+OMP_NUM_THREADS=1 likwid-perfctr -C 0 -g <group> -m python run_benchmark.py -M likwid -f <framework> -b <benchmark>
+
+<framework> := numpy | numba | dace_cpu
+```
+
+The available groups for each architecture can be found in LIKWID's [wiki](https://github.com/RRZE-HPC/likwid/wiki/likwid-perfctr).
 
 ## Customization
 
