@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "halide",
+        "full_name": "Halide",
+        "prefix": "hl",
+        "postfix": "halide",
+        "class": "HalideFramework",
+        "arch": "cpu"
+    }
+}
