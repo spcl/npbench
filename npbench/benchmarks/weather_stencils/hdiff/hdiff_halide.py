@@ -1,6 +1,11 @@
 import numpy as np
 import halide as hl
 
+def hdiff_params():
+    in_field = hl.ImageParam(hl.Float(32), 3, "in_field")
+    coeff = hl.ImageParam(hl.Float(32), 3, "coeff")
+    return in_field, coeff
+
 def hdiff(in_field, coeff):
     I = 256
     J = 256

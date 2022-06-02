@@ -41,37 +41,41 @@ class HalideFramework(Framework):
         halide_cache = benchmark_dir / ".halidecache"
         halide_cache.mkdir(parents=False, exist_ok=True)
 
+        # Load benchmark
+        exec("from {m} import {f} as ct_impl".format(m=module_str, f=func_str))
+        exec("from {m} import {f}_params as ct_params".format(m=module_str, f=func_str))
+
+
+        import halide as hl
+        # Load autoscheduler
+        exec("hl.load_plugin('autoschedule_adams2019')")
+
+        # Create pipeline
+        pipeline_str = '''
+params = list(ct_params())
+pipeline = hl.Pipeline(ct_impl(*params))
+'''
+        exec(pipeline_str)
+
+        # Auto scheduling: branch into multiple implementations here
+        autoschedule_str = 'pipeline.auto_schedule("Adams2019", hl.get_target_from_environment())'
+        #exec(autoschedule_str)
+
+        # Generate c++ code
+        object_file_path = halide_cache / f"{module_name}_halide.o"
+        python_extension_path = halide_cache / f"{module_name}_halide.py.cpp"
+        stmt_html_path = halide_cache / f"{module_name}_halide.html"
+        c_source_path = halide_cache / f"{module_name}_halide.cpp"
+
+        generator_options = f'hl.OutputFileType.object: "{object_file_path}", hl.OutputFileType.python_extension: "{python_extension_path}", hl.OutputFileType.stmt_html: "{stmt_html_path}", hl.OutputFileType.c_source: "{c_source_path}"'
+        generator_options = "{" + generator_options + "}"
+        
+        generator_str = f'pipeline.compile_to({generator_options}, params, "{module_name}_halide")'
+        exec(generator_str)
+
+
         try:
-            import halide as hl
 
-            # Load autoscheduler
-            exec("hl.load_plugin('autoschedule_adams2019')")
-
-            # Load benchmark
-            exec("from {m} import {f} as ct_impl".format(m=module_str, f=func_str))
-
-            pipeline_str = '''
-in_field = hl.ImageParam(hl.Float(32), 3, "in_field")
-coeff = hl.ImageParam(hl.Float(32), 3, "coeff")
-pipeline = hl.Pipeline(ct_impl(in_field, coeff))
-'''
-            exec(pipeline_str)
-
-            autoschedule_str = '''
-pipeline.auto_schedule("Adams2019", hl.get_target_from_environment())            
-'''
-            #exec(autoschedule_str)
-
-            # Generate c++ code
-            object_file_path = halide_cache / f"{module_name}_halide.o"
-            python_extension_path = halide_cache / f"{module_name}_halide.py.cpp"
-            stmt_html_path = halide_cache / f"{module_name}_halide.html"
-            c_source_path = halide_cache / f"{module_name}_halide.cpp"
-
-            generator_options = f'hl.OutputFileType.object: "{object_file_path}", hl.OutputFileType.python_extension: "{python_extension_path}", hl.OutputFileType.stmt_html: "{stmt_html_path}", hl.OutputFileType.c_source: "{c_source_path}"'
-            generator_options = "{" + generator_options + "}"
-            generator_str = f'pipeline.compile_to({generator_options}, [in_field, coeff], "{module_name}_halide")'
-            exec(generator_str)
 
             # Compile .so file
             so_file_path = halide_cache / f"{module_name}_halide.so"
