@@ -26,7 +26,11 @@ class DaceFramework(Framework):
         for copying the benchmark arguments. """
         if self.fname == "dace_gpu":
             import cupy
-            return cupy.asarray
+            def cp_copy_func(arr):
+                darr = cupy.asarray(arr)
+                cupy.cuda.stream.get_current_stream().synchronize()
+                return darr
+            return cp_copy_func
         return super().copy_func()
 
     def implementations(self,
@@ -198,25 +202,6 @@ class DaceFramework(Framework):
                 if not v.transient and isinstance(v, dace.data.Array):
                     v.storage = dace.dtypes.StorageType.GPU_Global
 
-            # Set library nodes
-            for node, state in sdfg.all_nodes_recursive():
-                if isinstance(node, dace.nodes.LibraryNode):
-                    if node.default_implementation == 'specialize':
-                        print("Expanding Node (Common)", node)
-                        node.expand(sdfg, state)
-
-            for node, state in sdfg.all_nodes_recursive():
-                if isinstance(node, dace.nodes.LibraryNode):
-                    from dace.sdfg.scope import is_devicelevel_gpu
-                    # Use CUB for device-level reductions
-                    if ('CUDA (device)' in node.implementations and
-                            not is_devicelevel_gpu(state.parent, state, node)
-                            and state.scope_dict()[node] is None):
-                        node.implementation = 'CUDA (device)'
-                    if 'cuBLAS' in node.implementations and not is_devicelevel_gpu(
-                            state.parent, state, node):
-                        node.implementation = 'cuBLAS'
-
         if self.info["arch"] == "gpu":
             import cupy as cp
 
@@ -227,7 +212,9 @@ class DaceFramework(Framework):
             if sdfg._name != 'auto_opt':
                 device = dtypes.DeviceType.GPU if self.info[
                     "arch"] == "gpu" else dtypes.DeviceType.CPU
-                opt.set_fast_implementations(sdfg, device)
+                if self.info["arch"] == "cpu":
+                    # GPUTransform will set GPU schedules by itself
+                    opt.set_fast_implementations(sdfg, device)
             if self.info["arch"] == "gpu":
                 if sdfg._name in ['strict', 'parallel', 'fusion']:
                     _, gpu_time1 = util.benchmark(
@@ -249,6 +236,7 @@ class DaceFramework(Framework):
                         out_text="DaCe GPU transformation time4",
                         context=locals(), verbose=False)
                     fe_time += gpu_time2[0] + gpu_time3[0] + gpu_time4[0]
+                    opt.set_fast_implementations(sdfg, device)
                 else:
                     gpu_time1 = [0]
                 fe_time += gpu_time1[0]
