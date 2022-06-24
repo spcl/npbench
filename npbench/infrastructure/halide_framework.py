@@ -22,7 +22,7 @@ class HalideFramework(Framework):
 
     def version(self) -> str:
         """ Returns the framework version. """
-        return pkg_resources.get_distribution("halide-python").version
+        return pkg_resources.get_distribution("halide").version
 
     def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
         """ Returns the framework's implementations for a particular benchmark.
@@ -74,26 +74,38 @@ pipeline = hl.Pipeline(ct_impl(*params))
         exec(generator_str)
 
 
-        try:
+        # Compile .so file
+        so_file_path = halide_cache / f"{module_name}_halide.so"
+        compiler = "g++"
+        flags = "-std=c++17 -O3 -pipe -fvisibility=hidden -fvisibility-inlines-hidden -fno-omit-frame-pointer -lz -rdynamic -Wl,-rpath,/usr/local/lib/ -fPIC"
+        includes = "-I/home/lukas/anaconda3/include/python3.9"
+        #includes = "-I /users/aziogas/anaconda3/include/python3.8"
+        files = f"-shared {python_extension_path} {object_file_path} -o {so_file_path}"
+        so_compile_str = " ".join([compiler, flags, includes, files])
+        cmd = shlex.split(so_compile_str)
+        p = subprocess.Popen(cmd)
+        p.wait()
 
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            bench.info["module_name"] + "_halide", so_file_path)
+        foo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(foo)
+        impl = eval("foo.{f}".format(f=bench.info["func_name"] + "_halide"))
 
-            # Compile .so file
-            so_file_path = halide_cache / f"{module_name}_halide.so"
-            compiler = "g++"
-            flags = "-std=c++17 -O3 -pipe -fvisibility=hidden -fvisibility-inlines-hidden -fno-omit-frame-pointer -lz -rdynamic -Wl,-rpath,/usr/local/lib/ -fPIC"
-            includes = "-I/home/lukas/anaconda3/include/python3.9 -I/home/lukas/anaconda3/lib/python3.9/site-packages/pybind11/include -I/usr/local/include"
-            files = f"-shared {python_extension_path} {object_file_path} -o {so_file_path}"
-            so_compile_str = " ".join([compiler, flags, includes, files])
-            cmd = shlex.split(so_compile_str)
-            p = subprocess.Popen(cmd)
-            p.wait()
+        return [(impl, "default")]
 
-            print("Compiled")
+    def arg_str(self, bench: Benchmark, impl: Callable = None):
+        """ Generates the argument-string that should be used for calling
+        the benchmark implementation.
+        :param bench: A benchmark.
+        :param impl: A benchmark implementation.
+        """
 
-        except Exception as e:
-            print("Failed to load the Halide implementation.")
-            raise (e)
-
-        impl = None
-
-        return [(None, "default")]
+        input_args = self.args(bench, impl)
+        input_args_str = ", ".join([
+            "{b}={a}".format(a=a, b=b)
+            for a, b in zip(input_args, bench.info["input_args"])
+        ])
+        input_args_str += ", output=output"
+        return input_args_str
