@@ -1,4 +1,6 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
+import os
+from tempfile import TemporaryFile
 import pkg_resources
 import traceback
 
@@ -8,10 +10,13 @@ from typing import Callable, Sequence, Tuple
 
 class DaceFramework(Framework):
     """ A class for reading and processing framework information. """
-    def __init__(self, fname: str):
+    def __init__(self, fname: str, save_strict: bool=False, load_strict: bool=False):
         """ Reads framework information.
         :param fname: The framework name.
         """
+
+        self.save_strict = save_strict
+        self.load_stric = load_strict
 
         import warnings
         warnings.filterwarnings("ignore")
@@ -68,24 +73,47 @@ class DaceFramework(Framework):
             print("Failed to load the DaCe implementation.")
             raise (e)
 
-        #########################################################
-        # Prepare SDFGs
-        base_sdfg, parse_time = util.benchmark(
-            "__npb_result = ct_impl.to_sdfg(strict=False)",
-            out_text="DaCe parsing time",
-            context=locals(),
-            output='__npb_result', verbose=False)
-        strict_sdfg = copy.deepcopy(base_sdfg)
-        strict_sdfg._name = "strict"
-        ldict['strict_sdfg'] = strict_sdfg
-        _, strict_time = util.benchmark(
-            "strict_sdfg.apply_strict_transformations()",
-            out_text="DaCe Strict Transformations time",
-            context=locals(), verbose=False)
-        # sdfg_list = [strict_sdfg]
-        # time_list = [parse_time[0] + strict_time[0]]
+        ##### Experimental: Load strict SDFG
+        sdfg_loaded = False
+        path = os.path.join(os.getcwd(), 'dace_sdfgs', f"{module_str}-{func_str}.sdfg")
+        try:
+            strict_sdfg = dace.SDFG.from_file(path)
+            sdfg_loaded = True
+        except Exception:
+            pass
+        
+        if not sdfg_loaded:
+            #########################################################
+            # Prepare SDFGs
+            base_sdfg, parse_time = util.benchmark(
+                "__npb_result = ct_impl.to_sdfg(strict=False)",
+                out_text="DaCe parsing time",
+                context=locals(),
+                output='__npb_result', verbose=False)
+            strict_sdfg = copy.deepcopy(base_sdfg)
+            strict_sdfg._name = "strict"
+            ldict['strict_sdfg'] = strict_sdfg
+            _, strict_time = util.benchmark(
+                "strict_sdfg.apply_strict_transformations()",
+                out_text="DaCe Strict Transformations time",
+                context=locals(), verbose=False)
+            # sdfg_list = [strict_sdfg]
+            # time_list = [parse_time[0] + strict_time[0]]
+        else:
+            ldict['strict_sdfg'] = strict_sdfg
+        parse_time = [0]
         sdfg_list = []
         time_list = []
+
+        ##### Experimental: Saving strict SDFG
+        if self.save_strict and not sdfg_loaded:
+            path = os.path.join(os.getcwd(), 'dace_sdfgs')
+            try:
+                os.mkdir(path)
+            except FileExistsError:
+                pass
+            path = os.path.join(os.getcwd(), 'dace_sdfgs', f"{module_str}-{func_str}.sdfg")
+            strict_sdfg.save(path)
 
         ##########################################################
 

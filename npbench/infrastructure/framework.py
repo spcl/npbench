@@ -170,7 +170,7 @@ class Framework(object):
         return "__npb_result = __npb_impl({a})".format(a=arg_str)
 
 
-def generate_framework(fname: str) -> Framework:
+def generate_framework(fname: str, save_strict: bool=False, load_strict: bool=False) -> Framework:
     """ Generates a framework object with the correct class.
     :param fname: The framework name.
     """
@@ -189,5 +189,8 @@ def generate_framework(fname: str) -> Framework:
         raise (e)
 
     exec("from npbench.infrastructure import {}".format(info["class"]))
-    frmwrk = eval("{}(fname)".format(info["class"]))
+    if fname.startswith('dace'):
+        frmwrk = eval(f"{info['class']}(fname, {save_strict}, {load_strict})")
+    else:
+        frmwrk = eval("{}(fname)".format(info["class"]))
     return frmwrk

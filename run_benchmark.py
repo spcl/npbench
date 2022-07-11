@@ -9,12 +9,12 @@ if __name__ == "__main__":
                         "--benchmark",
                         type=str,
                         nargs="?",
-                        required=True)
+                        default="azimint_naive")
     parser.add_argument("-f",
                         "--framework",
                         type=str,
                         nargs="?",
-                        default="numpy")
+                        default="dace_gpu")
     parser.add_argument("-p",
                         "--preset",
                         choices=['S', 'M', 'L', 'paper'],
@@ -32,12 +32,16 @@ if __name__ == "__main__":
                         type=float,
                         nargs="?",
                         default=200.0)
+    parser.add_argument("-s", "--save-strict-sdfg", type=util.str2bool, nargs="?", default=False)
+    parser.add_argument("-l", "--load-strict-sdfg", type=util.str2bool, nargs="?", default=False)
     args = vars(parser.parse_args())
 
     # print(args)
 
     bench = Benchmark(args["benchmark"])
-    frmwrk = generate_framework(args["framework"])
+    frmwrk = generate_framework(args["framework"],
+                                save_strict=args["save_strict_sdfg"],
+                                load_strict=args["load_strict_sdfg"])
     numpy = generate_framework("numpy")
     lcount = LineCount(bench, frmwrk, numpy)
     lcount.count()
