@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import sys
+import timeit
 from mpi4py import MPI
 
 
@@ -80,13 +81,24 @@ if __name__ == "__main__":
     start_N = cart_coords[1] * tile_size_N
     start_K = cart_coords[2] * tile_size_K
     alpha, beta, C, A, B = initialize(start_M, start_N, start_K, tile_size_M, tile_size_N, tile_size_K, M, N, K)
+    C_orig = C.copy()
 
-    cart_comm.Barrier()
+    reduce_C_comm = cart_comm.Sub([False, True, False])
 
-    kernel(alpha, beta, C, A, B)
+    def _func():
+        kernel(alpha, beta, C, A, B)
+        reduce_C_comm.Allreduce(MPI.IN_PLACE, C, op=MPI.SUM)
+        cart_comm.Barrier()
 
-    # Sub-communicator reduction
+    runtimes = timeit.repeat(
+        stmt="_func()",
+        setup="C[:] = C_orig; cart_comm.Barrier()",
+        repeat=10,
+        number=1,
+        globals=locals()
+    )
 
-    cart_comm.Barrier()
+    if cart_rank == 0:
+        print(f"Distributed GEMM kernels executed in {np.median(runtimes) * 1000} ms.")
 
     world_comm.Barrier()
