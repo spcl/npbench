@@ -1,4 +1,6 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
+import os
+from tempfile import TemporaryFile
 import pkg_resources
 import traceback
 
@@ -8,10 +10,13 @@ from typing import Callable, Sequence, Tuple
 
 class DaceFramework(Framework):
     """ A class for reading and processing framework information. """
-    def __init__(self, fname: str):
+    def __init__(self, fname: str, save_strict: bool=False, load_strict: bool=False):
         """ Reads framework information.
         :param fname: The framework name.
         """
+
+        self.save_strict = save_strict
+        self.load_stric = load_strict
 
         import warnings
         warnings.filterwarnings("ignore")
@@ -26,7 +31,11 @@ class DaceFramework(Framework):
         for copying the benchmark arguments. """
         if self.fname == "dace_gpu":
             import cupy
-            return cupy.asarray
+            def cp_copy_func(arr):
+                darr = cupy.asarray(arr)
+                cupy.cuda.stream.get_current_stream().synchronize()
+                return darr
+            return cp_copy_func
         return super().copy_func()
 
     def implementations(self,
@@ -64,24 +73,47 @@ class DaceFramework(Framework):
             print("Failed to load the DaCe implementation.")
             raise (e)
 
-        #########################################################
-        # Prepare SDFGs
-        base_sdfg, parse_time = util.benchmark(
-            "__npb_result = ct_impl.to_sdfg(strict=False)",
-            out_text="DaCe parsing time",
-            context=locals(),
-            output='__npb_result', verbose=False)
-        strict_sdfg = copy.deepcopy(base_sdfg)
-        strict_sdfg._name = "strict"
-        ldict['strict_sdfg'] = strict_sdfg
-        _, strict_time = util.benchmark(
-            "strict_sdfg.apply_strict_transformations()",
-            out_text="DaCe Strict Transformations time",
-            context=locals(), verbose=False)
-        # sdfg_list = [strict_sdfg]
-        # time_list = [parse_time[0] + strict_time[0]]
+        ##### Experimental: Load strict SDFG
+        sdfg_loaded = False
+        path = os.path.join(os.getcwd(), 'dace_sdfgs', f"{module_str}-{func_str}.sdfg")
+        try:
+            strict_sdfg = dace.SDFG.from_file(path)
+            sdfg_loaded = True
+        except Exception:
+            pass
+        
+        if not sdfg_loaded:
+            #########################################################
+            # Prepare SDFGs
+            base_sdfg, parse_time = util.benchmark(
+                "__npb_result = ct_impl.to_sdfg(strict=False)",
+                out_text="DaCe parsing time",
+                context=locals(),
+                output='__npb_result', verbose=False)
+            strict_sdfg = copy.deepcopy(base_sdfg)
+            strict_sdfg._name = "strict"
+            ldict['strict_sdfg'] = strict_sdfg
+            _, strict_time = util.benchmark(
+                "strict_sdfg.apply_strict_transformations()",
+                out_text="DaCe Strict Transformations time",
+                context=locals(), verbose=False)
+            # sdfg_list = [strict_sdfg]
+            # time_list = [parse_time[0] + strict_time[0]]
+        else:
+            ldict['strict_sdfg'] = strict_sdfg
+        parse_time = [0]
         sdfg_list = []
         time_list = []
+
+        ##### Experimental: Saving strict SDFG
+        if self.save_strict and not sdfg_loaded:
+            path = os.path.join(os.getcwd(), 'dace_sdfgs')
+            try:
+                os.mkdir(path)
+            except FileExistsError:
+                pass
+            path = os.path.join(os.getcwd(), 'dace_sdfgs', f"{module_str}-{func_str}.sdfg")
+            strict_sdfg.save(path)
 
         ##########################################################
 
@@ -198,25 +230,6 @@ class DaceFramework(Framework):
                 if not v.transient and isinstance(v, dace.data.Array):
                     v.storage = dace.dtypes.StorageType.GPU_Global
 
-            # Set library nodes
-            for node, state in sdfg.all_nodes_recursive():
-                if isinstance(node, dace.nodes.LibraryNode):
-                    if node.default_implementation == 'specialize':
-                        print("Expanding Node (Common)", node)
-                        node.expand(sdfg, state)
-
-            for node, state in sdfg.all_nodes_recursive():
-                if isinstance(node, dace.nodes.LibraryNode):
-                    from dace.sdfg.scope import is_devicelevel_gpu
-                    # Use CUB for device-level reductions
-                    if ('CUDA (device)' in node.implementations and
-                            not is_devicelevel_gpu(state.parent, state, node)
-                            and state.scope_dict()[node] is None):
-                        node.implementation = 'CUDA (device)'
-                    if 'cuBLAS' in node.implementations and not is_devicelevel_gpu(
-                            state.parent, state, node):
-                        node.implementation = 'cuBLAS'
-
         if self.info["arch"] == "gpu":
             import cupy as cp
 
@@ -227,7 +240,9 @@ class DaceFramework(Framework):
             if sdfg._name != 'auto_opt':
                 device = dtypes.DeviceType.GPU if self.info[
                     "arch"] == "gpu" else dtypes.DeviceType.CPU
-                opt.set_fast_implementations(sdfg, device)
+                if self.info["arch"] == "cpu":
+                    # GPUTransform will set GPU schedules by itself
+                    opt.set_fast_implementations(sdfg, device)
             if self.info["arch"] == "gpu":
                 if sdfg._name in ['strict', 'parallel', 'fusion']:
                     _, gpu_time1 = util.benchmark(
@@ -249,6 +264,7 @@ class DaceFramework(Framework):
                         out_text="DaCe GPU transformation time4",
                         context=locals(), verbose=False)
                     fe_time += gpu_time2[0] + gpu_time3[0] + gpu_time4[0]
+                    opt.set_fast_implementations(sdfg, device)
                 else:
                     gpu_time1 = [0]
                 fe_time += gpu_time1[0]

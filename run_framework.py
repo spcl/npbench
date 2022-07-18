@@ -8,8 +8,8 @@ from npbench.infrastructure import (Benchmark, generate_framework, LineCount,
 
 
 
-def run_benchmark(benchname, fname, preset, validate, repeat, timeout):
-    frmwrk = generate_framework(fname)
+def run_benchmark(benchname, fname, preset, validate, repeat, timeout, save_strict, load_strict):
+    frmwrk = generate_framework(fname, save_strict, load_strict)
     numpy = generate_framework("numpy")
     bench = Benchmark(benchname)
     lcount = LineCount(bench, frmwrk, numpy)
@@ -42,6 +42,8 @@ if __name__ == "__main__":
                         type=float,
                         nargs="?",
                         default=200.0)
+    parser.add_argument("-s", "--save-strict-sdfg", type=util.str2bool, nargs="?", default=False)
+    parser.add_argument("-l", "--load-strict-sdfg", type=util.str2bool, nargs="?", default=False)
     args = vars(parser.parse_args())
 
 
@@ -54,7 +56,7 @@ if __name__ == "__main__":
         p = Process(
             target=run_benchmark,
             args=(benchname, args["framework"], args["preset"],
-                  args["validate"], args["repeat"], args["timeout"])
-        )
+                  args["validate"], args["repeat"], args["timeout"],
+                  args["save_strict_sdfg"], args["load_strict_sdfg"]))
         p.start()
         p.join()
