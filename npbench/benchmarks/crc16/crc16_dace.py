@@ -11,7 +11,7 @@ def crc16(data: dace.uint8[N]):
     '''
     CRC-16-CCITT Algorithm
     '''
-    crc = 0xFFFF
+    crc: dace.uint16 = 0xFFFF
     for i in range(N):
         b = data[i]
         cur_byte = 0xFF & b
