@@ -14,8 +14,7 @@ def softmax(x):
 
 
 # 3-layer MLP
-def mlp(input, w1, b1, w2, b2, w3, b3):
+def mlp(input, w1, b1, w2, b2, w3, b3, output):
     x = relu(input @ w1 + b1)
     x = relu(x @ w2 + b2)
-    x = softmax(x @ w3 + b3)  # Softmax call can be omitted if necessary
-    return x
+    output[:, :] = softmax(x @ w3 + b3)  # Softmax call can be omitted if necessary

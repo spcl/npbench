@@ -42,27 +42,21 @@ class HalideFramework(Framework):
         halide_cache = benchmark_dir / ".halidecache"
         halide_cache.mkdir(parents=False, exist_ok=True)
 
-        # Load benchmark
-        exec("from {m} import {f} as ct_impl".format(m=module_str, f=func_str))
-        exec("from {m} import {f}_params as ct_params".format(m=module_str, f=func_str))
-
-
+        # Load pipeline
         import halide as hl
-        # Load autoscheduler
-        exec("hl.load_plugin('autoschedule_adams2019')")
+        exec("from {m} import {f} as ct_impl".format(m=module_str, f=func_str))
+        exec("from {m} import input_buffers".format(m=module_str, f=func_str))
+        exec("from {m} import set_estimates".format(m=module_str, f=func_str))
+        exec('output_buffers = ct_impl(**input_buffers)')
+        exec('pipeline = hl.Pipeline(list(output_buffers.values()))')
 
-        # Create pipeline
-        pipeline_str = '''
-params = list(ct_params())
-pipeline = hl.Pipeline(ct_impl(*params))
-'''
-        exec(pipeline_str)
+        # Auto scheduling
+        parameters = self.param_str(bench)
+        exec('hl.load_plugin("autoschedule_adams2019")')
+        exec(f'set_estimates(**input_buffers, **output_buffers, {parameters})')
+        exec('pipeline.auto_schedule("Adams2019", hl.get_target_from_environment())')
 
-        # Auto scheduling: branch into multiple implementations here
-        autoschedule_str = 'pipeline.auto_schedule("Adams2019", hl.get_target_from_environment())'
-        #exec(autoschedule_str)
-
-        # Generate c++ code
+        # Compile
         object_file_path = halide_cache / f"{module_name}_halide.o"
         python_extension_path = halide_cache / f"{module_name}_halide.py.cpp"
         stmt_html_path = halide_cache / f"{module_name}_halide.html"
@@ -71,9 +65,8 @@ pipeline = hl.Pipeline(ct_impl(*params))
         generator_options = f'hl.OutputFileType.object: "{object_file_path}", hl.OutputFileType.python_extension: "{python_extension_path}", hl.OutputFileType.stmt_html: "{stmt_html_path}", hl.OutputFileType.c_source: "{c_source_path}"'
         generator_options = "{" + generator_options + "}"
         
-        generator_str = f'pipeline.compile_to({generator_options}, params, "{module_name}_halide")'
+        generator_str = f'pipeline.compile_to({generator_options}, list(input_buffers.values()), "{module_name}_halide")'
         exec(generator_str)
-
 
         # Compile .so file
         so_file_path = halide_cache / f"{module_name}_halide.so"
@@ -94,7 +87,7 @@ pipeline = hl.Pipeline(ct_impl(*params))
             bench.info["module_name"] + "_halide", so_file_path)
         foo = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(foo)
-        impl = eval("foo.{f}".format(f=bench.info["func_name"] + "_halide"))
+        impl = eval("foo.{f}".format(f=bench.info["module_name"] + "_halide"))
 
         return [(impl, "default")]
 
@@ -110,5 +103,21 @@ pipeline = hl.Pipeline(ct_impl(*params))
             "{b}={a}".format(a=a, b=b)
             for a, b in zip(input_args, bench.info["input_args"])
         ])
-        input_args_str += ", output=output"
         return input_args_str
+
+    def params(self, bench: Benchmark, impl: Callable = None):
+        return {
+            p: v for p, v in bench.info["parameters"]['paper'].items()
+            if p not in bench.info["input_args"]
+        }
+
+    def param_str(self, bench: Benchmark, impl: Callable = None):
+        """ Generates the parameter-string that should be used for calling
+        the benchmark implementation.
+        :param bench: A benchmark.
+        :param impl: A benchmark implementation.
+        """
+
+        input_params = self.params(bench, impl)
+        return ", ".join(["{p}={v}".format(p=p, v=v) for p, v in input_params.items()])
+

@@ -11,4 +11,8 @@ def initialize(C_in, C_out, H, K, N, W):
     # Weights
     weights = rng.random((K, K, C_in, C_out), dtype=np.float32)
     bias = rng.random((C_out, ), dtype=np.float32)
-    return input, weights, bias
+    
+    H_out = input.shape[1] - K + 1
+    W_out = input.shape[2] - K + 1
+    output = np.empty((N, H_out, W_out, C_out), dtype=np.float32)
+    return input, weights, bias, output

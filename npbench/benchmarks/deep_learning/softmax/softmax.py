@@ -7,4 +7,5 @@ def initialize(N, H, SM):
     from numpy.random import default_rng
     rng = default_rng(42)
     x = rng.random((N, H, SM, SM), dtype=np.float32)
-    return x
+    output = np.empty((N, H, SM, SM), dtype=np.float32)
+    return x, output
