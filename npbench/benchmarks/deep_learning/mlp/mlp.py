@@ -18,4 +18,5 @@ def initialize(C_in, N, S0, S1, S2):
     w3 = rng.random((mlp_sizes[1], mlp_sizes[2]), dtype=np.float32)
     b3 = rng.random((mlp_sizes[2], ), dtype=np.float32)
 
-    return input, w1, b1, w2, b2, w3, b3
+    output = np.empty((N, S2), dtype=np.float32)
+    return input, w1, b1, w2, b2, w3, b3, output

@@ -17,10 +17,10 @@
         "init": {
             "func_name": "initialize",
             "input_args": ["C_in", "N", "S0", "S1", "S2"],
-            "output_args": ["input", "w1", "b1", "w2", "b2", "w3", "b3"]
+            "output_args": ["input", "w1", "b1", "w2", "b2", "w3", "b3", "output"]
         },
-        "input_args": ["input", "w1", "b1", "w2", "b2", "w3", "b3"],
-        "array_args": ["input", "w1", "b1", "w2", "b2", "w3", "b3"],
-        "output_args": []
+        "input_args": ["input", "w1", "b1", "w2", "b2", "w3", "b3", "output"],
+        "array_args": ["input", "w1", "b1", "w2", "b2", "w3", "b3", "output"],
+        "output_args": ["output"]
     }
 }
