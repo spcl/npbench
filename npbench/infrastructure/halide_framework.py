@@ -6,6 +6,7 @@ import shlex
 import subprocess
 import pkg_resources
 
+from sysconfig import get_paths
 from pathlib import Path
 
 from npbench.infrastructure import Benchmark, Framework, utilities as util
@@ -78,10 +79,12 @@ pipeline = hl.Pipeline(ct_impl(*params))
         so_file_path = halide_cache / f"{module_name}_halide.so"
         compiler = "g++"
         flags = "-std=c++17 -O3 -pipe -fvisibility=hidden -fvisibility-inlines-hidden -fno-omit-frame-pointer -lz -rdynamic -Wl,-rpath,/usr/local/lib/ -fPIC"
-        includes = "-I/home/lukas/anaconda3/include/python3.9"
-        #includes = "-I /users/aziogas/anaconda3/include/python3.8"
+        
+        python_include_path = get_paths()["platinclude"]
+        includes = f"-I{python_include_path}"
         files = f"-shared {python_extension_path} {object_file_path} -o {so_file_path}"
         so_compile_str = " ".join([compiler, flags, includes, files])
+        
         cmd = shlex.split(so_compile_str)
         p = subprocess.Popen(cmd)
         p.wait()
