@@ -8,14 +8,19 @@ from mpi4py import MPI
 def kernel(TSTEPS, A, B):
 
     for t in range(1, TSTEPS):
-        B[1:-1] = 0.33333 * (A[:-2] + A[1:-1] + A[2:])
-        A[1:-1] = 0.33333 * (B[:-2] + B[1:-1] + B[2:])
+        B[1:-1] = (A[:-2] + A[1:-1] + A[2:]) / 3
+        A[1:-1] = (B[:-2] + B[1:-1] + B[2:]) / 3
 
 
 def distr_kernel(TSTEPS: int, A, B, cart_comm: MPI.Cartcomm):
     
     west, east = cart_comm.Shift(0, 1)
-    woff, eoff = 1, A.shape[0] - 1 
+    woff, eoff = 1, A.shape[0] - 2  # -2 because is A is padded
+    # print(west, east, woff, eoff)
+    if west < 0:
+        west = MPI.PROC_NULL
+    if east < 0:
+        east = MPI.PROC_NULL
     if west == MPI.PROC_NULL:
         woff += 1
     if east == MPI.PROC_NULL:
@@ -23,6 +28,8 @@ def distr_kernel(TSTEPS: int, A, B, cart_comm: MPI.Cartcomm):
     wbuf = np.empty((1, ), dtype=A.dtype)
     ebuf = np.empty((1, ), dtype=A.dtype)
     req = np.empty((4, ), dtype=MPI.Request)
+
+    # print(west, east, woff, eoff)
 
     for t in range(1, TSTEPS):
 
@@ -34,7 +41,7 @@ def distr_kernel(TSTEPS: int, A, B, cart_comm: MPI.Cartcomm):
         A[0] = wbuf
         A[-1] = ebuf
 
-        B[woff:eoff] = 0.33333 * (A[woff-1:eoff-1] + A[woff:eoff] + A[woff+1:eoff+1])
+        B[woff:eoff] = (A[woff-1:eoff-1] + A[woff:eoff] + A[woff+1:eoff+1]) / 3
 
         req[0] = cart_comm.Isend(B[1], west, tag=0)
         req[1] = cart_comm.Isend(B[-2], east, tag=0)
@@ -44,13 +51,15 @@ def distr_kernel(TSTEPS: int, A, B, cart_comm: MPI.Cartcomm):
         B[0] = wbuf
         B[-1] = ebuf
 
-        A[woff:eoff] = 0.33333 * (B[woff-1:eoff-1] + B[woff:eoff] + B[woff+1:eoff+1])
+        A[woff:eoff] = (B[woff-1:eoff-1] + B[woff:eoff] + B[woff+1:eoff+1]) / 3
 
 
 
 def initialize(start: int, tile_size: int, N, datatype=np.float64):
-    A = np.fromfunction(lambda i: (i + start + 2) / N, (tile_size, ), dtype=datatype)
-    B = np.fromfunction(lambda i: (i + start+ 3) / N, (tile_size, ), dtype=datatype)
+    # A = np.fromfunction(lambda i: (i + start + 2) / N, (tile_size, ), dtype=datatype)
+    # B = np.fromfunction(lambda i: (i + start+ 3) / N, (tile_size, ), dtype=datatype)
+    A = np.arange(start, start + tile_size, dtype=datatype)
+    B = np.arange(start, start + tile_size, dtype=datatype)
 
     return A, B
 
@@ -94,6 +103,17 @@ if __name__ == "__main__":
     def _func():
         distr_kernel(1000, A_padded, B_padded, cart_comm)
         cart_comm.Barrier()
+    
+    # Validate
+    ref = np.arange(start, start + tile_size, dtype=np.float64)
+    cart_comm.Barrier()
+    _func()
+    # print(A_padded)
+    # print(B_padded)
+    # print(ref)
+    assert(np.allclose(A_padded[1:-1], ref))
+    assert(np.allclose(B_padded[1:-1], ref))
+    cart_comm.Barrier()
 
     runtimes = timeit.repeat(
         stmt="_func()",
