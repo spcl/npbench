@@ -11,11 +11,17 @@ def kernel(alpha, beta, C, A, B):
 
 
 def initialize(start_M: int, start_N: int, start_K: int, tile_size_M: int, tile_size_N: int, tile_size_K: int, M, N, K, datatype: type = np.float64):
+    # alpha = datatype(1.5)
+    # beta = datatype(1.2)
+    # C = np.fromfunction(lambda i, j: (((i + start_M) * (j + start_N) + 1) % M) / M, (tile_size_M, tile_size_N), dtype=datatype)
+    # A = np.fromfunction(lambda i, k: ((i + start_M) * (k + start_K + 1) % K) / K, (tile_size_M, tile_size_K), dtype=datatype)
+    # B = np.fromfunction(lambda k, j: ((k + start_K) * (j + start_N + 2) % N) / N, (tile_size_K, tile_size_N), dtype=datatype)
     alpha = datatype(1.5)
     beta = datatype(1.2)
-    C = np.fromfunction(lambda i, j: (((i + start_M) * (j + start_N) + 1) % M) / M, (tile_size_M, tile_size_N), dtype=datatype)
-    A = np.fromfunction(lambda i, k: ((i + start_M) * (k + start_K + 1) % K) / K, (tile_size_M, tile_size_K), dtype=datatype)
-    B = np.fromfunction(lambda k, j: ((k + start_K) * (j + start_N + 2) % N) / N, (tile_size_K, tile_size_N), dtype=datatype)
+    # C = np.ones((tile_size_M, tile_size_N), dtype=datatype)
+    C = np.fromfunction(lambda i, j: start_M + i + start_N + j, (tile_size_M, tile_size_N), dtype=datatype)
+    A = np.fromfunction(lambda i, k: start_K + k + 1, (tile_size_M, tile_size_K), dtype=datatype)
+    B = np.fromfunction(lambda k, j: start_K + k + 1, (tile_size_K, tile_size_N), dtype=datatype)
 
     if start_M + tile_size_M > M:
         C[M - start_M:] = 0
@@ -80,15 +86,40 @@ if __name__ == "__main__":
     start_M = cart_coords[0] * tile_size_M
     start_N = cart_coords[1] * tile_size_N
     start_K = cart_coords[2] * tile_size_K
+    # print(tile_size_M, tile_size_N, tile_size_K)
     alpha, beta, C, A, B = initialize(start_M, start_N, start_K, tile_size_M, tile_size_N, tile_size_K, M, N, K)
     C_orig = C.copy()
 
-    reduce_C_comm = cart_comm.Sub([False, True, False])
+    reduce_comm = cart_comm.Sub([False, False, True])
+    # print(reduce_C_comm.Get_rank(), reduce_C_comm.Get_size(), reduce_C_comm.Get_coords(reduce_C_comm.Get_rank()))
 
     def _func():
-        kernel(alpha, beta, C, A, B)
-        reduce_C_comm.Allreduce(MPI.IN_PLACE, C, op=MPI.SUM)
+        tmp = A @ B
+        reduce_comm.Allreduce(MPI.IN_PLACE, tmp, op=MPI.SUM)
+        C[:] = alpha * tmp + beta * C
         cart_comm.Barrier()
+
+    # Validate
+    cart_comm.Barrier()
+    _func()
+    val = K * (K + 1) * (2 * K + 1) / 6
+    alpha = 1.5
+    beta = 1.2
+    C_ref = np.fromfunction(lambda i, j: alpha * val + beta * (start_M + i + start_N + j), (tile_size_M, tile_size_N), dtype=np.float64)
+    if start_M + tile_size_M > M:
+        C_ref[M - start_M:] = 0
+    if start_N + tile_size_N > N:
+        C_ref[:, N - start_N:] = 0
+
+    # if cart_rank == 0:
+    #     print(A)
+    #     print(B)
+    #     print(C)
+    #     print(C_ref)
+    #     print(val)
+
+    assert(np.allclose(C, C_ref))
+    cart_comm.Barrier()
 
     runtimes = timeit.repeat(
         stmt="_func()",
