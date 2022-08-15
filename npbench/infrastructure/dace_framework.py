@@ -16,7 +16,7 @@ class DaceFramework(Framework):
         """
 
         self.save_strict = save_strict
-        self.load_stric = load_strict
+        self.load_strict = load_strict
 
         import warnings
         warnings.filterwarnings("ignore")
@@ -75,18 +75,19 @@ class DaceFramework(Framework):
 
         ##### Experimental: Load strict SDFG
         sdfg_loaded = False
-        path = os.path.join(os.getcwd(), 'dace_sdfgs', f"{module_str}-{func_str}.sdfg")
-        try:
-            strict_sdfg = dace.SDFG.from_file(path)
-            sdfg_loaded = True
-        except Exception:
-            pass
+        if self.load_strict:
+            path = os.path.join(os.getcwd(), 'dace_sdfgs', f"{module_str}-{func_str}.sdfg")
+            try:
+                strict_sdfg = dace.SDFG.from_file(path)
+                sdfg_loaded = True
+            except Exception:
+                pass
         
         if not sdfg_loaded:
             #########################################################
             # Prepare SDFGs
             base_sdfg, parse_time = util.benchmark(
-                "__npb_result = ct_impl.to_sdfg(strict=False)",
+                "__npb_result = ct_impl.to_sdfg(simplify=False)",
                 out_text="DaCe parsing time",
                 context=locals(),
                 output='__npb_result', verbose=False)
@@ -117,94 +118,103 @@ class DaceFramework(Framework):
 
         ##########################################################
 
-        try:
-            fusion_sdfg = copy.deepcopy(strict_sdfg)
-            fusion_sdfg._name = "fusion"
-            ldict['fusion_sdfg'] = fusion_sdfg
-            _, fusion_time1 = util.benchmark(
-                "fusion_sdfg.apply_transformations_repeated([MapFusion])",
-                out_text="DaCe MapFusion time",
-                context=locals(), verbose=False)
-            _, fusion_time2 = util.benchmark(
-                "fusion_sdfg.apply_strict_transformations()",
-                out_text="DaCe Strict Transformations time",
-                context=locals(), verbose=False)
-            sdfg_list.append(fusion_sdfg)
-            # time_list.append(time_list[-1] + fusion_time1[0] + fusion_time2[0])
-            time_list.append(parse_time[0] + fusion_time1[0] + fusion_time2[0])
-        except Exception as e:
-            print("DaCe MapFusion failed")
-            print(e)
-            fusion_sdfg = copy.deepcopy(strict_sdfg)
-            ldict['fusion_sdfg'] = fusion_sdfg
+        # try:
+        fusion_sdfg = copy.deepcopy(strict_sdfg)
+        fusion_sdfg._name = "fusion"
+        ldict['fusion_sdfg'] = fusion_sdfg
+        _, fusion_time1 = util.benchmark(
+            "fusion_sdfg.apply_transformations_repeated([MapFusion])",
+            out_text="DaCe MapFusion time",
+            context=locals(), verbose=False)
+        _, fusion_time2 = util.benchmark(
+            "fusion_sdfg.apply_strict_transformations()",
+            out_text="DaCe Strict Transformations time",
+            context=locals(), verbose=False)
+        sdfg_list.append(fusion_sdfg)
+        # time_list.append(time_list[-1] + fusion_time1[0] + fusion_time2[0])
+        time_list.append(parse_time[0] + fusion_time1[0] + fusion_time2[0])
+        # except Exception as e:
+        #     print("DaCe MapFusion failed")
+        #     print(e)
+        #     fusion_sdfg = copy.deepcopy(strict_sdfg)
+        #     ldict['fusion_sdfg'] = fusion_sdfg
 
         ###########################################################
 
         def parallelize(sdfg):
             from dace.sdfg import propagation
-            strict_xforms = dace.transformation.simplification_transformations()
+            try:
+                strict_xforms = dace.transformation.simplification_transformations()
+            except Exception:
+                strict_xforms = None
+
 
             for sd in sdfg.all_sdfgs_recursive():
                 propagation.propagate_states(sd)
-            sdfg.apply_transformations_repeated([LoopToMap, MapCollapse] +
-                                                strict_xforms)
+            if strict_xforms:
+                sdfg.apply_transformations_repeated([LoopToMap, MapCollapse] + strict_xforms)
+            else:
+                num = 1
+                while num > 0:
+                    num = sdfg.apply_transformations_repeated([LoopToMap, MapCollapse])
+                    sdfg.simplify()
 
-        try:
-            parallel_sdfg = copy.deepcopy(fusion_sdfg)
-            parallel_sdfg._name = "parallel"
-            ldict['parallel_sdfg'] = parallel_sdfg
-            _, ptime1 = util.benchmark("parallelize(parallel_sdfg)",
-                                       out_text="DaCe LoopToMap time1",
-                                       context=locals(), verbose=False)
-            _, ptime2 = util.benchmark(
-                "parallel_sdfg.apply_transformations_repeated([MapFusion])",
-                out_text="DaCe LoopToMap time2",
-                context=locals(), verbose=False)
-            sdfg_list.append(parallel_sdfg)
-            time_list.append(time_list[-1] + ptime1[0] + ptime2[0])
+        # try:
+        parallel_sdfg = copy.deepcopy(fusion_sdfg)
+        parallel_sdfg._name = "parallel"
+        ldict['parallel_sdfg'] = parallel_sdfg
+        _, ptime1 = util.benchmark("parallelize(parallel_sdfg)",
+                                    out_text="DaCe LoopToMap time1",
+                                    context=locals(), verbose=False)
+        _, ptime2 = util.benchmark(
+            "parallel_sdfg.apply_transformations_repeated([MapFusion])",
+            out_text="DaCe LoopToMap time2",
+            context=locals(), verbose=False)
+        sdfg_list.append(parallel_sdfg)
+        time_list.append(time_list[-1] + ptime1[0] + ptime2[0])
 
-        except Exception as e:
-            print("DaCe LoopToMap failed")
-            print(e)
-            parallel_sdfg = copy.deepcopy(fusion_sdfg)
-            ldict['parallel_sdfg'] = parallel_sdfg
+        # except Exception as e:
+        #     print("DaCe LoopToMap failed")
+        #     print(e)
+        #     parallel_sdfg = copy.deepcopy(fusion_sdfg)
+        #     ldict['parallel_sdfg'] = parallel_sdfg
 
         ###########################################################
         ###### Standalone Test Auto - Opt after strict transformation
-        try:
+        # try:
 
-            def autoopt(sdfg, device, symbols):#, nofuse):
-                # Mark arrays as on the GPU
-                if device == dtypes.DeviceType.GPU:
-                    for k, v in sdfg.arrays.items():
-                        if not v.transient and type(v) == dace.data.Array:
-                            v.storage = dace.dtypes.StorageType.GPU_Global
+        def autoopt(sdfg, device, symbols):#, nofuse):
+            # Mark arrays as on the GPU
+            if device == dtypes.DeviceType.GPU:
+                for k, v in sdfg.arrays.items():
+                    if not v.transient and type(v) == dace.data.Array:
+                        v.storage = dace.dtypes.StorageType.GPU_Global
 
-                # Auto-optimize SDFG
-                opt.auto_optimize(auto_opt_sdfg,
-                                  device,
-                                  symbols=symbols)
+            # Auto-optimize SDFG
+            opt.auto_optimize(auto_opt_sdfg,
+                                device,
+                                symbols=symbols)
 
-            auto_opt_sdfg = copy.deepcopy(strict_sdfg)
-            auto_opt_sdfg._name = 'auto_opt'
-            ldict['auto_opt_sdfg'] = auto_opt_sdfg
-            device = dtypes.DeviceType.GPU if self.info[
-                "arch"] == "gpu" else dtypes.DeviceType.CPU
+        auto_opt_sdfg = copy.deepcopy(strict_sdfg)
+        auto_opt_sdfg._name = 'auto_opt'
+        ldict['auto_opt_sdfg'] = auto_opt_sdfg
+        device = dtypes.DeviceType.GPU if self.info[
+            "arch"] == "gpu" else dtypes.DeviceType.CPU
 
-            _, auto_time = util.benchmark(
-                f"autoopt(auto_opt_sdfg, device, symbols = locals())",
-                out_text="DaCe Auto - Opt",
-                context=locals(), verbose=False)
+        _, auto_time = util.benchmark(
+            f"autoopt(auto_opt_sdfg, device, symbols = locals())",
+            out_text="DaCe Auto - Opt",
+            context=locals(), verbose=False)
 
-            sdfg_list.append(auto_opt_sdfg)
-            time_list.append(time_list[-1] + auto_time[0])
+        sdfg_list.append(auto_opt_sdfg)
+        time_list.append(time_list[-1] + auto_time[0])
 
-        except Exception as e:
-            print("DaCe autoopt failed")
-            # print(e)
-            # traceback.print_exc()
-            auto_opt_sdfg = copy.deepcopy(strict_sdfg)
-            ldict['auto_opt_sdfg'] = auto_opt_sdfg
+        # except Exception as e:
+        #     print("DaCe autoopt failed")
+        #     # print(e)
+        #     # traceback.print_exc()
+        #     auto_opt_sdfg = copy.deepcopy(strict_sdfg)
+        #     ldict['auto_opt_sdfg'] = auto_opt_sdfg
 
         def vectorize(sdfg, vec_len=None):
             matches = []
@@ -268,20 +278,20 @@ class DaceFramework(Framework):
                 else:
                     gpu_time1 = [0]
                 fe_time += gpu_time1[0]
-            try:
-                dc_exec, compile_time = util.benchmark(
-                    "__npb_result = sdfg.compile()",
-                    out_text="DaCe compilation time",
-                    context=locals(),
-                    output='__npb_result', verbose=False)
-                implementations.append((dc_exec, sdfg._name))
-            except Exception as e:
-                print("Failed to compile DaCe {a} {s} implementation.".format(
-                    a=self.info["arch"], s=sdfg._name))
-                print(e)
-                traceback.print_exc()
-                print("Traceback")
-                continue
+            # try:
+            dc_exec, compile_time = util.benchmark(
+                "__npb_result = sdfg.compile()",
+                out_text="DaCe compilation time",
+                context=locals(),
+                output='__npb_result', verbose=False)
+            implementations.append((dc_exec, sdfg._name))
+            # except Exception as e:
+            #     print("Failed to compile DaCe {a} {s} implementation.".format(
+            #         a=self.info["arch"], s=sdfg._name))
+            #     print(e)
+            #     traceback.print_exc()
+            #     print("Traceback")
+            #     continue
 
             fe_time += compile_time[0]
 
