@@ -20,15 +20,13 @@ class Framework(object):
 
         parent_folder = pathlib.Path(__file__).parent.absolute()
         frmwrk_filename = "{f}.json".format(f=fname)
-        frmwrk_path = parent_folder.joinpath("..", "..", "framework_info",
-                                             frmwrk_filename)
+        frmwrk_path = parent_folder.joinpath("..", "..", "framework_info", frmwrk_filename)
         try:
             with open(frmwrk_path) as json_file:
                 self.info = json.load(json_file)["framework"]
                 # print(self.info)
         except Exception as e:
-            print("Framework JSON file {f} could not be opened.".format(
-                f=frmwrk_filename))
+            print("Framework JSON file {f} could not be opened.".format(f=frmwrk_filename))
             raise (e)
 
     def version(self) -> str:
@@ -53,21 +51,18 @@ class Framework(object):
         """
 
         parent_folder = pathlib.Path(__file__).parent.absolute()
-        pymod_path = parent_folder.joinpath(
-            "..", "..", "npbench", "benchmarks", bench.info["relative_path"],
-            bench.info["module_name"] + "_" + self.info["postfix"] + ".py")
+        pymod_path = parent_folder.joinpath("..", "..", "npbench", "benchmarks", bench.info["relative_path"],
+                                            bench.info["module_name"] + "_" + self.info["postfix"] + ".py")
         return [(pymod_path, 'default')]
 
-    def implementations(self,
-                        bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
+    def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
         """ Returns the framework's implementations for a particular benchmark.
         :param bench: A benchmark.
         :returns: A list of the benchmark implementations.
         """
 
-        module_pypath = "npbench.benchmarks.{r}.{m}".format(
-            r=bench.info["relative_path"].replace('/', '.'),
-            m=bench.info["module_name"])
+        module_pypath = "npbench.benchmarks.{r}.{m}".format(r=bench.info["relative_path"].replace('/', '.'),
+                                                            m=bench.info["module_name"])
         if "postfix" in self.info.keys():
             postfix = self.info["postfix"]
         else:
@@ -77,12 +72,9 @@ class Framework(object):
 
         ldict = dict()
         try:
-            exec(
-                "from {m} import {f} as impl".format(m=module_str, f=func_str),
-                ldict)
+            exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
         except Exception as e:
-            print("Failed to load the {r} {f} implementation.".format(
-                r=self.info["full_name"], f=func_str))
+            print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=func_str))
             raise e
 
         return [(ldict['impl'], 'default')]
@@ -95,8 +87,7 @@ class Framework(object):
         """
 
         return [
-            "__npb_{pr}_{a}".format(pr=self.info["prefix"], a=a)
-            if a in bench.info["array_args"] else a
+            "__npb_{pr}_{a}".format(pr=self.info["prefix"], a=a) if a in bench.info["array_args"] else a
             for a in bench.info["input_args"]
         ]
 
@@ -107,10 +98,7 @@ class Framework(object):
         :param impl: A benchmark implementation.
         """
 
-        return [
-            "__npb_{pr}_{a}".format(pr=self.info["prefix"], a=a)
-            for a in bench.info["array_args"]
-        ]
+        return ["__npb_{pr}_{a}".format(pr=self.info["prefix"], a=a) for a in bench.info["array_args"]]
 
     # def params(self, bench: Benchmark, impl: Callable = None):
     #     return list(bench.info["input_params"])
@@ -143,9 +131,7 @@ class Framework(object):
 
         if len(bench.info["array_args"]):
             arg_str = self.out_arg_str(bench, impl)
-            copy_args = [
-                "__npb_copy({})".format(a) for a in bench.info["array_args"]
-            ]
+            copy_args = ["__npb_copy({})".format(a) for a in bench.info["array_args"]]
             return arg_str + " = " + ", ".join(copy_args)
         return "pass"
 
@@ -161,9 +147,7 @@ class Framework(object):
         return "__npb_result = __npb_impl({a})".format(a=arg_str)
 
 
-def generate_framework(fname: str,
-                       save_strict: bool = False,
-                       load_strict: bool = False) -> Framework:
+def generate_framework(fname: str, save_strict: bool = False, load_strict: bool = False) -> Framework:
     """ Generates a framework object with the correct class.
     :param fname: The framework name.
     :param save_strict: (dace_cpu/dace_gpu only) If True, saves the simplified SDFG.
@@ -172,15 +156,13 @@ def generate_framework(fname: str,
 
     parent_folder = pathlib.Path(__file__).parent.absolute()
     frmwrk_filename = "{f}.json".format(f=fname)
-    frmwrk_path = parent_folder.joinpath("..", "..", "framework_info",
-                                         frmwrk_filename)
+    frmwrk_path = parent_folder.joinpath("..", "..", "framework_info", frmwrk_filename)
     try:
         with open(frmwrk_path) as json_file:
             info = json.load(json_file)["framework"]
             # print(info)
     except Exception as e:
-        print("Framework JSON file {f} could not be opened.".format(
-            f=frmwrk_filename))
+        print("Framework JSON file {f} could not be opened.".format(f=frmwrk_filename))
         raise (e)
 
     exec("from npbench.infrastructure import {}".format(info["class"]))

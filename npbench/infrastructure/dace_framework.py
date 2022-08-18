@@ -10,10 +10,7 @@ from typing import Callable, Sequence, Tuple
 class DaceFramework(Framework):
     """ A class for reading and processing framework information. """
 
-    def __init__(self,
-                 fname: str,
-                 save_strict: bool = False,
-                 load_strict: bool = False):
+    def __init__(self, fname: str, save_strict: bool = False, load_strict: bool = False):
         """ Reads framework information.
         :param fname: The framework name.
         :param save_strict: If True, saves the simplified SDFG.
@@ -45,16 +42,14 @@ class DaceFramework(Framework):
             return cp_copy_func
         return super().copy_func()
 
-    def implementations(self,
-                        bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
+    def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
         """ Returns the framework's implementations for a particular benchmark.
         :param bench: A benchmark.
         :returns: A list of the benchmark implementations.
         """
 
-        module_pypath = "npbench.benchmarks.{r}.{m}".format(
-            r=bench.info["relative_path"].replace('/', '.'),
-            m=bench.info["module_name"])
+        module_pypath = "npbench.benchmarks.{r}.{m}".format(r=bench.info["relative_path"].replace('/', '.'),
+                                                            m=bench.info["module_name"])
         if "postfix" in self.info.keys():
             postfix = self.info["postfix"]
         else:
@@ -74,8 +69,7 @@ class DaceFramework(Framework):
             from dace.transformation.interstate import LoopToMap
             import dace.transformation.auto.auto_optimize as opt
 
-            exec("from {m} import {f} as ct_impl".format(m=module_str,
-                                                         f=func_str))
+            exec("from {m} import {f} as ct_impl".format(m=module_str, f=func_str))
         except Exception as e:
             print("Failed to load the DaCe implementation.")
             raise (e)
@@ -83,8 +77,7 @@ class DaceFramework(Framework):
         ##### Experimental: Load strict SDFG
         sdfg_loaded = False
         if self.load_strict:
-            path = os.path.join(os.getcwd(), 'dace_sdfgs',
-                                f"{module_str}-{func_str}.sdfg")
+            path = os.path.join(os.getcwd(), 'dace_sdfgs', f"{module_str}-{func_str}.sdfg")
             try:
                 strict_sdfg = dace.SDFG.from_file(path)
                 sdfg_loaded = True
@@ -94,20 +87,18 @@ class DaceFramework(Framework):
         if not sdfg_loaded:
             #########################################################
             # Prepare SDFGs
-            base_sdfg, parse_time = util.benchmark(
-                "__npb_result = ct_impl.to_sdfg(simplify=False)",
-                out_text="DaCe parsing time",
-                context=locals(),
-                output='__npb_result',
-                verbose=False)
+            base_sdfg, parse_time = util.benchmark("__npb_result = ct_impl.to_sdfg(simplify=False)",
+                                                   out_text="DaCe parsing time",
+                                                   context=locals(),
+                                                   output='__npb_result',
+                                                   verbose=False)
             strict_sdfg = copy.deepcopy(base_sdfg)
             strict_sdfg._name = "strict"
             ldict['strict_sdfg'] = strict_sdfg
-            _, strict_time = util.benchmark(
-                "strict_sdfg.apply_strict_transformations()",
-                out_text="DaCe Strict Transformations time",
-                context=locals(),
-                verbose=False)
+            _, strict_time = util.benchmark("strict_sdfg.apply_strict_transformations()",
+                                            out_text="DaCe Strict Transformations time",
+                                            context=locals(),
+                                            verbose=False)
             # sdfg_list = [strict_sdfg]
             # time_list = [parse_time[0] + strict_time[0]]
         else:
@@ -123,8 +114,7 @@ class DaceFramework(Framework):
                 os.mkdir(path)
             except FileExistsError:
                 pass
-            path = os.path.join(os.getcwd(), 'dace_sdfgs',
-                                f"{module_str}-{func_str}.sdfg")
+            path = os.path.join(os.getcwd(), 'dace_sdfgs', f"{module_str}-{func_str}.sdfg")
             strict_sdfg.save(path)
 
         ##########################################################
@@ -133,16 +123,14 @@ class DaceFramework(Framework):
             fusion_sdfg = copy.deepcopy(strict_sdfg)
             fusion_sdfg._name = "fusion"
             ldict['fusion_sdfg'] = fusion_sdfg
-            _, fusion_time1 = util.benchmark(
-                "fusion_sdfg.apply_transformations_repeated([MapFusion])",
-                out_text="DaCe MapFusion time",
-                context=locals(),
-                verbose=False)
-            _, fusion_time2 = util.benchmark(
-                "fusion_sdfg.apply_strict_transformations()",
-                out_text="DaCe Strict Transformations time",
-                context=locals(),
-                verbose=False)
+            _, fusion_time1 = util.benchmark("fusion_sdfg.apply_transformations_repeated([MapFusion])",
+                                             out_text="DaCe MapFusion time",
+                                             context=locals(),
+                                             verbose=False)
+            _, fusion_time2 = util.benchmark("fusion_sdfg.apply_strict_transformations()",
+                                             out_text="DaCe Strict Transformations time",
+                                             context=locals(),
+                                             verbose=False)
             sdfg_list.append(fusion_sdfg)
             # time_list.append(time_list[-1] + fusion_time1[0] + fusion_time2[0])
             time_list.append(parse_time[0] + fusion_time1[0] + fusion_time2[0])
@@ -157,21 +145,18 @@ class DaceFramework(Framework):
         def parallelize(sdfg):
             from dace.sdfg import propagation
             try:
-                strict_xforms = dace.transformation.simplification_transformations(
-                )
+                strict_xforms = dace.transformation.simplification_transformations()
             except Exception:
                 strict_xforms = None
 
             for sd in sdfg.all_sdfgs_recursive():
                 propagation.propagate_states(sd)
             if strict_xforms:
-                sdfg.apply_transformations_repeated([LoopToMap, MapCollapse] +
-                                                    strict_xforms)
+                sdfg.apply_transformations_repeated([LoopToMap, MapCollapse] + strict_xforms)
             else:
                 num = 1
                 while num > 0:
-                    num = sdfg.apply_transformations_repeated(
-                        [LoopToMap, MapCollapse])
+                    num = sdfg.apply_transformations_repeated([LoopToMap, MapCollapse])
                     sdfg.simplify()
 
         try:
@@ -182,11 +167,10 @@ class DaceFramework(Framework):
                                        out_text="DaCe LoopToMap time1",
                                        context=locals(),
                                        verbose=False)
-            _, ptime2 = util.benchmark(
-                "parallel_sdfg.apply_transformations_repeated([MapFusion])",
-                out_text="DaCe LoopToMap time2",
-                context=locals(),
-                verbose=False)
+            _, ptime2 = util.benchmark("parallel_sdfg.apply_transformations_repeated([MapFusion])",
+                                       out_text="DaCe LoopToMap time2",
+                                       context=locals(),
+                                       verbose=False)
             sdfg_list.append(parallel_sdfg)
             time_list.append(time_list[-1] + ptime1[0] + ptime2[0])
 
@@ -213,14 +197,12 @@ class DaceFramework(Framework):
             auto_opt_sdfg = copy.deepcopy(strict_sdfg)
             auto_opt_sdfg._name = 'auto_opt'
             ldict['auto_opt_sdfg'] = auto_opt_sdfg
-            device = dtypes.DeviceType.GPU if self.info[
-                "arch"] == "gpu" else dtypes.DeviceType.CPU
+            device = dtypes.DeviceType.GPU if self.info["arch"] == "gpu" else dtypes.DeviceType.CPU
 
-            _, auto_time = util.benchmark(
-                f"autoopt(auto_opt_sdfg, device, symbols = locals())",
-                out_text="DaCe Auto - Opt",
-                context=locals(),
-                verbose=False)
+            _, auto_time = util.benchmark(f"autoopt(auto_opt_sdfg, device, symbols = locals())",
+                                          out_text="DaCe Auto - Opt",
+                                          context=locals(),
+                                          verbose=False)
 
             sdfg_list.append(auto_opt_sdfg)
             time_list.append(time_list[-1] + auto_time[0])
@@ -234,8 +216,7 @@ class DaceFramework(Framework):
 
         def vectorize(sdfg, vec_len=None):
             matches = []
-            for xform in Optimizer(sdfg).get_pattern_matches(
-                    patterns=[Vectorization]):
+            for xform in Optimizer(sdfg).get_pattern_matches(patterns=[Vectorization]):
                 matches.append(xform)
             for xform in matches:
                 if vec_len:
@@ -243,13 +224,9 @@ class DaceFramework(Framework):
                 xform.apply(sdfg)
 
         if self.info["arch"] == "gpu":
-            def_impl = dace.Config.get('library', 'blas',
-                                       'default_implementation')
+            def_impl = dace.Config.get('library', 'blas', 'default_implementation')
             if def_impl != "pure":
-                dace.Config.set('library',
-                                'blas',
-                                'default_implementation',
-                                value='cuBLAS')
+                dace.Config.set('library', 'blas', 'default_implementation', value='cuBLAS')
 
         def copy_to_gpu(sdfg):
             for k, v in sdfg.arrays.items():
@@ -264,51 +241,44 @@ class DaceFramework(Framework):
             ldict['sdfg'] = sdfg
             fe_time = t
             if sdfg._name != 'auto_opt':
-                device = dtypes.DeviceType.GPU if self.info[
-                    "arch"] == "gpu" else dtypes.DeviceType.CPU
+                device = dtypes.DeviceType.GPU if self.info["arch"] == "gpu" else dtypes.DeviceType.CPU
                 if self.info["arch"] == "cpu":
                     # GPUTransform will set GPU schedules by itself
                     opt.set_fast_implementations(sdfg, device)
             if self.info["arch"] == "gpu":
                 if sdfg._name in ['strict', 'parallel', 'fusion']:
-                    _, gpu_time1 = util.benchmark(
-                        "copy_to_gpu(sdfg)",
-                        out_text="DaCe GPU transformation time1",
-                        context=locals(),
-                        verbose=False)
+                    _, gpu_time1 = util.benchmark("copy_to_gpu(sdfg)",
+                                                  out_text="DaCe GPU transformation time1",
+                                                  context=locals(),
+                                                  verbose=False)
 
-                    _, gpu_time2 = util.benchmark(
-                        "sdfg.apply_gpu_transformations()",
-                        out_text="DaCe GPU transformation time2",
-                        context=locals(),
-                        verbose=False)
-                    _, gpu_time3 = util.benchmark(
-                        "sdfg.simplify()",
-                        out_text="DaCe GPU transformation time3",
-                        context=locals(),
-                        verbose=False)
+                    _, gpu_time2 = util.benchmark("sdfg.apply_gpu_transformations()",
+                                                  out_text="DaCe GPU transformation time2",
+                                                  context=locals(),
+                                                  verbose=False)
+                    _, gpu_time3 = util.benchmark("sdfg.simplify()",
+                                                  out_text="DaCe GPU transformation time3",
+                                                  context=locals(),
+                                                  verbose=False)
                     # NOTE: to be fair, allow one additional greedy MapFusion after GPU trafos
-                    _, gpu_time4 = util.benchmark(
-                        "sdfg.apply_transformations_repeated(MapFusion)",
-                        out_text="DaCe GPU transformation time4",
-                        context=locals(),
-                        verbose=False)
+                    _, gpu_time4 = util.benchmark("sdfg.apply_transformations_repeated(MapFusion)",
+                                                  out_text="DaCe GPU transformation time4",
+                                                  context=locals(),
+                                                  verbose=False)
                     fe_time += gpu_time2[0] + gpu_time3[0] + gpu_time4[0]
                     opt.set_fast_implementations(sdfg, device)
                 else:
                     gpu_time1 = [0]
                 fe_time += gpu_time1[0]
             try:
-                dc_exec, compile_time = util.benchmark(
-                    "__npb_result = sdfg.compile()",
-                    out_text="DaCe compilation time",
-                    context=locals(),
-                    output='__npb_result',
-                    verbose=False)
+                dc_exec, compile_time = util.benchmark("__npb_result = sdfg.compile()",
+                                                       out_text="DaCe compilation time",
+                                                       context=locals(),
+                                                       output='__npb_result',
+                                                       verbose=False)
                 implementations.append((dc_exec, sdfg._name))
             except Exception as e:
-                print("Failed to compile DaCe {a} {s} implementation.".format(
-                    a=self.info["arch"], s=sdfg._name))
+                print("Failed to compile DaCe {a} {s} implementation.".format(a=self.info["arch"], s=sdfg._name))
                 print(e)
                 traceback.print_exc()
                 print("Traceback")
@@ -319,10 +289,7 @@ class DaceFramework(Framework):
         return implementations
 
     def params(self, bench: Benchmark, impl: Callable = None):
-        return [
-            p for p in bench.info["parameters"]['L'].keys()
-            if p not in bench.info["input_args"]
-        ]
+        return [p for p in bench.info["parameters"]['L'].keys() if p not in bench.info["input_args"]]
 
     def arg_str(self, bench: Benchmark, impl: Callable = None):
         """ Generates the argument-string that should be used for calling
@@ -333,10 +300,7 @@ class DaceFramework(Framework):
 
         input_args = self.args(bench, impl)
         params = self.params(bench, impl)
-        input_args_str = ", ".join([
-            "{b}={a}".format(a=a, b=b)
-            for a, b in zip(input_args, bench.info["input_args"])
-        ])
+        input_args_str = ", ".join(["{b}={a}".format(a=a, b=b) for a, b in zip(input_args, bench.info["input_args"])])
         params_str = ", ".join(["{a}={a}".format(a=a) for a in params])
         return ", ".join((input_args_str, params_str))
 

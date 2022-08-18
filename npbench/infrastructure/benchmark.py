@@ -19,15 +19,13 @@ class Benchmark(object):
 
         parent_folder = pathlib.Path(__file__).parent.absolute()
         bench_filename = "{b}.json".format(b=bname)
-        bench_path = parent_folder.joinpath("..", "..", "bench_info",
-                                            bench_filename)
+        bench_path = parent_folder.joinpath("..", "..", "bench_info", bench_filename)
         try:
             with open(bench_path) as json_file:
                 self.info = json.load(json_file)["benchmark"]
                 # print(self.info)
         except Exception as e:
-            print("Benchmark JSON file {b} could not be opened.".format(
-                b=bench_filename))
+            print("Benchmark JSON file {b} could not be opened.".format(b=bench_filename))
             raise (e)
 
     def get_data(self, preset: str = 'L') -> Dict[str, Any]:
@@ -42,30 +40,25 @@ class Benchmark(object):
         data = dict()
         # 2. Add parameters to data dictionary
         if preset not in self.info["parameters"].keys():
-            raise NotImplementedError("{b} doesn't have a {p} preset.".format(
-                b=self.bname, p=preset))
+            raise NotImplementedError("{b} doesn't have a {p} preset.".format(b=self.bname, p=preset))
         parameters = self.info["parameters"][preset]
         for k, v in parameters.items():
             data[k] = v
         # 3. Import initialization function
         if "init" in self.info.keys() and self.info["init"]:
             module_filename = "{m}.py".format(m=self.info["module_name"])
-            module_pypath = "npbench.benchmarks.{r}.{m}".format(
-                r=self.info["relative_path"].replace('/', '.'),
-                m=self.info["module_name"])
-            exec_str = "from {m} import {i}".format(
-                m=module_pypath, i=self.info["init"]["func_name"])
+            module_pypath = "npbench.benchmarks.{r}.{m}".format(r=self.info["relative_path"].replace('/', '.'),
+                                                                m=self.info["module_name"])
+            exec_str = "from {m} import {i}".format(m=module_pypath, i=self.info["init"]["func_name"])
             try:
                 exec(exec_str, data)
             except Exception as e:
-                print("Module Python file {m} could not be opened.".format(
-                    m=module_filename))
+                print("Module Python file {m} could not be opened.".format(m=module_filename))
                 raise (e)
             # 4. Execute initialization
-            init_str = "{oargs} = {i}({iargs})".format(
-                oargs=",".join(self.info["init"]["output_args"]),
-                i=self.info["init"]["func_name"],
-                iargs=",".join(self.info["init"]["input_args"]))
+            init_str = "{oargs} = {i}({iargs})".format(oargs=",".join(self.info["init"]["output_args"]),
+                                                       i=self.info["init"]["func_name"],
+                                                       iargs=",".join(self.info["init"]["input_args"]))
             exec(init_str, data)
             del data[self.info["init"]["func_name"]]
 

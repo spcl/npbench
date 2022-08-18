@@ -9,10 +9,7 @@ from pygount import SourceAnalysis
 class LineCount(object):
     """ A class for counting lines of code. """
 
-    def __init__(self,
-                 bench: Benchmark,
-                 frmwrk: Framework,
-                 npfrmwrk: Framework = None):
+    def __init__(self, bench: Benchmark, frmwrk: Framework, npfrmwrk: Framework = None):
         self.bench = bench
         self.frmwrk = frmwrk
         self.numpy = npfrmwrk
@@ -55,8 +52,7 @@ class LineCount(object):
         avalues = []
         for impl_file, impl_name in self.frmwrk.impl_files(self.bench):
             try:
-                frmwrk_analysis = SourceAnalysis.from_file(
-                    impl_file, "pygount")
+                frmwrk_analysis = SourceAnalysis.from_file(impl_file, "pygount")
                 # print(frmwrk_analysis.code_count)
                 if np_analysis:
                     text1 = open(np_file).readlines()
@@ -67,11 +63,7 @@ class LineCount(object):
                     for line in diff.compare(text1, text2):
                         if line[0] == '-':
                             changed_lines += 1
-                    avalues.append({
-                        'details': impl_name,
-                        'count': frmwrk_analysis.code_count,
-                        'npdiff': changed_lines
-                    })
+                    avalues.append({'details': impl_name, 'count': frmwrk_analysis.code_count, 'npdiff': changed_lines})
             except Exception:
                 continue
 
@@ -93,5 +85,4 @@ class LineCount(object):
             }
             result = tuple(new_d.values())
             # print(result)
-            util.create_result(conn, util.sql_insert_into_lcounts_table,
-                               result)
+            util.create_result(conn, util.sql_insert_into_lcounts_table, result)

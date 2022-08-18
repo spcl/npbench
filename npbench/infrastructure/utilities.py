@@ -24,8 +24,7 @@ def time_to_ms(raw: float) -> int:
     return int(round(raw * 1000))
 
 
-def relative_error(ref: Union[Number, np.ndarray],
-                   val: Union[Number, np.ndarray]) -> float:
+def relative_error(ref: Union[Number, np.ndarray], val: Union[Number, np.ndarray]) -> float:
     return np.linalg.norm(ref - val) / np.linalg.norm(ref)
 
 
@@ -133,25 +132,12 @@ def inner(_it, _timer{init}):
 """
 
 
-def benchmark(stmt,
-              setup="pass",
-              out_text="",
-              repeat=1,
-              context={},
-              output=None,
-              verbose=True):
+def benchmark(stmt, setup="pass", out_text="", repeat=1, context={}, output=None, verbose=True):
 
-    timeit.template = timeit_tmpl.format(init='{init}',
-                                         setup='{setup}',
-                                         stmt='{stmt}',
-                                         output=output)
+    timeit.template = timeit_tmpl.format(init='{init}', setup='{setup}', stmt='{stmt}', output=output)
 
     ldict = {**context}
-    output = timeit.repeat(stmt,
-                           setup=setup,
-                           repeat=repeat,
-                           number=1,
-                           globals=ldict)
+    output = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
     res = output[0][1]
     raw_time_list = [a for a, _ in output]
     raw_time = np.median(raw_time_list)
