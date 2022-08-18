@@ -10,6 +10,7 @@ from typing import Any, Callable, Dict, Sequence, Tuple
 
 class Framework(object):
     """ A class for reading and processing framework information. """
+
     def __init__(self, fname: str):
         """ Reads framework information.
         :param fname: The framework name.
@@ -133,16 +134,6 @@ class Framework(object):
         output_args = self.out_args(bench, impl)
         return ", ".join(output_args)
 
-    # def param_str(self, bench: Benchmark, impl: Callable = None):
-    #     """ Generates the parameter-string that should be used for calling
-    #     the benchmark implementation.
-    #     :param bench: A benchmark.
-    #     :param impl: A benchmark implementation.
-    #     """
-
-    #     input_params = self.params(bench, impl)
-    #     return ", ".join(input_params)
-
     def setup_str(self, bench: Benchmark, impl: Callable = None):
         """ Generates the setup-string that should be used before calling
         the benchmark implementation.
@@ -170,9 +161,13 @@ class Framework(object):
         return "__npb_result = __npb_impl({a})".format(a=arg_str)
 
 
-def generate_framework(fname: str, save_strict: bool=False, load_strict: bool=False) -> Framework:
+def generate_framework(fname: str,
+                       save_strict: bool = False,
+                       load_strict: bool = False) -> Framework:
     """ Generates a framework object with the correct class.
     :param fname: The framework name.
+    :param save_strict: (dace_cpu/dace_gpu only) If True, saves the simplified SDFG.
+    :param load_strict: (dace_cpu/dace_gpu only) If True, loads the simplified SDFG.
     """
 
     parent_folder = pathlib.Path(__file__).parent.absolute()

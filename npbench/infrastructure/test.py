@@ -8,6 +8,7 @@ from typing import Any, Callable, Dict, Sequence, Tuple
 
 class Test(object):
     """ A class for testing a framework on a benchmark. """
+
     def __init__(self,
                  bench: Benchmark,
                  frmwrk: Framework,
@@ -24,8 +25,6 @@ class Test(object):
             copy = frmwrk.copy_func()
             setup_str = frmwrk.setup_str(self.bench, impl)
             exec_str = frmwrk.exec_str(self.bench, impl)
-            # print(setup_str)
-            # print(exec_str)
         except Exception as e:
             print("Failed to load the {} implementation.".format(report_str))
             print(e)
@@ -66,7 +65,8 @@ class Test(object):
         :param validate: If true, it validates the output against NumPy.
         :param repeat: The number of repeatitions.
         """
-        print("***** Testing {f} with {b} on the {p} dataset *****".format(b=self.bench.bname, f=self.frmwrk.info["full_name"], p=preset))
+        print("***** Testing {f} with {b} on the {p} dataset *****".format(
+            b=self.bench.bname, f=self.frmwrk.info["full_name"], p=preset))
 
         bdata = self.bench.get_data(preset)
 
@@ -121,8 +121,8 @@ class Test(object):
                         print("{} - {} - validation: SUCCESS".format(
                             frmwrk_name, impl_name))
                     elif not ignore_errors:
-                        raise ValueError("{} did not validate!"
-                            .format(frmwrk_name))
+                        raise ValueError(
+                            "{} did not validate!".format(frmwrk_name))
                 except Exception:
                     print("Failed to run {} validation.".format(
                         self.frmwrk.info["full_name"]))

@@ -9,12 +9,12 @@ if __name__ == "__main__":
                         "--benchmark",
                         type=str,
                         nargs="?",
-                        default="azimint_naive")
+                        required=True)
     parser.add_argument("-f",
                         "--framework",
                         type=str,
                         nargs="?",
-                        default="dace_gpu")
+                        default="numpy")
     parser.add_argument("-p",
                         "--preset",
                         choices=['S', 'M', 'L', 'paper'],
@@ -32,8 +32,16 @@ if __name__ == "__main__":
                         type=float,
                         nargs="?",
                         default=200.0)
-    parser.add_argument("-s", "--save-strict-sdfg", type=util.str2bool, nargs="?", default=False)
-    parser.add_argument("-l", "--load-strict-sdfg", type=util.str2bool, nargs="?", default=False)
+    parser.add_argument("-s",
+                        "--save-strict-sdfg",
+                        type=util.str2bool,
+                        nargs="?",
+                        default=False)
+    parser.add_argument("-l",
+                        "--load-strict-sdfg",
+                        type=util.str2bool,
+                        nargs="?",
+                        default=False)
     args = vars(parser.parse_args())
 
     # print(args)
