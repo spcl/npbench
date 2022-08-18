@@ -18,7 +18,7 @@ class Test(object):
 
     def _execute(self, frmwrk: Framework, impl: Callable, impl_name: str,
                  mode: str, bdata: Dict[str, Any], repeat: int,
-                 ignore_erros: bool) -> Tuple[Any, Sequence[float]]:
+                 ignore_errors: bool) -> Tuple[Any, Sequence[float]]:
         report_str = frmwrk.info["full_name"] + " - " + impl_name
         try:
             copy = frmwrk.copy_func()
@@ -29,7 +29,7 @@ class Test(object):
         except Exception as e:
             print("Failed to load the {} implementation.".format(report_str))
             print(e)
-            if not ignore_erros:
+            if not ignore_errors:
                 raise
             return None, None
         ldict = {'__npb_impl': impl, '__npb_copy': copy, **bdata}
@@ -41,7 +41,7 @@ class Test(object):
             print(
                 "Failed to execute the {} implementation.".format(report_str))
             print(e)
-            if not ignore_erros:
+            if not ignore_errors:
                 raise
             return None, None
         if out is not None:
