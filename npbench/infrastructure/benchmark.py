@@ -8,6 +8,7 @@ from typing import Any, Dict
 class Benchmark(object):
     """ A class for reading and benchmark information and initializing
     bechmark data. """
+
     def __init__(self, bname: str):
         """ Reads benchmark information.
         :param bname: The benchmark name.

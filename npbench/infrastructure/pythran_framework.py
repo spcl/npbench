@@ -9,6 +9,7 @@ from typing import Callable, Sequence, Tuple
 
 class PythranFramework(Framework):
     """ A class for reading and processing framework information. """
+
     def __init__(self, fname: str):
         """ Reads framework information.
         :param fname: The framework name.

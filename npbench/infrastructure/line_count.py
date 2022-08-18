@@ -8,6 +8,7 @@ from pygount import SourceAnalysis
 
 class LineCount(object):
     """ A class for counting lines of code. """
+
     def __init__(self,
                  bench: Benchmark,
                  frmwrk: Framework,
