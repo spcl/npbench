@@ -42,6 +42,12 @@ if __name__ == "__main__":
                         type=float,
                         nargs="?",
                         default=200.0)
+    parser.add_argument("--ignore-errors",
+                        type=util.str2bool,
+                        nargs="?",
+                        default=True)
+    parser.add_argument("-s", "--save-strict-sdfg", type=util.str2bool, nargs="?", default=False)
+    parser.add_argument("-l", "--load-strict-sdfg", type=util.str2bool, nargs="?", default=False)
     args = vars(parser.parse_args())
 
     parent_folder = pathlib.Path(__file__).parent.absolute()
