@@ -7,6 +7,7 @@ from typing import Any, Callable, Dict
 
 class CupyFramework(Framework):
     """ A class for reading and processing framework information. """
+
     def __init__(self, fname: str):
         """ Reads framework information.
         :param fname: The framework name.
@@ -16,10 +17,7 @@ class CupyFramework(Framework):
 
     def version(self) -> str:
         """ Return the framework version. """
-        return [
-            p.version for p in pkg_resources.working_set
-            if p.project_name.startswith("cupy")
-        ][0]
+        return [p.version for p in pkg_resources.working_set if p.project_name.startswith("cupy")][0]
 
     def imports(self) -> Dict[str, Any]:
         import cupy
@@ -42,9 +40,7 @@ class CupyFramework(Framework):
         sync_str = "cpstream.get_current_stream().synchronize()"
         if len(bench.info["array_args"]):
             arg_str = self.out_arg_str(bench, impl)
-            copy_args = [
-                "__npb_copy({})".format(a) for a in bench.info["array_args"]
-            ]
+            copy_args = ["__npb_copy({})".format(a) for a in bench.info["array_args"]]
             return arg_str + " = " + ", ".join(copy_args) + "; " + sync_str
         return sync_str
 

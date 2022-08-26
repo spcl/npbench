@@ -55,7 +55,9 @@ def exit_after(s):
     use as decorator to exit process if 
     function takes longer than s seconds
     '''
+
     def outer(fn):
+
         def inner(*args, **kwargs):
             timer = threading.Timer(s, cdquit, args=[fn.__name__])
             timer.start()
