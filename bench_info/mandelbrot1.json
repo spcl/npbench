@@ -24,6 +24,7 @@
         },
         "input_args": ["xmin", "xmax", "ymin", "ymax", "XN", "YN", "maxiter", "horizon"],
         "array_args": [],
-        "output_args": []
+        "output_args": [],
+        "norm_error": 1e-3
     }
 }

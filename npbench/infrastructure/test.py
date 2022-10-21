@@ -102,7 +102,11 @@ class Test(object):
             if validate and np_out is not None:
                 try:
                     frmwrk_name = self.frmwrk.info["full_name"]
-                    valid = util.validate(np_out, frmwrk_out, frmwrk_name)
+
+                    rtol = 1e-5 if not 'rtol' in self.bench.info else self.bench.info['rtol']
+                    atol = 1e-8 if not 'atol' in self.bench.info else self.bench.info['atol']
+                    norm_error = 1e-5 if not 'norm_error' in self.bench.info else self.bench.info['norm_error']
+                    valid = util.validate(np_out, frmwrk_out, frmwrk_name, rtol=rtol, atol=atol, norm_error=norm_error)
                     if valid:
                         print("{} - {} - validation: SUCCESS".format(frmwrk_name, impl_name))
                     elif not ignore_errors:

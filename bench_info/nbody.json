@@ -21,6 +21,7 @@
         },
         "input_args": ["mass", "pos", "vel", "N", "Nt", "dt", "G", "softening"],
         "array_args": ["mass", "pos", "vel"],
-        "output_args": []
+        "output_args": [],
+        "norm_error": 1e-1
     }
 }
