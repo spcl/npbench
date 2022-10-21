@@ -147,14 +147,14 @@ def benchmark(stmt, setup="pass", out_text="", repeat=1, context={}, output=None
     return res, raw_time_list
 
 
-def validate(ref, val, framework="Unknown"):
+def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-5):
     if not isinstance(ref, (tuple, list)):
         ref = [ref]
     if not isinstance(val, (tuple, list)):
         val = [val]
     valid = True
     for r, v in zip(ref, val):
-        if not np.allclose(r, v):
+        if not np.allclose(r, v, rtol=rtol, atol=atol):
             try:
                 import cupy
                 if isinstance(v, cupy.ndarray):
@@ -163,7 +163,7 @@ def validate(ref, val, framework="Unknown"):
                     relerror = relative_error(r, v)
             except Exception:
                 relerror = relative_error(r, v)
-            if relerror < 1e-05:
+            if relerror < norm_error:
                 continue
             valid = False
             print("Relative error: {}".format(relerror))

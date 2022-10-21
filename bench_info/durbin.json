@@ -21,6 +21,8 @@
         },
         "input_args": ["r"],
         "array_args": ["r"],
-        "output_args": []
+        "output_args": [],
+        "rtol": 1e-3,
+        "atol": 1e-3
     }
 }
