@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "Weighted Euclidean Distance",
+        "short_name": "wdist",
+        "relative_path": "wdist",
+        "module_name": "wdist",
+        "func_name": "wdist",
+        "kind": "microbench",
+        "domain": "LinAlg",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S": { "K": 100, "M": 100, "N": 100 },
+            "M": { "K": 200, "M": 200, "N": 200 },
+            "L": { "K": 500, "M": 500, "N": 500},
+            "paper": { "K": 1000, "M": 1000, "N": 1000 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["K", "M", "N"],
+            "output_args": ["A", "B", "W"]
+        },
+        "input_args": ["A", "B", "W"],
+        "array_args": ["A", "B", "W"],
+        "output_args": []
+    }
+}

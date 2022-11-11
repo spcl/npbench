@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "Least-Squares Linear Regression",
+        "short_name": "lstsqr",
+        "relative_path": "lstsqr",
+        "module_name": "lstsqr",
+        "func_name": "lstsqr",
+        "kind": "microbench",
+        "domain": "Solver",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S": { "N": 100000 },
+            "M": { "N": 1000000 },
+            "L": { "N": 10000000 },
+            "paper": { "N": 10000000 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["N"],
+            "output_args": ["x", "y"]
+        },
+        "input_args": ["x", "y"],
+        "array_args": ["x", "y"],
+        "output_args": []
+    }
+}
