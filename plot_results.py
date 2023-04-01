@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 from scipy.stats.mstats import gmean
 from npbench.infrastructure import utilities as util
 
+def my_round(x, width):
+    float_format = "{:." + f"{width}" +  "f}"
+    return float_format.format(x)
 
 # geomean which ignores NA values
 def my_geomean(x):
@@ -31,9 +34,9 @@ def my_speedup_abbr(x):
     if x > 100:
         x = int(x)
     if x > 1000:
-        label = prefix + str(round(x / 1000, 1)) + "k"
+        label = prefix + str(my_round(x / 1000, 1)) + "k"
     else:
-        label = prefix + str(round(x, 1))
+        label = prefix + str(my_round(x, 1))
     return str(label)
 
 
@@ -45,7 +48,7 @@ def my_runtime_abbr(x):
     if x < 0.1:
         x = x * 1000
         suffix = " ms"
-    return str(round(x, 2)) + suffix
+    return str(my_round(x, 2)) + suffix
 
 
 def bootstrap_ci(data, statfunction=np.median, alpha=0.05, n_samples=300):
