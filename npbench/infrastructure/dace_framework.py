@@ -19,10 +19,28 @@ class DaceFramework(Framework):
 
         self.save_strict = save_strict
         self.load_strict = load_strict
+        self.cupy = False
+        self.torch = False
 
         import warnings
         warnings.filterwarnings("ignore")
         super().__init__(fname)
+
+        if self.fname == "dace_gpu":
+            try:
+                import cupy
+                self.cupy = True
+            except ModuleNotFoundError:
+                print("CuPy not found. Trying torch ...")
+                self.cupy = False
+
+                try:
+                    import torch
+                    self.torch = True
+                    torch.set_default_device('cuda:0')
+                except ModuleNotFoundError:
+                    print("Torch not found. Using numpy ...")
+                    self.torch = False
 
     def version(self) -> str:
         """ Return the framework version. """
@@ -32,14 +50,27 @@ class DaceFramework(Framework):
         """ Returns the copy-method that should be used 
         for copying the benchmark arguments. """
         if self.fname == "dace_gpu":
-            import cupy
+            if self.cupy:
+                import cupy
 
-            def cp_copy_func(arr):
-                darr = cupy.asarray(arr)
-                cupy.cuda.stream.get_current_stream().synchronize()
-                return darr
+                def cp_copy_func(arr):
+                    darr = cupy.asarray(arr)
+                    cupy.cuda.stream.get_current_stream().synchronize()
+                    return darr
+                
+                return cp_copy_func
 
-            return cp_copy_func
+            elif self.torch:
+                import torch
+                torch.set_default_device('cuda:0')
+
+                def cp_copy_func(arr):
+                    darr = torch.from_numpy(arr).cuda(0)
+                    torch.cuda.synchronize()
+                    return darr
+                
+                return cp_copy_func
+
         return super().copy_func()
 
     def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
@@ -186,7 +217,7 @@ class DaceFramework(Framework):
 
             def autoopt(sdfg, device, symbols):  #, nofuse):
                 # Mark arrays as on the GPU
-                if device == dtypes.DeviceType.GPU:
+                if device == dtypes.DeviceType.GPU and (self.cupy or self.torch):
                     for k, v in sdfg.arrays.items():
                         if not v.transient and type(v) == dace.data.Array:
                             v.storage = dace.dtypes.StorageType.GPU_Global
@@ -234,7 +265,11 @@ class DaceFramework(Framework):
                     v.storage = dace.dtypes.StorageType.GPU_Global
 
         if self.info["arch"] == "gpu":
-            import cupy as cp
+            if self.cupy:
+                import cupy as cp
+            elif self.torch:
+                import torch
+                torch.set_default_device('cuda:0')
 
         implementations = []
         for sdfg, t in zip(sdfg_list, time_list):
@@ -247,10 +282,15 @@ class DaceFramework(Framework):
                     opt.set_fast_implementations(sdfg, device)
             if self.info["arch"] == "gpu":
                 if sdfg._name in ['strict', 'parallel', 'fusion']:
-                    _, gpu_time1 = util.benchmark("copy_to_gpu(sdfg)",
-                                                  out_text="DaCe GPU transformation time1",
-                                                  context=locals(),
-                                                  verbose=False)
+                    if self.cupy or self.torch:
+                        print("Copying to GPU")
+                        _, gpu_time1 = util.benchmark("copy_to_gpu(sdfg)",
+                                                    out_text="DaCe GPU transformation time1",
+                                                    context=locals(),
+                                                    verbose=False)
+                    else:
+                        print("No GPU copy")
+                        gpu_time1 = [0]
 
                     _, gpu_time2 = util.benchmark("sdfg.apply_gpu_transformations()",
                                                   out_text="DaCe GPU transformation time2",

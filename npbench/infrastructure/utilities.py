@@ -148,21 +148,32 @@ def benchmark(stmt, setup="pass", out_text="", repeat=1, context={}, output=None
 
 
 def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-5):
+
+    using_cupy = False
+    using_torch = False
+    try:
+        import cupy
+        using_cupy = True
+    except ImportError:
+        try:
+            import torch
+            using_torch = True
+        except ImportError:
+            pass
+
     if not isinstance(ref, (tuple, list)):
         ref = [ref]
     if not isinstance(val, (tuple, list)):
         val = [val]
     valid = True
     for r, v in zip(ref, val):
-        if not np.allclose(r, v, rtol=rtol, atol=atol):
-            try:
-                import cupy
-                if isinstance(v, cupy.ndarray):
-                    relerror = relative_error(r, cupy.asnumpy(v))
-                else:
-                    relerror = relative_error(r, v)
-            except Exception:
-                relerror = relative_error(r, v)
+        vv = v
+        if using_cupy and isinstance(vv, cupy.ndarray):
+            vv = cupy.asnumpy(vv)
+        elif using_torch and isinstance(vv, torch.Tensor):
+            vv = vv.cpu().numpy()
+        if not np.allclose(r, vv, rtol=rtol, atol=atol):
+            relerror = relative_error(r, vv)
             if relerror < norm_error:
                 continue
             valid = False

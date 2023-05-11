@@ -1,5 +1,6 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 import time
+import traceback
 
 from npbench.infrastructure import (Benchmark, Framework, timeout_decorator as tout, utilities as util)
 from typing import Any, Callable, Dict, Sequence, Tuple
@@ -33,6 +34,7 @@ class Test(object):
         except Exception as e:
             print("Failed to execute the {} implementation.".format(report_str))
             print(e)
+            print(traceback.format_exc())
             if not ignore_errors:
                 raise
             return None, None
