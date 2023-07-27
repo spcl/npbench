@@ -43,8 +43,8 @@ class Test(object):
                 out = [out]
         else:
             out = []
-        if "out_args" in self.bench.info.keys():
-            out += [ldict[a] for a in self.frmwrk.args(self.bench)]
+        if "output_args" in self.bench.info.keys():
+            out += [ldict[a] for a in frmwrk.args(self.bench)]
         return out, timelist
 
     def run(self, preset: str, validate: bool, repeat: int, timeout: float = 200.0, ignore_errors: bool = True):
