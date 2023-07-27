@@ -134,16 +134,20 @@ def inner(_it, _timer{init}):
 
 def benchmark(stmt, setup="pass", out_text="", repeat=1, context={}, output=None, verbose=True):
 
-    timeit.template = timeit_tmpl.format(init='{init}', setup='{setup}', stmt='{stmt}', output=output)
-
     ldict = {**context}
-    output = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
-    res = output[0][1]
-    raw_time_list = [a for a, _ in output]
+    raw_time_list = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
     raw_time = np.median(raw_time_list)
     ms_time = time_to_ms(raw_time)
     if verbose:
         print("{}: {}ms".format(out_text, ms_time))
+    
+    if output is not None:
+        exec(setup, context)
+        exec(stmt, context)
+        res = context[output]
+    else:
+        res = None
+
     return res, raw_time_list
 
 
