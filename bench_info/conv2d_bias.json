@@ -17,10 +17,10 @@
         "init": {
             "func_name": "initialize",
             "input_args": ["C_in", "C_out", "H", "K", "N", "W"],
-            "output_args": ["input", "weights", "bias"]
+            "output_args": ["input", "weights", "bias", "output"]
         },
-        "input_args": ["input", "weights", "bias"],
-        "array_args": ["input", "weights", "bias"],
-        "output_args": []
+        "input_args": ["input", "weights", "bias", "output"],
+        "array_args": ["input", "weights", "bias", "output"],
+        "output_args": ["output"]
     }
 }
