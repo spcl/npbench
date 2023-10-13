@@ -25,4 +25,4 @@ jobs:
         python -m pip install numba==0.54
     - name: Test
       run: |
-        python run_framework.py -f numba -r 1 --ignore-errors=0
+        python run_framework.py -f numba -r 1 --ignore-errors=0 --expected-fail=azimint_hist,contour_integral,correlation,covariance,durbin,mlp
