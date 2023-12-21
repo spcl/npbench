@@ -1,0 +1,26 @@
+{
+	"benchmark": {
+		"name": "Sparse Biconjugate Gradient",
+		"short_name": "sp_bicg",
+		"relative_path": "sparse/solvers/bicg",
+		"module_name": "bicg",
+		"func_name": "bicg",
+		"kind": "microapp",
+		"domain": "Sparse solver",
+		"dwarf": "sparse_linear_algebra",
+		"parameters": {
+            "S": { "N": 2048, "nnz": 409600 },
+            "M": { "N": 4096, "nnz": 1638400 },
+            "L": { "N": 8192, "nnz": 6553600 },
+            "paper": { "N": 8192, "nnz": 6553600 }
+		},
+		"init": {
+			"func_name": "initialize",
+			"input_args": ["N", "nnz"],
+			"output_args": ["A", "x", "b"]
+		},
+		"input_args": ["A", "x", "b"],
+		"array_args": ["x", "b"],
+		"output_args": []
+	}
+}

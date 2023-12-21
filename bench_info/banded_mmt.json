@@ -1,0 +1,26 @@
+{
+	"benchmark": {
+		"name": "Banded Matrix-Matrix-Transposed Multiplication",
+		"short_name": "banded_mmt",
+		"relative_path": "sparse/banded_mmt",
+		"module_name": "banded_mmt",
+		"func_name": "banded_mmt",
+		"kind": "microapp",
+		"domain": "Other",
+		"dwarf": "sparse_linear_algebra",
+		"parameters": {
+			"S": { "N": 100, "a_lbound": 3, "a_ubound": 4, "b_lbound": 5, "b_ubound": 2 },
+			"M": { "N": 1000, "a_lbound": 11, "a_ubound": 9, "b_lbound": 6, "b_ubound": 13 },
+			"L": { "N": 10000, "a_lbound": 15, "a_ubound": 12, "b_lbound": 13, "b_ubound": 11 },
+			"paper": { "N": 20000, "a_lbound": 43, "a_ubound": 31, "b_lbound": 15, "b_ubound": 50 }
+		},
+		"init": {
+			"func_name": "initialize",
+			"input_args": ["N", "a_lbound", "a_ubound", "b_lbound", "b_ubound"],
+			"output_args": ["A", "B"]
+		},
+		"input_args": ["A", "a_lbound", "a_ubound", "B", "b_lbound", "b_ubound"],
+		"array_args": ["A", "B"],
+		"output_args": []
+	}
+}
