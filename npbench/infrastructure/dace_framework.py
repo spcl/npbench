@@ -185,14 +185,14 @@ class DaceFramework(Framework):
         try:
 
             def autoopt(sdfg, device, symbols):  #, nofuse):
-                # Mark arrays as on the GPU
-                if device == dtypes.DeviceType.GPU:
-                    for k, v in sdfg.arrays.items():
-                        if not v.transient and type(v) == dace.data.Array:
-                            v.storage = dace.dtypes.StorageType.GPU_Global
+                # # Mark arrays as on the GPU
+                # if device == dtypes.DeviceType.GPU:
+                #     for k, v in sdfg.arrays.items():
+                #         if not v.transient and type(v) == dace.data.Array:
+                #             v.storage = dace.dtypes.StorageType.GPU_Global
 
                 # Auto-optimize SDFG
-                opt.auto_optimize(auto_opt_sdfg, device, symbols=symbols)
+                opt.auto_optimize(auto_opt_sdfg, device, symbols=symbols, use_gpu_storage=True)
 
             auto_opt_sdfg = copy.deepcopy(strict_sdfg)
             auto_opt_sdfg._name = 'auto_opt'
@@ -229,9 +229,10 @@ class DaceFramework(Framework):
                 dace.Config.set('library', 'blas', 'default_implementation', value='cuBLAS')
 
         def copy_to_gpu(sdfg):
-            for k, v in sdfg.arrays.items():
-                if not v.transient and isinstance(v, dace.data.Array):
-                    v.storage = dace.dtypes.StorageType.GPU_Global
+            opt.apply_gpu_storage(sdfg)
+            # for k, v in sdfg.arrays.items():
+            #     if not v.transient and isinstance(v, dace.data.Array):
+            #         v.storage = dace.dtypes.StorageType.GPU_Global
 
         if self.info["arch"] == "gpu":
             import cupy as cp
@@ -242,9 +243,9 @@ class DaceFramework(Framework):
             fe_time = t
             if sdfg._name != 'auto_opt':
                 device = dtypes.DeviceType.GPU if self.info["arch"] == "gpu" else dtypes.DeviceType.CPU
-                if self.info["arch"] == "cpu":
-                    # GPUTransform will set GPU schedules by itself
-                    opt.set_fast_implementations(sdfg, device)
+                # if self.info["arch"] == "cpu":
+                #     # GPUTransform will set GPU schedules by itself
+                opt.set_fast_implementations(sdfg, device)
             if self.info["arch"] == "gpu":
                 if sdfg._name in ['strict', 'parallel', 'fusion']:
                     _, gpu_time1 = util.benchmark("copy_to_gpu(sdfg)",
