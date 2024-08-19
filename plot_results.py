@@ -1,3 +1,4 @@
+import os
 import argparse
 import math
 import pandas as pd
@@ -298,7 +299,7 @@ for i in range(len(best_wide['benchmark'])):
                             fontsize=8)
 
 ax1.set_ylabel("Benchmarks", labelpad=0)
-
+print("saving file in directory:",os.getcwd())
 plt.tight_layout()
-plt.savefig("heatmap.pdf", dpi=600)
-plt.show()
+plt.savefig("heatmap.png", dpi=600)
+#plt.show()
