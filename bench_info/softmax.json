@@ -17,10 +17,10 @@
         "init": {
             "func_name": "initialize",
             "input_args": ["N", "H", "SM"],
-            "output_args": ["x"]
+            "output_args": ["x", "output"]
         },
-        "input_args": ["x"],
-        "array_args": ["x"],
-        "output_args": []
+        "input_args": ["x", "output"],
+        "array_args": ["x", "output"],
+        "output_args": ["output"]
     }
 }
