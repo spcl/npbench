@@ -3,3 +3,4 @@ numpy
 pandas
 pygount
 scipy
+Pillow
