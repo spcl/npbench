@@ -17,6 +17,7 @@ module load anaconda3
 module load git
 module load cmake
 module load gmake
+module load openblas
 module list
 
 source /hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/bin/activate

@@ -17,11 +17,12 @@ module load anaconda3
 module load git
 module load cmake
 module load gmake
+module load openblas
 module list
 
 source /hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/bin/activate
 
-python /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/main.py -p L -v 1 -d 1 # I made the shortest one I could find
+python /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/main.py -p L -v 1 -r 25 -t 100 -d 1 # I made the shortest one I could find
 python /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/plot_results.py
 python /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/plot_lines.py
 

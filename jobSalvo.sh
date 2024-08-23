@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH -D jobpaper
+#SBATCH -J npb-all
+#SBATCH -D salvo
 #SBATCH --partition=micro
 #SBATCH --time=24:00:00
 #SBATCH --account=pr28fi
 #SBATCH --ntasks=1
-#SBATCH -J paper
 #SBATCH --ear=off
 #SBATCH --export=NONE
 #SBATCH --get-user-env
@@ -20,10 +20,19 @@ module load gmake
 module load openblas
 module list
 
-source /hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/bin/activate
+BASE=/hppfs/work/pr28fi/di38jil/npb-shared/
+CODE=$BASE/npb-lrz
 
-python /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/main.py -p paper -v 1 -r 25 -t 25 -d 1
-python /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/plot_results.py
-python /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/plot_lines.py
+source $BASE/conda-npb/bin/activate
+
+for SIZE in S M L paper
+do
+  mkdir -p $SIZE
+  cd $SIZE
+  python $CODE/main.py -p $SIZE -v 1 -d 1 -r 25 -t 100.0
+  python $CODE/plot_results.py
+  python $CODE/plot_lines.py
+  cd ..
+done
 
 exit

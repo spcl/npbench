@@ -32,10 +32,9 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     benchmarks = [
-        'adi', 'arc_distance', 'atax', 'azimint_naive', 'bicg', 'cavity_flow',
-        'cholesky2', 'compute', 'doitgen', 'floyd_warshall', 'gemm', 'gemver',
-        'gesummv', 'go_fast', 'hdiff', 'jacobi_2d', 'lenet', 'syr2k', 'trmm',
-        'vadv'
+        'adi', 'arc_distance', 'azimint_naive', 'cavity_flow',
+        'cholesky2', 'compute', 'doitgen', 'gemm', 'gemver',
+        'gesummv', 'go_fast', 'hdiff', 'jacobi_2d', 'syr2k','vadv'
     ]
 
     frameworks = ["numpy", "numba", "pythran"]
