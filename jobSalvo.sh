@@ -29,9 +29,9 @@ for SIZE in S M L paper
 do
   mkdir -p $SIZE
   cd $SIZE
-  python $CODE/main.py -p $SIZE -v 1 -d 1 -r 25 -t 100.0
-  python $CODE/plot_results.py
-  python $CODE/plot_lines.py
+  python $CODE/quickstart.py -p $SIZE -v 0 -d 1 -r 1 -t 1.0 2> quickstart.err
+  python $CODE/plot_results.py 2> plot_results.err
+  python $CODE/plot_lines.py   2> plot_lines.err
   cd ..
 done
 
