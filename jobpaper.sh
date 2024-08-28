@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -D jobpaper
+#SBATCH -D jobpaper1
 #SBATCH --partition=micro
 #SBATCH --time=24:00:00
 #SBATCH --account=pr28fi
