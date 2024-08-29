@@ -1,0 +1,19 @@
+***** Testing NumPy with channel_flow on the paper dataset *****
+NumPy - default - first/validation: 7228ms
+NumPy - default - median: 7217ms
+***** Testing Pythran with channel_flow on the paper dataset *****
+Pythran compilation time: 74985ms
+Pythran - default - first/validation: 3871ms
+Pythran - default - median: 3849ms
+***** Testing DaCe CPU with channel_flow on the paper dataset *****
+Applied 194 MapFusion.Applied 195 MapFusion.Applied 196 MapFusion.Applied 197 MapFusion.Applied 198 MapFusion.Applied 199 MapFusion.Applied 200 MapFusion.Applied 201 MapFusion.Applied 202 MapFusion.Applied 203 MapFusion.Applied 204 MapFusion.Applied 205 MapFusion.Applied 206 MapFusion.Applied 207 MapFusion.Applied 208 MapFusion.Applied 209 MapFusion.Applied 210 MapFusion.Applied 211 MapFusion.Applied 212 MapFusion.Applied 213 MapFusion.Applied 214 MapFusion.Applied 215 MapFusion.Applied 216 MapFusion.Applied 217 MapFusion.Applied 218 MapFusion.Applied 219 MapFusion.Applied 220 MapFusion.Applied 194 MapFusion.Applied 195 MapFusion.Applied 196 MapFusion.Applied 197 MapFusion.Applied 198 MapFusion.Applied 199 MapFusion.Applied 200 MapFusion.Applied 201 MapFusion.Applied 202 MapFusion.Applied 203 MapFusion.Applied 204 MapFusion.Applied 205 MapFusion.Applied 206 MapFusion.Applied 207 MapFusion.Applied 208 MapFusion.Applied 209 MapFusion.Applied 210 MapFusion.Applied 211 MapFusion.Applied 212 MapFusion.Applied 213 MapFusion.Applied 214 MapFusion.Applied 215 MapFusion.Applied 216 MapFusion.Applied 217 MapFusion.Applied 218 MapFusion.Applied 219 MapFusion.Applied 220 MapFusion.DaCe CPU - fusion - first/validation: 1791ms
+DaCe CPU - fusion - median: 1909ms
+DaCe CPU - parallel - first/validation: 1816ms
+DaCe CPU - parallel - median: 1914ms
+DaCe CPU - auto_opt - first/validation: 2270ms
+DaCe CPU - auto_opt - median: 2265ms
+***** Testing Numba with channel_flow on the paper dataset *****
+Numba - nopython-mode - first/validation: 20805ms
+Numba - nopython-mode - median: 5371ms
+Numba - nopython-mode-parallel - first/validation: 101888ms
+Numba - nopython-mode-parallel - median: 71759ms

@@ -1,0 +1,12 @@
+***** Testing NumPy with gemm on the paper dataset *****
+NumPy - default - first/validation: 546ms
+NumPy - default - median: 443ms
+***** Testing Numba with gemm on the paper dataset *****
+Numba - nopython-mode - first/validation: 2031ms
+Numba - nopython-mode - median: 427ms
+Numba - nopython-mode-parallel - first/validation: 2088ms
+Numba - nopython-mode-parallel - median: 418ms
+***** Testing Pythran with gemm on the paper dataset *****
+Pythran compilation time: 7516ms
+Pythran - default - first/validation: 515ms
+Pythran - default - median: 432ms

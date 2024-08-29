@@ -1,0 +1,19 @@
+***** Testing NumPy with bicg on the paper dataset *****
+NumPy - default - first/validation: 567ms
+NumPy - default - median: 496ms
+***** Testing Numba with bicg on the paper dataset *****
+Numba - nopython-mode - first/validation: 2431ms
+Numba - nopython-mode - median: 520ms
+Numba - nopython-mode-parallel - first/validation: 924ms
+Numba - nopython-mode-parallel - median: 520ms
+***** Testing Pythran with bicg on the paper dataset *****
+Pythran compilation time: 6973ms
+Pythran - default - first/validation: 774ms
+Pythran - default - median: 486ms
+***** Testing DaCe CPU with bicg on the paper dataset *****
+DaCe CPU - fusion - first/validation: 13490ms
+DaCe CPU - fusion - median: 13477ms
+DaCe CPU - parallel - first/validation: 13467ms
+DaCe CPU - parallel - median: 13461ms
+DaCe CPU - auto_opt - first/validation: 13470ms
+DaCe CPU - auto_opt - median: 13458ms

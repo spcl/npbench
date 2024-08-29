@@ -37,17 +37,22 @@ MY_NODES_PER_UNIT=1
 MY_WORKERS=$(( $SLURM_JOB_NUM_NODES / $MY_NODES_PER_UNIT ))
 MY_TASKS_PER_WORKER=$(( $SLURM_NTASKS_PER_NODE * $MY_NODES_PER_UNIT ))
 
-for iBM in  'adi' 'jacobi_1d' 'jacobi_2d' 'fdtd_2d' 'bicg' 'cavity_flow' 'cholesky' 'nbody' 'channel_flow' 'covariance' 'gemm' 'conv2d_bias' 'softmax' 'k2mm' 'atax' 'crc16' 'mandelbrot1' 'seidel_2d' 'hdiff' 'vadv' 'heat_3d' 'scattering_self_energies' 'contour_integral' 'stockham_fft' 'trisolv' 'lu'
+for iBM in 'adi' 'jacobi_1d' 'jacobi_2d' 'fdtd_2d' 'bicg' 'cavity_flow' 'cholesky' 'nbody' 'channel_flow' 'covariance' \
+           'gemm' 'conv2d_bias' 'softmax' 'k2mm' 'atax' 'crc16' 'mandelbrot1' 'seidel_2d' 'hdiff' 'vadv' \
+           'heat_3d' 'scattering_self_energies' 'contour_integral' 'stockham_fft' 'trisolv' 'lu'
 do
   export BM=$iBM
   while true ; do # Scan for a free worker
-    SUBJOBS=`jobs -r | wc -l` # detect how many subjobs are already running
+  	SUBJOBS=`jobs -r | wc -l` # detect how many subjobs are already running
     if [ $SUBJOBS -lt $MY_WORKERS ] ; then  # submit only if at least one worker is free
+	  echo "---jobs"
+	  jobs -r
+	  echo "---end"
       sleep 4 # wait before any submission
       # wrapper could also be an MPI program,`-c $SLURM_CPUS_PER_TASK` is only for OpenMP
       srun -N $MY_NODES_PER_UNIT -n $MY_TASKS_PER_WORKER -J subjob.$BM \
         $CODE/loop.sh 2> $BM.err 1> $BM.out  &
-      break # So "I" will get +1
+      break # So we move to next BM
     fi
   done
 done

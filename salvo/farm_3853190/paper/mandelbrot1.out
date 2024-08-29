@@ -1,0 +1,25 @@
+***** Testing NumPy with mandelbrot1 on the paper dataset *****
+NumPy - default - first/validation: 1350ms
+NumPy - default - median: 1283ms
+***** Testing Numba with mandelbrot1 on the paper dataset *****
+Numba - object-mode - first/validation: 2761ms
+Numba - object-mode - median: 1386ms
+Numba - object-mode-parallel - first/validation: 2456ms
+Numba - object-mode-parallel - median: 1372ms
+Numba - nopython-mode - first/validation: 2847ms
+Numba - nopython-mode - median: 1094ms
+Numba - nopython-mode-parallel - first/validation: 3147ms
+Numba - nopython-mode-parallel - median: 497ms
+Numba - nopython-mode-parallel-range - first/validation: 3209ms
+Numba - nopython-mode-parallel-range - median: 156ms
+***** Testing Pythran with mandelbrot1 on the paper dataset *****
+Pythran compilation time: 7279ms
+Pythran - default - first/validation: 1905ms
+Pythran - default - median: 1919ms
+***** Testing DaCe CPU with mandelbrot1 on the paper dataset *****
+DaCe CPU - fusion - first/validation: 1201ms
+DaCe CPU - fusion - median: 1171ms
+DaCe CPU - parallel - first/validation: 1176ms
+DaCe CPU - parallel - median: 1164ms
+DaCe CPU - auto_opt - first/validation: 784ms
+DaCe CPU - auto_opt - median: 771ms

@@ -1,0 +1,19 @@
+***** Testing NumPy with atax on the paper dataset *****
+NumPy - default - first/validation: 559ms
+NumPy - default - median: 502ms
+***** Testing Numba with atax on the paper dataset *****
+Numba - nopython-mode - first/validation: 1930ms
+Numba - nopython-mode - median: 524ms
+Numba - nopython-mode-parallel - first/validation: 896ms
+Numba - nopython-mode-parallel - median: 524ms
+***** Testing Pythran with atax on the paper dataset *****
+Pythran compilation time: 7803ms
+Pythran - default - first/validation: 562ms
+Pythran - default - median: 502ms
+***** Testing DaCe CPU with atax on the paper dataset *****
+DaCe CPU - fusion - first/validation: 14282ms
+DaCe CPU - fusion - median: 13497ms
+DaCe CPU - parallel - first/validation: 13509ms
+DaCe CPU - parallel - median: 13500ms
+DaCe CPU - auto_opt - first/validation: 13509ms
+DaCe CPU - auto_opt - median: 13494ms

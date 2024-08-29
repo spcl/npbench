@@ -1,0 +1,20 @@
+***** Testing NumPy with nbody on the paper dataset *****
+NumPy - default - first/validation: 492ms
+NumPy - default - median: 501ms
+***** Testing Numba with nbody on the paper dataset *****
+Numba - object-mode - first/validation: 3558ms
+Numba - object-mode - median: 516ms
+Numba - object-mode-parallel - first/validation: 2841ms
+Numba - object-mode-parallel - median: 517ms
+Numba - nopython-mode - first/validation: 14890ms
+Numba - nopython-mode - median: 265ms
+***** Testing Pythran with nbody on the paper dataset *****
+Pythran compilation time: 12225ms
+Failed to load the Pythran implementation.
+***** Testing DaCe CPU with nbody on the paper dataset *****
+DaCe CPU - fusion - first/validation: 711ms
+DaCe CPU - fusion - median: 699ms
+DaCe CPU - parallel - first/validation: 701ms
+DaCe CPU - parallel - median: 699ms
+DaCe CPU - auto_opt - first/validation: 638ms
+DaCe CPU - auto_opt - median: 636ms

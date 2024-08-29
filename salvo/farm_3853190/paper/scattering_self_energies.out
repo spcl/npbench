@@ -1,0 +1,19 @@
+***** Testing NumPy with scattering_self_energies on the paper dataset *****
+NumPy - default - first/validation: 3287ms
+NumPy - default - median: 3247ms
+***** Testing Numba with scattering_self_energies on the paper dataset *****
+Numba - nopython-mode - first/validation: 2265ms
+Numba - nopython-mode - median: 375ms
+Numba - nopython-mode-parallel-range - first/validation: 5572ms
+Numba - nopython-mode-parallel-range - median: 678ms
+***** Testing Pythran with scattering_self_energies on the paper dataset *****
+Pythran compilation time: 6742ms
+Pythran - default - first/validation: 603ms
+Pythran - default - median: 548ms
+***** Testing DaCe CPU with scattering_self_energies on the paper dataset *****
+DaCe CPU - fusion - first/validation: 2878ms
+DaCe CPU - fusion - median: 2872ms
+DaCe CPU - parallel - first/validation: 2872ms
+DaCe CPU - parallel - median: 2870ms
+DaCe CPU - auto_opt - first/validation: 2834ms
+DaCe CPU - auto_opt - median: 2834ms

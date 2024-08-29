@@ -1,0 +1,19 @@
+***** Testing NumPy with adi on the paper dataset *****
+NumPy - default - first/validation: 975ms
+NumPy - default - median: 978ms
+***** Testing Pythran with adi on the paper dataset *****
+Pythran compilation time: 21350ms
+Pythran - default - first/validation: 81ms
+Pythran - default - median: 83ms
+***** Testing DaCe CPU with adi on the paper dataset *****
+DaCe CPU - fusion - first/validation: 149ms
+DaCe CPU - fusion - median: 140ms
+DaCe CPU - parallel - first/validation: 139ms
+DaCe CPU - parallel - median: 140ms
+DaCe CPU - auto_opt - first/validation: 116ms
+DaCe CPU - auto_opt - median: 117ms
+***** Testing Numba with adi on the paper dataset *****
+Numba - nopython-mode - first/validation: 6020ms
+Numba - nopython-mode - median: 103ms
+Numba - nopython-mode-parallel - first/validation: 44958ms
+Numba - nopython-mode-parallel - median: 36979ms

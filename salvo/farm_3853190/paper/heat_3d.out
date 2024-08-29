@@ -1,0 +1,19 @@
+***** Testing NumPy with heat_3d on the paper dataset *****
+NumPy - default - first/validation: 43195ms
+NumPy - default - median: 42236ms
+***** Testing Pythran with heat_3d on the paper dataset *****
+Pythran compilation time: 10276ms
+Pythran - default - first/validation: 20967ms
+Pythran - default - median: 19874ms
+***** Testing Numba with heat_3d on the paper dataset *****
+Numba - nopython-mode - first/validation: 50750ms
+Numba - nopython-mode - median: 47938ms
+Numba - nopython-mode-parallel - first/validation: 5734ms
+Numba - nopython-mode-parallel - median: 1254ms
+***** Testing DaCe CPU with heat_3d on the paper dataset *****
+DaCe CPU - fusion - first/validation: 4959ms
+DaCe CPU - fusion - median: 4998ms
+DaCe CPU - parallel - first/validation: 4889ms
+DaCe CPU - parallel - median: 5016ms
+DaCe CPU - auto_opt - first/validation: 4882ms
+DaCe CPU - auto_opt - median: 5025ms

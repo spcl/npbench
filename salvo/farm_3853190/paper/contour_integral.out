@@ -1,0 +1,50 @@
+***** Testing NumPy with contour_integral on the paper dataset *****
+NumPy - default - first/validation: 1966ms
+NumPy - default - median: 1896ms
+***** Testing Numba with contour_integral on the paper dataset *****
+Numba - nopython-mode - first/validation: 6369ms
+Numba - nopython-mode - median: 2290ms
+Numba - nopython-mode-parallel - first/validation: 6298ms
+Numba - nopython-mode-parallel - median: 2210ms
+Numba - nopython-mode-parallel-range - first/validation: 12448ms
+Numba - nopython-mode-parallel-range - median: 1019ms
+***** Testing Pythran with contour_integral on the paper dataset *****
+Pythran compilation time: 1030ms
+Failed to load the Pythran implementation.
+***** Testing DaCe CPU with contour_integral on the paper dataset *****
+Failed to compile DaCe cpu fusion implementation.
+Compiler failure:
+[ 25%] Building CXX object CMakeFiles/fusion.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/fusion/src/cpu/fusion.cpp.o
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/fusion/src/cpu/fusion.cpp:4:10: fatal error: cblas.h: No such file or directory
+    4 | #include "cblas.h"
+      |          ^~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/fusion.dir/build.make:76: CMakeFiles/fusion.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/fusion/src/cpu/fusion.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:85: CMakeFiles/fusion.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2
+
+Traceback
+Failed to compile DaCe cpu parallel implementation.
+Compiler failure:
+[ 25%] Building CXX object CMakeFiles/parallel.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/parallel/src/cpu/parallel.cpp.o
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/parallel/src/cpu/parallel.cpp:4:10: fatal error: cblas.h: No such file or directory
+    4 | #include "cblas.h"
+      |          ^~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/parallel.dir/build.make:76: CMakeFiles/parallel.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/parallel/src/cpu/parallel.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:85: CMakeFiles/parallel.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2
+
+Traceback
+Failed to compile DaCe cpu auto_opt implementation.
+Compiler failure:
+[ 25%] Building CXX object CMakeFiles/auto_opt.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/auto_opt/src/cpu/auto_opt.cpp.o
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/auto_opt/src/cpu/auto_opt.cpp:4:10: fatal error: cblas.h: No such file or directory
+    4 | #include "cblas.h"
+      |          ^~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/auto_opt.dir/build.make:76: CMakeFiles/auto_opt.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/auto_opt/src/cpu/auto_opt.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:85: CMakeFiles/auto_opt.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2
+
+Traceback

@@ -1,0 +1,89 @@
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/mandelbrot1/mandelbrot1_numba_o.py:11: NumbaWarning: 
+Compilation is falling back to object mode WITHOUT looplifting enabled because Function "mandelbrot" failed type inference due to: No implementation of function Function(<built-in function abs>) found for signature:
+ 
+ >>> abs(array(complex128, 2d, C))
+ 
+There are 6 candidate implementations:
+  - Of which 2 did not match due to:
+  Type Restricted Function in function 'abs': File: unknown: Line unknown.
+    With argument(s): '(array(complex128, 2d, C))':
+   No match for registered cases:
+    * (int8,) -> int8
+    * (int16,) -> int16
+    * (int32,) -> int32
+    * (int64,) -> int64
+    * (uint8,) -> uint8
+    * (uint16,) -> uint16
+    * (uint32,) -> uint32
+    * (uint64,) -> uint64
+    * (float32,) -> float32
+    * (float64,) -> float64
+    * (complex64,) -> float32
+    * (complex128,) -> float64
+  - Of which 4 did not match due to:
+  Overload of function 'abs': File: <numerous>: Line N/A.
+    With argument(s): '(array(complex128, 2d, C))':
+   No match.
+
+During: resolving callee type: Function(<built-in function abs>)
+During: typing of call at /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/mandelbrot1/mandelbrot1_numba_o.py (21)
+
+
+File "../../../npbench/benchmarks/mandelbrot1/mandelbrot1_numba_o.py", line 21:
+def mandelbrot(xmin, xmax, ymin, ymax, xn, yn, maxiter, horizon=2.0):
+    <source elided>
+    for n in range(maxiter):
+        I = np.less(abs(Z), horizon)
+        ^
+
+  @nb.jit(nopython=False, forceobj=True, parallel=False, fastmath=True)
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/mandelbrot1/mandelbrot1_numba_op.py:11: NumbaWarning: 
+Compilation is falling back to object mode WITHOUT looplifting enabled because Function "mandelbrot" failed type inference due to: No implementation of function Function(<built-in function abs>) found for signature:
+ 
+ >>> abs(array(complex128, 2d, C))
+ 
+There are 6 candidate implementations:
+    - Of which 2 did not match due to:
+    Type Restricted Function in function 'abs': File: unknown: Line unknown.
+      With argument(s): '(array(complex128, 2d, C))':
+     No match for registered cases:
+      * (int8,) -> int8
+      * (int16,) -> int16
+      * (int32,) -> int32
+      * (int64,) -> int64
+      * (uint8,) -> uint8
+      * (uint16,) -> uint16
+      * (uint32,) -> uint32
+      * (uint64,) -> uint64
+      * (float32,) -> float32
+      * (float64,) -> float64
+      * (complex64,) -> float32
+      * (complex128,) -> float64
+    - Of which 4 did not match due to:
+    Overload of function 'abs': File: <numerous>: Line N/A.
+      With argument(s): '(array(complex128, 2d, C))':
+     No match.
+
+During: resolving callee type: Function(<built-in function abs>)
+During: typing of call at /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/mandelbrot1/mandelbrot1_numba_op.py (21)
+
+
+File "../../../npbench/benchmarks/mandelbrot1/mandelbrot1_numba_op.py", line 21:
+def mandelbrot(xmin, xmax, ymin, ymax, xn, yn, maxiter, horizon=2.0):
+    <source elided>
+    for n in range(maxiter):
+        I = np.less(abs(Z), horizon)
+        ^
+
+  @nb.jit(nopython=False, forceobj=True, parallel=True, fastmath=True)
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/mandelbrot1/mandelbrot1_numba_np.py:26: NumbaPerformanceWarning: 
+The keyword argument 'parallel=True' was specified but no transformation for parallel execution was possible.
+
+To find out why, try turning on parallel diagnostics, see https://numba.readthedocs.io/en/stable/user/parallel.html#diagnostics for help.
+
+File "../../../npbench/benchmarks/mandelbrot1/mandelbrot1_numba_np.py", line 12:
+@nb.jit(nopython=True, parallel=True, fastmath=True)
+def linspace(start, stop, num, dtype):
+^
+
+  X = linspace(xmin, xmax, xn, dtype=np.float64)

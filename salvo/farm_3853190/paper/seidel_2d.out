@@ -1,0 +1,19 @@
+***** Testing NumPy with seidel_2d on the paper dataset *****
+NumPy - default - first/validation: 13504ms
+NumPy - default - median: 13394ms
+***** Testing Numba with seidel_2d on the paper dataset *****
+Numba - nopython-mode - first/validation: 1281ms
+Numba - nopython-mode - median: 136ms
+Numba - nopython-mode-parallel - first/validation: 13524ms
+Numba - nopython-mode-parallel - median: 11869ms
+***** Testing Pythran with seidel_2d on the paper dataset *****
+Pythran compilation time: 7698ms
+Pythran - default - first/validation: 116ms
+Pythran - default - median: 117ms
+***** Testing DaCe CPU with seidel_2d on the paper dataset *****
+DaCe CPU - fusion - first/validation: 159ms
+DaCe CPU - fusion - median: 151ms
+DaCe CPU - parallel - first/validation: 151ms
+DaCe CPU - parallel - median: 150ms
+DaCe CPU - auto_opt - first/validation: 154ms
+DaCe CPU - auto_opt - median: 154ms

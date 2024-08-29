@@ -1,0 +1,127 @@
+CRITICAL: I am in trouble. Your input file does not seem to match Pythran's constraints...
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/../../npbench/benchmarks/contour_integral/contour_integral_pythran.py:19:16 error: Attribute 'solve' unknown
+----
+            X = np.linalg.solve(Tz, Y)
+                ^~~~ (o_0)
+----
+
+Traceback (most recent call last):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared//npb-lrz/run_benchmark.py", line 57, in <module>
+    test.run(args["preset"], args["validate"], args["repeat"], args["timeout"])
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/test.py", line 88, in run
+    for impl, impl_name in self.frmwrk.implementations(self.bench):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/pythran_framework.py", line 45, in implementations
+    raise (e)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/pythran_framework.py", line 40, in implementations
+    foo = importlib.util.module_from_spec(spec)
+  File "<frozen importlib._bootstrap>", line 571, in module_from_spec
+  File "<frozen importlib._bootstrap_external>", line 1176, in create_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+ImportError: /hppfs/scratch/07/di52vum/tmp/tmp7jde6jyq/contour_integral_pythran.so: cannot open shared object file: No such file or directory
+srun: error: i01r03c03s08: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=3853190.74
+Traceback (most recent call last):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 232, in configure_and_compile
+    _run_liveoutput("cmake --build . --config %s" % (Config.get('compiler', 'build_type')),
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 416, in _run_liveoutput
+    raise subprocess.CalledProcessError(process.returncode, command, output.getvalue())
+subprocess.CalledProcessError: Command 'cmake --build . --config RelWithDebInfo' returned non-zero exit status 2.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/dace_framework.py", line 274, in implementations
+    dc_exec, compile_time = util.benchmark("__npb_result = sdfg.compile()",
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/utilities.py", line 140, in benchmark
+    output = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 239, in repeat
+    return Timer(stmt, setup, timer, globals).repeat(repeat, number)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 206, in repeat
+    t = self.timeit(number)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 178, in timeit
+    timing = self.inner(it, self.timer)
+  File "<timeit-src>", line 6, in inner
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/sdfg/sdfg.py", line 2253, in compile
+    shared_library = compiler.configure_and_compile(program_folder, sdfg.name)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 241, in configure_and_compile
+    raise cgx.CompilationError('Compiler failure:\n' + ex.output)
+dace.codegen.exceptions.CompilationError: Compiler failure:
+[ 25%] Building CXX object CMakeFiles/fusion.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/fusion/src/cpu/fusion.cpp.o
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/fusion/src/cpu/fusion.cpp:4:10: fatal error: cblas.h: No such file or directory
+    4 | #include "cblas.h"
+      |          ^~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/fusion.dir/build.make:76: CMakeFiles/fusion.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/fusion/src/cpu/fusion.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:85: CMakeFiles/fusion.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2
+
+Traceback (most recent call last):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 232, in configure_and_compile
+    _run_liveoutput("cmake --build . --config %s" % (Config.get('compiler', 'build_type')),
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 416, in _run_liveoutput
+    raise subprocess.CalledProcessError(process.returncode, command, output.getvalue())
+subprocess.CalledProcessError: Command 'cmake --build . --config RelWithDebInfo' returned non-zero exit status 2.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/dace_framework.py", line 274, in implementations
+    dc_exec, compile_time = util.benchmark("__npb_result = sdfg.compile()",
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/utilities.py", line 140, in benchmark
+    output = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 239, in repeat
+    return Timer(stmt, setup, timer, globals).repeat(repeat, number)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 206, in repeat
+    t = self.timeit(number)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 178, in timeit
+    timing = self.inner(it, self.timer)
+  File "<timeit-src>", line 6, in inner
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/sdfg/sdfg.py", line 2253, in compile
+    shared_library = compiler.configure_and_compile(program_folder, sdfg.name)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 241, in configure_and_compile
+    raise cgx.CompilationError('Compiler failure:\n' + ex.output)
+dace.codegen.exceptions.CompilationError: Compiler failure:
+[ 25%] Building CXX object CMakeFiles/parallel.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/parallel/src/cpu/parallel.cpp.o
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/parallel/src/cpu/parallel.cpp:4:10: fatal error: cblas.h: No such file or directory
+    4 | #include "cblas.h"
+      |          ^~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/parallel.dir/build.make:76: CMakeFiles/parallel.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/parallel/src/cpu/parallel.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:85: CMakeFiles/parallel.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2
+
+Traceback (most recent call last):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 232, in configure_and_compile
+    _run_liveoutput("cmake --build . --config %s" % (Config.get('compiler', 'build_type')),
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 416, in _run_liveoutput
+    raise subprocess.CalledProcessError(process.returncode, command, output.getvalue())
+subprocess.CalledProcessError: Command 'cmake --build . --config RelWithDebInfo' returned non-zero exit status 2.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/dace_framework.py", line 274, in implementations
+    dc_exec, compile_time = util.benchmark("__npb_result = sdfg.compile()",
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/utilities.py", line 140, in benchmark
+    output = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 239, in repeat
+    return Timer(stmt, setup, timer, globals).repeat(repeat, number)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 206, in repeat
+    t = self.timeit(number)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 178, in timeit
+    timing = self.inner(it, self.timer)
+  File "<timeit-src>", line 6, in inner
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/sdfg/sdfg.py", line 2253, in compile
+    shared_library = compiler.configure_and_compile(program_folder, sdfg.name)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 241, in configure_and_compile
+    raise cgx.CompilationError('Compiler failure:\n' + ex.output)
+dace.codegen.exceptions.CompilationError: Compiler failure:
+[ 25%] Building CXX object CMakeFiles/auto_opt.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/auto_opt/src/cpu/auto_opt.cpp.o
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/auto_opt/src/cpu/auto_opt.cpp:4:10: fatal error: cblas.h: No such file or directory
+    4 | #include "cblas.h"
+      |          ^~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/auto_opt.dir/build.make:76: CMakeFiles/auto_opt.dir/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/salvo/farm_3853190/paper/.dacecache/auto_opt/src/cpu/auto_opt.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:85: CMakeFiles/auto_opt.dir/all] Error 2
+gmake: *** [Makefile:91: all] Error 2
+

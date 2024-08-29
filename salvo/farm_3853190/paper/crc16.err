@@ -1,0 +1,33 @@
+/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/numba/core/typed_passes.py:336: NumbaPerformanceWarning: 
+The keyword argument 'parallel=True' was specified but no transformation for parallel execution was possible.
+
+To find out why, try turning on parallel diagnostics, see https://numba.readthedocs.io/en/stable/user/parallel.html#diagnostics for help.
+
+File "../../../npbench/benchmarks/crc16/crc16_numba_np.py", line 7:
+@nb.jit(nopython=True, parallel=True, fastmath=True)
+def crc16(data, poly=0x8408):
+^
+
+  warnings.warn(errors.NumbaPerformanceWarning(msg,
+Traceback (most recent call last):
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/dace_framework.py", line 274, in implementations
+    dc_exec, compile_time = util.benchmark("__npb_result = sdfg.compile()",
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/infrastructure/utilities.py", line 140, in benchmark
+    output = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 239, in repeat
+    return Timer(stmt, setup, timer, globals).repeat(repeat, number)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 206, in repeat
+    t = self.timeit(number)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/timeit.py", line 178, in timeit
+    timing = self.inner(it, self.timer)
+  File "<timeit-src>", line 6, in inner
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/sdfg/sdfg.py", line 2262, in compile
+    return compiler.get_program_handle(shared_library, sdfg)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiler.py", line 373, in get_program_handle
+    return csd.CompiledSDFG(sdfg, lib, sdfg.arg_names)
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiled_sdfg.py", line 188, in __init__
+    lib.load()  # Explicitly load the library
+  File "/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/dace/codegen/compiled_sdfg.py", line 127, in load
+    raise RuntimeError(f'Could not load library {os.path.basename(self._library_filename)}. {reason}')
+RuntimeError: Could not load library libfusion.so. Reason:
+

@@ -1,0 +1,19 @@
+***** Testing NumPy with trisolv on the paper dataset *****
+NumPy - default - first/validation: 195ms
+NumPy - default - median: 136ms
+***** Testing Numba with trisolv on the paper dataset *****
+Numba - nopython-mode - first/validation: 689ms
+Numba - nopython-mode - median: 103ms
+Numba - nopython-mode-parallel - first/validation: 360ms
+Numba - nopython-mode-parallel - median: 102ms
+***** Testing Pythran with trisolv on the paper dataset *****
+Pythran compilation time: 5033ms
+Pythran - default - first/validation: 100ms
+Pythran - default - median: 100ms
+***** Testing DaCe CPU with trisolv on the paper dataset *****
+DaCe CPU - fusion - first/validation: 2155ms
+DaCe CPU - fusion - median: 2142ms
+DaCe CPU - parallel - first/validation: 2172ms
+DaCe CPU - parallel - median: 2142ms
+DaCe CPU - auto_opt - first/validation: 2149ms
+DaCe CPU - auto_opt - median: 2141ms

@@ -1,0 +1,54 @@
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_o.py:6: NumbaWarning: 
+Compilation is falling back to object mode WITHOUT looplifting enabled because Function conv2d failed at nopython mode lowering due to: No definition for lowering <function sum at 0x14df84fd8b80>(Array(float32, 5, 'C', False, aligned=True), Tuple((Literal[int](1), Literal[int](2), Literal[int](3)))) -> array(float32, 4d, C)
+  @nb.jit(nopython=False, forceobj=True, parallel=False, fastmath=True)
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_o.py:6: NumbaWarning: 
+Compilation is falling back to object mode WITHOUT looplifting enabled because Function conv2d failed at nopython mode lowering due to: No definition for lowering <function sum at 0x14df84fd8b80>(Array(float32, 5, 'C', False, aligned=True), Tuple((Literal[int](1), Literal[int](2), Literal[int](3)))) -> array(float32, 4d, C)
+  @nb.jit(nopython=False, forceobj=True, parallel=False, fastmath=True)
+/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/numba/core/typed_passes.py:336: NumbaPerformanceWarning: 
+The keyword argument 'parallel=True' was specified but no transformation for parallel execution was possible.
+
+To find out why, try turning on parallel diagnostics, see https://numba.readthedocs.io/en/stable/user/parallel.html#diagnostics for help.
+
+File "../../../npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_op.py", line 16:
+def conv2d(input, weights):
+    <source elided>
+    # Loop structure adapted from https://github.com/SkalskiP/ILearnDeepLearning.py/blob/ba0b5ba589d4e656141995e8d1a06d44db6ce58d/01_mysteries_of_neural_networks/06_numpy_convolutional_neural_net/src/layers/convolutional.py#L88
+    for i in range(H_out):
+    ^
+
+  warnings.warn(errors.NumbaPerformanceWarning(msg,
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_op.py:6: NumbaWarning: 
+Compilation is falling back to object mode WITHOUT looplifting enabled because Function conv2d failed at nopython mode lowering due to: No definition for lowering <function sum at 0x14df84fd8b80>(Array(float32, 5, 'C', False, aligned=True), Tuple((Literal[int](1), Literal[int](2), Literal[int](3)))) -> array(float32, 4d, C)
+  @nb.jit(nopython=False, forceobj=True, parallel=True, fastmath=True)
+/hppfs/work/pr28fi/di38jil/npb-shared/conda-npb/lib/python3.10/site-packages/numba/core/typed_passes.py:336: NumbaPerformanceWarning: 
+The keyword argument 'parallel=True' was specified but no transformation for parallel execution was possible.
+
+To find out why, try turning on parallel diagnostics, see https://numba.readthedocs.io/en/stable/user/parallel.html#diagnostics for help.
+
+File "../../../npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_op.py", line 16:
+def conv2d(input, weights):
+    <source elided>
+    # Loop structure adapted from https://github.com/SkalskiP/ILearnDeepLearning.py/blob/ba0b5ba589d4e656141995e8d1a06d44db6ce58d/01_mysteries_of_neural_networks/06_numpy_convolutional_neural_net/src/layers/convolutional.py#L88
+    for i in range(H_out):
+    ^
+
+  warnings.warn(errors.NumbaPerformanceWarning(msg,
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_op.py:6: NumbaWarning: 
+Compilation is falling back to object mode WITHOUT looplifting enabled because Function conv2d failed at nopython mode lowering due to: No definition for lowering <function sum at 0x14df84fd8b80>(Array(float32, 5, 'C', False, aligned=True), UniTuple(int64, 3)) -> array(float32, 4d, C)
+  @nb.jit(nopython=False, forceobj=True, parallel=True, fastmath=True)
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_opr.py:6: NumbaWarning: 
+Compilation is falling back to object mode WITHOUT looplifting enabled because Function "conv2d" failed type inference due to: non-precise type pyobject
+During: typing of argument at /hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_opr.py (16)
+
+File "../../../npbench/benchmarks/deep_learning/conv2d_bias/conv2d_numba_opr.py", line 16:
+def conv2d(input, weights):
+    <source elided>
+    # Loop structure adapted from https://github.com/SkalskiP/ILearnDeepLearning.py/blob/ba0b5ba589d4e656141995e8d1a06d44db6ce58d/01_mysteries_of_neural_networks/06_numpy_convolutional_neural_net/src/layers/convolutional.py#L88
+    for i in nb.prange(H_out):
+    ^
+
+  @nb.jit(nopython=False, forceobj=True, parallel=True, fastmath=True)
+slurmstepd: error: *** STEP 3853190.89 ON i01r03c04s01 CANCELLED AT 2024-08-29T16:35:17 DUE TO TIME LIMIT ***
+srun: error: i01r03c04s01: task 0: Terminated
+srun: launch/slurm: _step_signal: Terminating StepId=3853190.89
+srun: Force Terminated StepId=3853190.89
