@@ -1,9 +1,9 @@
 {
     "framework": {
-        "simple_name": "dpcpp",
-        "full_name": "DPC++",
+        "simple_name": "dpnp",
+        "full_name": "Dpnp",
         "prefix": "dp",
-        "postfix": "dpcpp",
+        "postfix": "dpnp",
         "class": "DpcppFramework",
         "arch": "gpu"
     }
