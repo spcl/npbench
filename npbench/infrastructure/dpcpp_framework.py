@@ -1,7 +1,7 @@
 import os
 import pathlib
 import tempfile
-import dpnp as np
+#import dpnp as np
 from npbench.infrastructure import Benchmark, Framework, utilities as util
 from typing import Any, Callable, Dict, Sequence, Tuple
 
@@ -14,13 +14,17 @@ class DpcppFramework(Framework):
 
     def version(self) -> str:
         """ Returns the Dpnp version. """
-        return np.__version__
-
+        try:
+            dpnp = __import__('dpnp')
+            return dpnp.__version__
+        except ImportError:
+            return "DPNP not installed"
+ 
     def imports(self) -> Dict[str, Any]:
         """ Returns the required imports for Dpnp. """
         import dpnp
         return {'dpnp': dpnp}
-
+ 
     def copy_func(self) -> Callable:
         """ Returns the copy method for Dpnp, typically dpnp.asarray. """
         import dpnp

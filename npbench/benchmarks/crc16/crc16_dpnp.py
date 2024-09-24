@@ -1,4 +1,5 @@
-import dpnp as np
+import numpy as np
+import dpnp
 
 def crc16(data, poly=0x8408):
     '''
@@ -7,7 +8,7 @@ def crc16(data, poly=0x8408):
     crc = 0xFFFF
     
     # Convert the data to a dpnp array for device execution
-    data_np = np.asarray(data, dtype=np.uint8)
+    data_np = np.asarray(data, dtype=np.int32)
     
     for b in data_np:
         cur_byte = 0xFF & b
