@@ -4,7 +4,7 @@
         "full_name": "Numba-DPEx",
         "prefix": "ndpx",
         "postfix": "numba_dpex",
-        "class": "NumbaDPExFramework",
+        "class": "NumbaDpexFramework",
         "arch": "gpu"
     }
 }
