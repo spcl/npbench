@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "numba_dpex",
+        "full_name": "Numba-DPEx",
+        "prefix": "ndpx",
+        "postfix": "numba_dpex",
+        "class": "NumbaDpexFramework",
+        "arch": "gpu"
+    }
+}
