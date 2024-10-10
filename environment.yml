@@ -1,4 +1,4 @@
-name: req
+name: conda-npb
 channels:
   - https://software.repos.intel.com/python/conda
   - conda-forge
@@ -11,4 +11,4 @@ dependencies:
   - numba
   - pandas
   - scipy
-prefix: /home/ubuntu/miniconda3/envs/req
+  - numba-dpex
