@@ -1,12 +1,13 @@
-name: conda-npb
+name: npb
 channels:
-  - https://software.repos.intel.com/python/conda
   - conda-forge
+  - https://software.repos.intel.com/python/conda
+  - defaults
 dependencies:
-  - python=3.10
-  - dpnp
+  - python=3.10.14
   - numpy=1.26.4
   - dace
+  - pythran
   - matplotlib
   - numba
   - pandas

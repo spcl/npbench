@@ -1,4 +1,0 @@
-slurmstepd: error: *** STEP 3853190.88 ON i01r03c03s11 CANCELLED AT 2024-08-29T16:35:17 DUE TO TIME LIMIT ***
-srun: error: i01r03c03s11: task 0: Terminated
-srun: launch/slurm: _step_signal: Terminating StepId=3853190.88
-srun: Force Terminated StepId=3853190.88

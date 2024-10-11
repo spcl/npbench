@@ -1,14 +1,8 @@
-name: req
-channels:
-  - https://software.repos.intel.com/python/conda
-  - conda-forge
-dependencies:
-  - python=3.10
-  - dpnp
-  - numpy=1.24.4
-  - dace
-  - matplotlib
-  - numba
-  - pandas
-  - scipy
-prefix: /home/ubuntu/miniconda3/envs/req
+numpy=1.26.4
+dace
+matplotlib
+numba
+pandas
+scipy
+pythran
+numba-dpex

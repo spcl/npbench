@@ -1,2 +1,0 @@
-/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/npbench/benchmarks/polybench/lu/lu_numba_n.py:10: NumbaPerformanceWarning: '@' is faster on contiguous arrays, called on (Array(float64, 1, 'C', False, aligned=True), Array(float64, 1, 'A', False, aligned=True))
-  A[i, j] -= A[i, :j] @ A[:j, j]

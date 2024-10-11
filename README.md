@@ -3,17 +3,16 @@
 
 ## Quickstart
 
-To install NPBench, simply execute:
+To install this branch NPBench including dpnp/numba-dpex, use conda!
 ```
-python -m pip install -r requirements.txt
-python -m pip install .
+conda env create -f environment.yml 
 ```
-You can then run a subset of the benchmarks with NumPy, Numba, and DaCe and plot
-the speedup of DaCe and Numba against NumPy:
+Better to install most packages in one go, to avoid environment mismatches.
+
+You can then run a subset of the benchmarks with NumPy, Numba, DaCe, Dpnp and Numba-dpex,
+and plot the speedup of DaCe and Numba against NumPy:
 ```
-python -m pip install numba
-python -m pip install dace
-python quickstart.py
+python main.py
 python plot_results.py
 ```
 
@@ -22,15 +21,16 @@ python plot_results.py
 Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
 - DaCe
+- Dpnp
 - Numba
+- Numba-dpex
 - NumPy
 - Pythran
 
 Support will also be added shortly for:
 - Legate
 
-Please note that the NPBench setup only installs NumPy.
-To run benchmarks with other frameworks, you have to install them separately.
+Please note that the NPBench setup installs all frameworks except CuPy.
 Below, we provide some tips about installing each of the above frameworks:
 
 ### CuPy
@@ -44,33 +44,6 @@ For example, if you have CUDA 11.1, then you should install CuPy with:
 python -m pip install cupy-cuda111
 ```
 For more installation options, consult the CuPy [installation guide](https://docs.cupy.dev/en/stable/install.html#install-cupy).
-
-### DaCe
-
-DaCe can be install with pip:
-```
-python -m pip install dace
-```
-However, you may want to install the latest version from the [GitHub repository](https://github.com/spcl/dace).
-To run NPBench with DaCe, you have to select as framework (see details below)
-either `dace_cpu` or `dace_gpu`.
-
-### Numba
-
-Numba can be installed with pip:
-```
-python -m pip install numba
-```
-If you use Anaconda on an Intel-based machine, then you can install an optimized version of Numba that uses Intel SVML:
-```
-conda install -c numba icc_rt
-```
-For more installation options, please consult the Numba [installation guide](https://numba.readthedocs.io/en/stable/user/installing.html).
-
-### Pythran
-
-Pythran can be install with pip and Anaconda. For detailed installation options, please consult the Pythran [installation guide](https://pythran.readthedocs.io/en/latest/).
-
 
 ## Running benchmarks
 
