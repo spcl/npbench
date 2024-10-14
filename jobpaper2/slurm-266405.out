@@ -1,0 +1,39 @@
+Unloading mpi_settings/1.0 <S>
+  ERROR: Unload of sticky module skipped
+
+Unloading lrz/1.0 <S>
+  ERROR: Unload of sticky module skipped
+
+Unloading tempdir/1.0 <S>
+  ERROR: Unload of sticky module skipped
+
+Unloading admin/2.0 <S>
+  ERROR: Unload of sticky module skipped
+INFO: Anaconda does not work correctly with EAR.
+      Deactivate EAR in your batch script by adding the following line:
+      #SBATCH --ear=off
+Loading intel-oneapi-compilers/2024.1.0-gcc7
+  ERROR: Module cannot be loaded due to a conflict.
+    HINT: Might try "module unload intel" first.
+ERROR: Unable to locate a modulefile for 'openblas'
+Currently Loaded Modulefiles:
+ 1) admin/2.0(default) <S>          7) slurm_setup/1.0(default)  
+ 2) tempdir/1.0(default) <S>        8) anaconda3/2024.06-1       
+ 3) lrz/1.0(default) <S>            9) git/2.42.0                
+ 4) mpi_settings/1.0(default) <S>  10) cmake/3.27.7              
+ 5) spack/24.1.1                   11) gmake/4.4.1               
+ 6) intel/2024.0.0(default)        
+
+Key:
+(symbolic-version)  <module-tag>  <S>=sticky  
+saving file in directory: /hppfs/work/pr28fi/di38jil/npb-lrz/jobpaper1
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/plot_lines.py:24: FutureWarning: The provided callable <function min at 0x149af910d000> is currently using SeriesGroupBy.min. In a future version of pandas, the provided callable will be used directly. To keep current behavior pass the string "min" instead.
+  dropna=False).agg({
+/hppfs/work/pr28fi/di38jil/npb-shared/npb-lrz/plot_lines.py:63: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  numbers[f] = numbers[f] - numbers['numpy']
+['dace_cpu', 'numba', 'numpy', 'pythran']
+saving file in: /hppfs/work/pr28fi/di38jil/npb-lrz/jobpaper1
