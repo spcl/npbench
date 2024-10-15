@@ -5,29 +5,61 @@ import tempfile
 from npbench.infrastructure import Benchmark, Framework, utilities as util
 from typing import Any, Callable, Dict, Sequence, Tuple
 
-class DpcppFramework(Framework):
-    """ A class for reading and processing framework information specific to DPC++/Dpnp. """
+class DpnpFramework(Framework):
+    """ A class for DPC++/DPNP framework supporting both CPU and GPU selection. """
 
     def __init__(self, fname: str):
         """ Initializes the DPC++ framework with the provided name. """
         super().__init__(fname)
+        self.device_type = None  # Store the device type based on the framework
 
     def version(self) -> str:
         """ Returns the Dpnp version. """
-        return np.__version__
+        try:
+            dpnp = __import__('dpnp')
+            return dpnp.__version__
+        except ImportError:
+            return "DPNP not installed"
 
     def imports(self) -> Dict[str, Any]:
-        """ Returns the required imports for Dpnp. """
+        """ Returns the required imports for Dpnp and dpctl. """
         import dpnp
-        return {'dpnp': dpnp}
+        import dpctl
+        return {'dpnp': dpnp, 'dpctl': dpctl}
+
+    def select_device(self):
+        """ Selects the default SYCL device based on the framework name (CPU or GPU). """
+        imports = self.imports()  # Ensure imports are correctly fetched
+        dpctl = imports['dpctl']
+
+        # Identify the framework type and select the appropriate device
+        if self.fname == "dpnp_cpu":
+            # Select CPU device
+            cpu_device = dpctl.select_cpu_device()
+            print(f"Selected CPU device: {cpu_device}")
+            return cpu_device
+        elif self.fname == "dpnp_gpu":
+            # Select GPU device
+            gpu_device = dpctl.select_gpu_device()
+            print(f"Selected GPU device: {gpu_device}")
+            return gpu_device
+        else:
+            # Default device (use dpctl to select default, usually GPU if available)
+            default_device = dpctl.select_default_device()
+            print(f"Selected default device: {default_device}")
+            return default_device
 
     def copy_func(self) -> Callable:
-        """ Returns the copy method for Dpnp, typically dpnp.asarray. """
-        import dpnp
-        return dpnp.asarray
+        """ Returns the copy method for Dpnp, and ensures array creation is on the selected device. """
+        imports = self.imports()  # Import dpnp and dpctl
+        dpnp = imports['dpnp']  # Access dpnp from the imports
+        device = self.select_device()  # Select the device dynamically
+
+        # Ensure that dpnp.asarray uses the selected device
+        return lambda x: dpnp.asarray(x, device=device)
 
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
-        """ Generates the setup-string, typically for copying data to the device. """
+        """ Generates the setup-string, typically for copying data to the selected device. """
         if len(bench.info["array_args"]):
             arg_str = self.out_arg_str(bench, impl)
             copy_args = ["__npb_copy({})".format(a) for a in bench.info["array_args"]]
@@ -35,29 +67,29 @@ class DpcppFramework(Framework):
         return "pass"
 
     def exec_str(self, bench: Benchmark, impl: Callable = None):
-        """ Generates the execution-string for Dpnp. """
+        """ Generates the execution-string for Dpnp, ensuring it runs on the selected device. """
         arg_str = self.arg_str(bench, impl)
         main_exec_str = "__npb_result = __npb_impl({a})".format(a=arg_str)
-        # Synchronization might not be necessary, but if Dpnp supports it, add it here.
-        # sync_str = "dpnp.synchronize()"  # Uncomment if dpnp has synchronization
-        return main_exec_str  # + "; " + sync_str if synchronization is needed
+        return main_exec_str
 
     def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
         """ Returns the implementations specific to Dpnp for a particular benchmark. """
-        module_pypath = "npbench.benchmarks.{r}.{m}".format(r=bench.info["relative_path"].replace('/', '.'),
-                                                            m=bench.info["module_name"])
-        if "postfix" in self.info.keys():
-            postfix = self.info["postfix"]
-        else:
-            postfix = self.fname
-        module_str = "{m}_{p}".format(m=module_pypath, p=postfix)
+        # Always load the benchmark from the common dpnp file
+        module_pypath = "npbench.benchmarks.{r}.{m}".format(
+            r=bench.info["relative_path"].replace('/', '.'),
+            m=bench.info["module_name"]
+        )
+        
+        # Keep the module name the same, like `benchmark_name_dpnp`
+        module_str = "{m}_dpnp".format(m=module_pypath)
         func_str = bench.info["func_name"]
 
         ldict = dict()
         try:
-            exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
+            # Load the same implementation regardless of CPU or GPU, and set device later
+            exec(f"from {module_str} import {func_str} as impl", ldict)
         except Exception as e:
-            print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=func_str))
+            print(f"Failed to load the {self.fname} implementation of {func_str}.")
             raise e
 
         return [(ldict['impl'], 'default')]
