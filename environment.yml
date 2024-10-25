@@ -2,10 +2,10 @@ name: npb
 channels:
   - conda-forge
   - https://software.repos.intel.com/python/conda
-  - defaults
+  - defaults        # you can either remove or put "defaults" channel last; the important thing is that conda won't try to use it
 dependencies:
   - python=3.10.14
-  - numpy=1.26.4
+  - numpy=1.26.4    # dpnp theoretically requires numpy<=1.24.4, numba-dpex numpy>=1.26.4; seems that 1.26.4 works fine even dor dpnp
   - dace
   - pythran
   - matplotlib

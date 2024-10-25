@@ -1,20 +1,127 @@
 <img src="npbench.svg" alt="npbench-logo" width="100"/>
 <h1>NPBench</h1>
 
-## Quickstart
+<br>
+<br>
 
-To install this branch NPBench including dpnp/numba-dpex, use conda!
-```
-conda env create -f environment.yml 
-```
-Better to install most packages in one go, to avoid environment mismatches.
 
-You can then run a subset of the benchmarks with NumPy, Numba, DaCe, Dpnp and Numba-dpex,
-and plot the speedup of DaCe and Numba against NumPy:
+- [Installation](#installation)
+  - [on SuperMUC-NG Phase 1](#on-supermuc-ng-phase-1)
+  - [on SuperMUC-NG Phase 2](#on-supermuc-ng-phase-2)
+  - [Conda env without licensing issues](#conda-env-without-licensing-issues)
+- [Supported Frameworks](#supported-frameworks)
+  - [CuPy](#cupy)
+- [Running benchmarks](#running-benchmarks)
+  - [Presets](#presets)
+  - [Visualization](#visualization)
+- [Customization](#customization)
+- [Publication](#publication)
+- [Acknowledgements](#acknowledgements)
+
+
+
+
+## Installation 
+
+To install this branch NPBench, including dpnp/numba-dpex, we can use conda for most of the packages and pip for dpnp itself.
+
+<br>
+<br>
+<br>
+
+
+
+
+### on SuperMUC-NG Phase 1
+
+On SuperMUC-NG Phase 1 with Spack 22.2.1:
+
+```bash
+# suppose you have set up internet connection correctly
+$ env | grep -iE "HTTP_|HTTPS_"
+    HTTP_PROXY=localhost:1234
+    https_proxy=localhost:1234
+    http_proxy=localhost:1234
+    HTTPS_PROXY=localhost:1234
+$ module list spack
+    Currently Loaded Matching Modulefiles:
+        1) spack/22.2.1  
+
+    Key:
+    default-version  
+$ conda env create -f environment.yml       # environment.yml contains all the right dependencies
+$ python -m pip --proxy=http://localhost:1234 install dpnp      # where "localhost:1234" is the value of the env var "HTTP_PROXY"
 ```
-python main.py
-python plot_results.py
+
+<br>
+<br>
+<br>
+
+
+
+
+### on SuperMUC-NG Phase 2
+
+
+On SuperMUC-NG Phase 2, in addition to what shown for Phase 1, you either 
+
+- swap from Spack 24.1.0 to Spack 22.2.1 (currently not available however)
+- install with pip also the package pygount => you need to set up internet connection with SSH Remote Forward
+
+Here we show the second way:
+
+```bash
+# suppose you have set up internet connection correctly
+$ env | grep -iE "HTTP_|HTTPS_"
+    HTTP_PROXY=localhost:1234
+    https_proxy=localhost:1234
+    http_proxy=localhost:1234
+    HTTPS_PROXY=localhost:1234
+$ module list spack
+    Currently Loaded Modulefiles:
+    1) admin/2.0   2) tempdir/1.0   3) lrz/1.0   4) mpi_settings/1.0   5) user_spack/24.1.0   6) lrztools/2.0  
+
+    Key:
+    default-version  sticky  
+$ conda env create -f environment.yml       # environment.yml contains all the right dependencies
+$ python -m pip --proxy=http://localhost:1234 install pygount dpnp      # where "localhost:1234" is the value of the env var "HTTP_PROXY"
 ```
+
+
+
+
+
+### Conda env without licensing issues
+
+Creating the conda environment without licensing issues:
+
+1. download & install miniconda (or something similar)
+2. conda init as normal
+3. edit .condarc
+4. modify the channels an put them in this order:
+
+```yaml
+channel:
+  - https://software.repos.intel.com/python/conda
+  - conda-forge
+  - defaults              #  you can either remove or put this "defaults" channel last; the important thing is that conda won't try to use this channel
+```
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+
+
+
 
 ## Supported Frameworks
 
@@ -33,6 +140,13 @@ Support will also be added shortly for:
 Please note that the NPBench setup installs all frameworks except CuPy.
 Below, we provide some tips about installing each of the above frameworks:
 
+<br>
+<br>
+<br>
+
+
+
+
 ### CuPy
 
 If you already have CUDA installed, then you can install CuPy with pip:
@@ -45,23 +159,63 @@ python -m pip install cupy-cuda111
 ```
 For more installation options, consult the CuPy [installation guide](https://docs.cupy.dev/en/stable/install.html#install-cupy).
 
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
 ## Running benchmarks
 
-To run individual bencharks, you can use the `run_benchmark` script:
+You can then run a subset of the benchmarks with NumPy, Numba, DaCe, Dpnp and Numba-dpex,
+and plot the speedup of DaCe and Numba against NumPy:
+
+```bash
+$ python main.py
+$ python plot_results.py
 ```
-python run_benchmark.py -b <benchmark> -f <framework>
+
+To run individual bencharks, you can use the `$ run_benchmark` script:
+
+```bash
+$ python run_benchmark.py -b <benchmark> -f <framework>
 ```
-The available benchmarks are listed in the `bench_info` folder.
-The supported frameworks are listed in the `framework_info` folder.
-Please use the corresponding JSON filenames.
+
+- the available benchmarks are listed in the `bench_info` folder
+- the supported frameworks are listed in the `framework_info` folder
+- lease use the corresponding JSON filenames for both of them
+
+
 For example, to run `adi` with NumPy, execute the following:
+
+```bash
+$ python run_benchmark.py -b adi -f numpy
 ```
-python run_benchmark.py -b adi -f numpy
-```
+
 You can run all the available benchmarks with a specific framework using the `run_framework` script:
-```
+
+```bash
 python run_framework.py -f <framework>
 ```
+
+<br>
+<br>
+<br>
+
+
+
+
 
 ### Presets
 
@@ -74,18 +228,45 @@ tuned for 5, 20 and 100ms approximately due to very high memory requirements.
 The `paper` preset is the problem sizes used in the NPBench [paper](http://spcl.inf.ethz.ch/Publications/index.php?pub=412).
 By default, the provided python scripts execute the benchmarks using the `S` preset.
 You can select a different preset with the optional `-p` flag:
-```
+
+```bash
 python run_benchmark.py -b gemm -f numpy -p L
 ```
+
+<br>
+<br>
+<br>
+
+
+
 
 ### Visualization
 
 After running some benchmarks with different frameworks, you can generate plots
 of the speedups and line-count differences (experimental) against NumPy:
+
+
+```bash
+$ python plot_results.py
+$ python plot_lines.py
 ```
-python plot_results.py
-python plot_lines.py
-```
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+
+
+
+
 
 ## Customization
 
