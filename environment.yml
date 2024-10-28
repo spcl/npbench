@@ -13,3 +13,4 @@ dependencies:
   - pandas
   - scipy
   - numba-dpex
+  - dpnp

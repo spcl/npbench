@@ -6,8 +6,9 @@
 
 
 - [Installation](#installation)
-  - [on SuperMUC-NG Phase 1](#on-supermuc-ng-phase-1)
-  - [on SuperMUC-NG Phase 2](#on-supermuc-ng-phase-2)
+  - [...on a VM in the LRZ Compute Cloud (with only VCPUs or with Nvidia v100 GPUs)](#on-a-vm-in-the-lrz-compute-cloud-with-only-vcpus-or-with-nvidia-v100-gpus)
+  - [...on SuperMUC-NG Phase 1](#on-supermuc-ng-phase-1)
+  - [...on SuperMUC-NG Phase 2](#on-supermuc-ng-phase-2)
   - [Conda env without licensing issues](#conda-env-without-licensing-issues)
 - [Supported Frameworks](#supported-frameworks)
   - [CuPy](#cupy)
@@ -23,8 +24,18 @@
 
 ## Installation 
 
+First of all, put a copy of this directory where you want to run the benchmarkings; you can use scp, git or whatever other way you prefer.
+
 To install this branch NPBench, including dpnp/numba-dpex, we can use conda for most of the packages and pip for dpnp itself.
 
+NOTE: You could, in line of principle, install DPNP with Pip, but if you do so, it will not see the GPUs!
+
+```bash
+$ python -m pip --proxy=http://localhost:1234 install dpnp      # where "localhost:1234" is the value of the env var "HTTP_PROXY"
+```
+
+NOTE: On SuperMUC-NG Phase 1/2, you need to have internet connection (to allow conda/pip to download packages) => SSH Remote Forward
+
 <br>
 <br>
 <br>
@@ -32,9 +43,36 @@ To install this branch NPBench, including dpnp/numba-dpex, we can use conda for 
 
 
 
-### on SuperMUC-NG Phase 1
 
-On SuperMUC-NG Phase 1 with Spack 22.2.1:
+
+### ...on a VM in the LRZ Compute Cloud (with only VCPUs or with Nvidia v100 GPUs)
+
+On a CC instance, we have internet connection => no SSH Remote Forward necessary.<br>
+However, there are no modules to be loaded, so we need to install oneAPI with get:
+
+
+```bash
+$ conda env create -f environment.yml 
+$ wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e6ff8e9c-ee28-47fb-abd7-5c524c983e1c/l_BaseKit_p_2024.2.1.100_offline.sh
+```
+
+
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+
+
+
+### ...on SuperMUC-NG Phase 1
+
+On SuperMUC-NG Phase 1, with Spack 22.2.1:
 
 ```bash
 # suppose you have set up internet connection correctly
@@ -49,8 +87,7 @@ $ module list spack
 
     Key:
     default-version  
-$ conda env create -f environment.yml       # environment.yml contains all the right dependencies
-$ python -m pip --proxy=http://localhost:1234 install dpnp      # where "localhost:1234" is the value of the env var "HTTP_PROXY"
+$ conda env create -f environment.yml                             # environment.yml contains all the right dependencies
 ```
 
 <br>
@@ -60,13 +97,16 @@ $ python -m pip --proxy=http://localhost:1234 install dpnp      # where "localho
 
 
 
-### on SuperMUC-NG Phase 2
+
+
+
+### ...on SuperMUC-NG Phase 2
 
 
 On SuperMUC-NG Phase 2, in addition to what shown for Phase 1, you either 
 
 - swap from Spack 24.1.0 to Spack 22.2.1 (currently not available however)
-- install with pip also the package pygount => you need to set up internet connection with SSH Remote Forward
+- install with pip the package pygount
 
 Here we show the second way:
 
@@ -83,9 +123,19 @@ $ module list spack
 
     Key:
     default-version  sticky  
-$ conda env create -f environment.yml       # environment.yml contains all the right dependencies
-$ python -m pip --proxy=http://localhost:1234 install pygount dpnp      # where "localhost:1234" is the value of the env var "HTTP_PROXY"
+$ conda env create -f environment.yml                           # environment.yml contains all the right dependencies
+$ python -m pip --proxy=http://localhost:1234 install pygrount  # where "localhost:1234" is the value of the env var "HTTP_PROXY"
 ```
+
+
+
+<br>
+<br>
+<br>
+
+
+
+
 
 
 
@@ -112,6 +162,15 @@ channel:
 <br>
 <br>
 <br>
+
+
+
+
+
+
+
+
+
 
 
 
