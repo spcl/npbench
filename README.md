@@ -52,7 +52,8 @@ However, there are no modules to be loaded, so we need to install oneAPI with ge
 
 
 ```bash
-$ conda env create -f environment.yml 
+$ conda env create -f environment.yml
+$ pip install pygount 
 $ wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e6ff8e9c-ee28-47fb-abd7-5c524c983e1c/l_BaseKit_p_2024.2.1.100_offline.sh
 ```
 
@@ -88,6 +89,7 @@ $ module list spack
     Key:
     default-version  
 $ conda env create -f environment.yml                             # environment.yml contains all the right dependencies
+$ python -m pip --proxy=http://localhost:1234 install pygount  # where "localhost:1234" is the value of the env var "HTTP_PROXY"
 ```
 
 <br>
@@ -124,7 +126,7 @@ $ module list spack
     Key:
     default-version  sticky  
 $ conda env create -f environment.yml                           # environment.yml contains all the right dependencies
-$ python -m pip --proxy=http://localhost:1234 install pygrount  # where "localhost:1234" is the value of the env var "HTTP_PROXY"
+$ python -m pip --proxy=http://localhost:1234 install pygount  # where "localhost:1234" is the value of the env var "HTTP_PROXY"
 ```
 
 
