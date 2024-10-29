@@ -48,7 +48,7 @@ NOTE: On SuperMUC-NG Phase 1/2, you need to have internet connection (to allow c
 ### ...on a VM in the LRZ Compute Cloud (with only VCPUs or with Nvidia v100 GPUs)
 
 On a CC instance, we have internet connection => no SSH Remote Forward necessary.<br>
-However, there are no modules to be loaded, so we need to install oneAPI with get:
+However, there are no modules to be loaded, so we need to install oneAPI with get, also nvidia plugin must be added to detect the gpus:
 
 
 ```bash
