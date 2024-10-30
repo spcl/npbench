@@ -1,3 +1,8 @@
+.DS_Store
+*/.DS_Store
+npbench.db
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
