@@ -34,19 +34,28 @@ class DpnpFramework(Framework):
 
         # Identify the framework type and select the appropriate device
         if self.fname == "dpnp_cpu":
-            # Select CPU device
+        # Select CPU device
             cpu_device = dpctl.select_cpu_device()
+            selector = f"{cpu_device.backend.name}:{cpu_device.device_type.name}"
+            os.environ['ONEAPI_DEVICE_SELECTOR'] = selector
             print(f"Selected CPU device: {cpu_device}")
+            print(f"Set ONEAPI_DEVICE_SELECTOR to {selector}")
             return cpu_device
         elif self.fname == "dpnp_gpu":
-            # Select GPU device
+        # Select GPU device
             gpu_device = dpctl.select_gpu_device()
+            selector = f"{gpu_device.backend.name}:{gpu_device.device_type.name}"
+            os.environ['ONEAPI_DEVICE_SELECTOR'] = selector
             print(f"Selected GPU device: {gpu_device}")
+            print(f"Set ONEAPI_DEVICE_SELECTOR to {selector}")
             return gpu_device
         else:
-            # Default device (use dpctl to select default, usually GPU if available)
+        # Default device (usually GPU if available)
             default_device = dpctl.select_default_device()
+            selector = f"{default_device.backend.name}:{default_device.device_type.name}"
+            os.environ['ONEAPI_DEVICE_SELECTOR'] = selector
             print(f"Selected default device: {default_device}")
+            print(f"Set ONEAPI_DEVICE_SELECTOR to {selector}")
             return default_device
 
     def copy_func(self) -> Callable:
