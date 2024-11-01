@@ -66,6 +66,12 @@ class DpnpFramework(Framework):
 
         # Ensure that dpnp.asarray uses the selected device
         return lambda x: dpnp.asarray(x, device=device)
+    
+    def copy_back_func(self) -> Callable:
+        """ Returns the copy-back method for Dpnp, ensuring the array is copied back to the host. """
+        imports = self.imports()
+        dpnp = imports['dpnp']
+        return lambda x: dpnp.asnumpy(x)
 
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
         """ Generates the setup-string, typically for copying data to the selected device. """
