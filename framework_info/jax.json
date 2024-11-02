@@ -4,7 +4,7 @@
         "full_name": "Jax",
         "prefix": "jax",
         "postfix": "jax",
-        "class": "Framework",
+        "class": "JaxFramework",
         "arch": "cpu"
     }
 }
