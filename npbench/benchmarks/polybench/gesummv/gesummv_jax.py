@@ -4,4 +4,4 @@ import jax.numpy as jnp
 @jax.jit
 def kernel(alpha, beta, A: jax.Array, B: jax.Array, x: jax.Array):
 
-    return alpha * A @ x + beta * B @ x
+    return (alpha * A + beta * B) @ x
