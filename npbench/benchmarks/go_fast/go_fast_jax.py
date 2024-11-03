@@ -5,7 +5,8 @@ import jax.numpy as jnp
 
 @jax.jit
 def go_fast(a: jax.Array):
-    trace = jnp.float64(0)
-    for i in range(a.shape[0]):
-        trace += jnp.tanh(a[i, i])
+    # Calculate the trace of the tanh of the diagonal elements
+    trace = jnp.sum(jnp.tanh(jnp.diag(a)))
+
+    # Add the result to the original matrix
     return a + trace
