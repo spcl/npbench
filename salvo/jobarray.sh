@@ -2,19 +2,22 @@
 #SBATCH -D jd
 #SBATCH -p test
 #SBATCH --account=pr28fi --ntasks=1 --ear=off
-#SBATCH -J dpnp
-#SBATCH --array=1-26 -d singleton
-##SBATCH --export=NONE  ## Added these ones, should be safer (get a new clean environment on the compute nodes)
+#SBATCH -J dpnp_cpu
+#SBATCH --array=1-26
+##SBATCH -d singleton
+#SBATCH --export=NONE  ## Added these ones, should be safer (get a new clean environment on the compute nodes)
 ##SBATCH --get-user-env
 
-SZ=paper
+SZ=paper && VAL=0 && RR=10  && TT=100  # PRODUCTION
+#SZ=M     && VAL=1 && RR=1   && TT=5000 # VALIDATION (comment to toggle)
+
 FW=$SLURM_JOB_NAME
 
 module purge
-module swap spack/24.1.1
+module swap spack/23
 module load intel
 module load slurm_setup
-module load anaconda3
+#module load anaconda3
 module load git
 module load cmake
 module load gmake
@@ -24,17 +27,20 @@ module list
 BMS=('adi' 'jacobi_1d' 'jacobi_2d' 'fdtd_2d' 'bicg' 'cavity_flow' \
      'cholesky' 'nbody' 'channel_flow' 'covariance' 'gemm' 'conv2d_bias' \
      'softmax' 'k2mm' 'atax' 'crc16' 'mandelbrot1' 'seidel_2d' 'hdiff' \
-     'vadv' 'heat_3d' 'scattering_self_energies' 'contour_intergral' 'stockham_fft'\
+     'vadv' 'heat_3d' 'scattering_self_energies' 'contour_integral' 'stockham_fft'\
      'trisolv' 'lu' )
 
-source activate /dss/dsshome1/07/di52vum/.conda/envs/npb
+source deactivate
+conda activate npb
+
 BASE=${HOME}/npb-lrz
 IDX=$(( ${SLURM_ARRAY_TASK_ID} - 1 ))
 BM=${BMS[${IDX}]}
 
-mkdir -p $SZ
-cd $SZ
+## If python is wrong, check the spack version and the conda commands via salloc
+which python3
+mkdir -p $SZ ; cd $SZ
 
-python ${BASE}/run_benchmark.py -p $SZ -v 1 -r 10 -b ${BM} -f $FW -t 100 2> ${BM}_${FW}.err
+python3 ${BASE}/run_benchmark.py -p $SZ -v $VAL -r $RR -b ${BM} -f $FW -t $TT  1> ${BM}_${FW}.out 2> ${BM}_${FW}.err
 
 exit
