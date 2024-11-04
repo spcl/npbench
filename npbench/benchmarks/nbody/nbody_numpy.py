@@ -75,7 +75,7 @@ def getEnergy(pos, vel, mass, G):
 
     # sum over upper triangle, to count each interaction only once
     # PE = G * np.sum(np.sum(np.triu(-(mass*mass.T)*inv_r,1)))
-    PE = G * np.sum(np.triu(-(mass * mass.T) * inv_r))
+    PE = G * np.sum(np.triu(-(mass * mass.T) * inv_r, 1))
 
     return KE, PE
 

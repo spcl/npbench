@@ -38,7 +38,7 @@ if __name__ == "__main__":
         'vadv'
     ]
 
-    frameworks = ["numpy", "numba", "pythran"]
+    frameworks = ["numpy", "numba"]
     if args['dace']:
         frameworks.append("dace_cpu")
 

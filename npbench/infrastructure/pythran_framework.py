@@ -30,7 +30,7 @@ class PythranFramework(Framework):
         somod_path = os.path.join(tmpdir.name, bench.info["module_name"] + "_pythran.so")
 
         compile_str = ("os.system(\"pythran -DUSE_XSIMD -fopenmp -march=native " +
-                       "-ffast-math {pp} -o {sp} $OPENBLAS_INC\")".format(pp=pymod_path, sp=somod_path))
+                       "-ffast-math {pp} -o {sp}\")".format(pp=pymod_path, sp=somod_path))
         try:
             _, compile_time = util.benchmark(compile_str, out_text="Pythran compilation time", context=globals())
             fe_time = compile_time[0]

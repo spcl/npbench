@@ -1,4 +1,3 @@
-import os
 import argparse
 import math
 import pandas as pd
@@ -105,21 +104,14 @@ data = data[data['validated'] == True]
 data = data.drop(['validated'], axis=1).reset_index(drop=True)
 
 # Filter by preset
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# SC: if a single numpy does not validate,
-# this fails. Commented for safety
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#data = data[data['preset'] == args['preset']]
-#data = data.drop(['preset'], axis=1).reset_index(drop=True)
-#frmwrks = list(data['framework'].unique())
-#print(frmwrks)
+data = data[data['preset'] == args['preset']]
+data = data.drop(['preset'], axis=1).reset_index(drop=True)
 
 # for each framework and benchmark, choose only the best details,mode (based on median runtime), then get rid of those
-aggdata = data.groupby(
-            ["benchmark", "domain", "framework", "mode", "details"],
-            dropna=False).agg({
-            "time": "median"
-             }).reset_index()
+aggdata = data.groupby(["benchmark", "domain", "framework", "mode", "details"],
+                       dropna=False).agg({
+                           "time": np.median
+                       }).reset_index()
 best = aggdata.sort_values("time").groupby(
     ["benchmark", "domain", "framework", "mode"],
     dropna=False).first().reset_index()
@@ -130,21 +122,14 @@ data = pd.merge(left=bestgroup,
                 right=data,
                 on=["benchmark", "domain", "framework", "mode", "details"],
                 how="inner")  # do a join on data and best
-
 data = data.drop(['mode', 'details'], axis=1).reset_index(drop=True)
 
 frmwrks = list(data['framework'].unique())
-#print(frmwrks)
+print(frmwrks)
 assert ('numpy' in frmwrks)
 frmwrks.remove('numpy')
 frmwrks.append('numpy')
 lfilter = ['benchmark', 'domain'] + frmwrks
-
-
-## SC: attempt to print to CSV
-grouped = data.groupby(['preset', 'framework'])
-for k, gr in grouped:
-    gr.to_csv('-'.join(k)+'.csv',sep=" ", header=False, columns=["benchmark", "time","id" ], index=False)
 
 # get improvement over numpy (keep times in best_wide_time for numpy column), reorder columns
 best_wide = best.pivot_table(index=["benchmark", "domain"],
@@ -157,7 +142,7 @@ for f in frmwrks:
 
 # compute ci-size for each
 cidata = data.groupby(["benchmark", "domain", "framework"], dropna=False).agg({
-    "time": [bootstrap_ci, "median"]
+    "time": [bootstrap_ci, np.median]
 }).reset_index()
 cidata.columns = ['_'.join(col).strip() for col in cidata.columns.values]
 cidata['perc'] = (cidata['time_bootstrap_ci'] / cidata['time_median']) * 100
@@ -313,7 +298,7 @@ for i in range(len(best_wide['benchmark'])):
                             fontsize=8)
 
 ax1.set_ylabel("Benchmarks", labelpad=0)
-print("saving file in directory:",os.getcwd())
+
 plt.tight_layout()
-plt.savefig("heatmap.png", dpi=600)
-#plt.show()
+plt.savefig("heatmap.pdf", dpi=600)
+plt.show()

@@ -1,4 +1,3 @@
-import os
 import math
 import pandas as pd
 import numpy as np
@@ -126,7 +125,6 @@ plt.setp(ax0.get_xticklabels(),
          ha="right",
          rotation_mode="anchor")
 
-print("saving file in:", os.getcwd())
 plt.tight_layout()
 plt.savefig("plot2.pdf", dpi=600)
-#plt.show()
+plt.show()
