@@ -101,10 +101,6 @@ class Test(object):
             valid = True
             if validate and np_out is not None:
                 try:
-                    if isinstance(frmwrk_out, (tuple, list)):
-                        frmwrk_out = [self.frmwrk.copy_back_func()(a) for a in frmwrk_out]
-                    else:
-                        frmwrk_out = self.frmwrk.copy_back_func()(frmwrk_out)
                     frmwrk_name = self.frmwrk.info["full_name"]
 
                     rtol = 1e-5 if not 'rtol' in self.bench.info else self.bench.info['rtol']
