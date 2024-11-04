@@ -52,51 +52,17 @@ class NumbaDpexFramework(Framework):
         # No explicit synchronization required; Numba DPEX executes synchronously
         return main_exec_str
 
-#    def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
-#        module_pypath = f"npbench.benchmarks.{bench.info['relative_path'].replace('/', '.')}.{bench.info['module_name']}"
-#        postfix = self.info.get("postfix", self.fname)
-#        module_str = f"{module_pypath}_{postfix}"
-#        func_str = bench.info["func_name"]
-
-#        ldict = {}
-#        try:
-#            exec(f"from {module_str} import {func_str} as impl", ldict)
-#        except Exception as e:
-#            print(f"Failed to load the {self.info['full_name']} {func_str} implementation.")
-#            raise e
-
-#        return [(ldict['impl'], 'default')]
     def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
-        """ Returns the framework's implementations for a particular benchmark.
-        :param bench: A benchmark.
-        :returns: A list of the benchmark implementations.
-        """
-
-        module_pypath = "npbench.benchmarks.{r}.{m}".format(
-            r=bench.info["relative_path"].replace('/', '.'), 
-            m=bench.info["module_name"]
-        )
-    
-        if "postfix" in self.info.keys():
-            postfix = self.info["postfix"]
-        else:
-            postfix = self.fname
-        
-        module_str = "{m}_{p}".format(m=module_pypath, p=postfix)
+        module_pypath = f"npbench.benchmarks.{bench.info['relative_path'].replace('/', '.')}.{bench.info['module_name']}"
+        postfix = self.info.get("postfix", self.fname)
+        module_str = f"{module_pypath}_{postfix}"
         func_str = bench.info["func_name"]
 
-        ldict = dict()
+        ldict = {}
         try:
-            exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
+            exec(f"from {module_str} import {func_str} as impl", ldict)
         except Exception as e:
-            print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=func_str))
+            print(f"Failed to load the {self.info['full_name']} {func_str} implementation.")
             raise e
-    
-        # Check if the implementation is for DPEX and adjust if necessary
-        impl = ldict['impl']
-        if self.info.get("framework_name") == "numba-dpex":
-            # Here you might include additional setup or checks
-            if not hasattr(impl, '__dpex_kernel__'):
-                raise ValueError(f"The implementation {func_str} is not marked as a DPEX kernel.")
 
-        return [(impl, 'default')]
+        return [(ldict['impl'], 'default')]
