@@ -23,50 +23,30 @@ class DpnpFramework(Framework):
 
     def imports(self) -> Dict[str, Any]:
         """ Returns the required imports for Dpnp and dpctl. """
-        import dpnp
         import dpctl
+        import dpnp
         return {'dpnp': dpnp, 'dpctl': dpctl}
 
     def select_device(self):
         """ Selects the default SYCL device based on the framework name (CPU or GPU). """
+        if   self.fname == "dpnp_cpu":
+            os.environ["ONEAPI_DEVICE_SELECTOR"] ="*:cpu"
+        elif self.fname == "dpnp_gpu":
+            os.environ["ONEAPI_DEVICE_SELECTOR"] ="*:gpu"
+        else:
+            os.environ["ONEAPI_DEVICE_SELECTOR"] ="*:*"
         imports = self.imports()  # Ensure imports are correctly fetched
         dpctl = imports['dpctl']
-
-        # Identify the framework type and select the appropriate device
-        if self.fname == "dpnp_cpu":
-        # Select CPU device
-            cpu_device = dpctl.select_cpu_device()
-            selector = f"{cpu_device.backend.name}:{cpu_device.device_type.name}"
-            os.environ['ONEAPI_DEVICE_SELECTOR'] = selector
-            print(f"Selected CPU device: {cpu_device}")
-            print(f"Set ONEAPI_DEVICE_SELECTOR to {selector}")
-            return cpu_device
-        elif self.fname == "dpnp_gpu":
-        # Select GPU device
-            gpu_device = dpctl.select_gpu_device()
-            selector = f"{gpu_device.backend.name}:{gpu_device.device_type.name}"
-            os.environ['ONEAPI_DEVICE_SELECTOR'] = selector
-            print(f"Selected GPU device: {gpu_device}")
-            print(f"Set ONEAPI_DEVICE_SELECTOR to {selector}")
-            return gpu_device
-        else:
-        # Default device (usually GPU if available)
-            default_device = dpctl.select_default_device()
-            selector = f"{default_device.backend.name}:{default_device.device_type.name}"
-            os.environ['ONEAPI_DEVICE_SELECTOR'] = selector
-            print(f"Selected default device: {default_device}")
-            print(f"Set ONEAPI_DEVICE_SELECTOR to {selector}")
-            return default_device
+        return dpctl.select_default_device()
 
     def copy_func(self) -> Callable:
         """ Returns the copy method for Dpnp, and ensures array creation is on the selected device. """
         imports = self.imports()  # Import dpnp and dpctl
         dpnp = imports['dpnp']  # Access dpnp from the imports
         device = self.select_device()  # Select the device dynamically
-
         # Ensure that dpnp.asarray uses the selected device
         return lambda x: dpnp.asarray(x, device=device)
-    
+
     def copy_back_func(self) -> Callable:
         """ Returns the copy-back method for Dpnp, ensuring the array is copied back to the host. """
         imports = self.imports()
@@ -94,7 +74,7 @@ class DpnpFramework(Framework):
             r=bench.info["relative_path"].replace('/', '.'),
             m=bench.info["module_name"]
         )
-        
+
         # Keep the module name the same, like `benchmark_name_dpnp`
         module_str = "{m}_dpnp".format(m=module_pypath)
         func_str = bench.info["func_name"]
