@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "dpnp_gpu",
+        "full_name": "Dpnp_GPU",
+        "prefix": "dpg",
+        "postfix": "dpnp_gpu",
+        "class": "DpnpFramework",
+        "arch": "gpu"
+    }
+}

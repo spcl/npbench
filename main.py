@@ -32,13 +32,17 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
 
     benchmarks = [
-        'adi', 'arc_distance', 'atax', 'azimint_naive', 'bicg', 'cavity_flow',
-        'cholesky2', 'compute', 'doitgen', 'floyd_warshall', 'gemm', 'gemver',
-        'gesummv', 'go_fast', 'hdiff', 'jacobi_2d', 'lenet', 'syr2k', 'trmm',
-        'vadv'
+                'adi', 'jacobi_1d', 'jacobi_2d', 'fdtd_2d', 'bicg', 'cavity_flow',
+        'cholesky', 'nbody', 'channel_flow', 'covariance', 'gemm', 'conv2d_bias',
+        'softmax', 'k2mm', 'atax', 'crc16', 'mandelbrot1', 'seidel_2d', 'hdiff',
+        'vadv','heat_3d','scattering_self_energies','contour_intergral','stockham_fft'
+        ,'trisolv','lu'
+
     ]
 
-    frameworks = ["numpy", "numba", "pythran"]
+    frameworks = ["numpy", "numba","dpnp"]
+#    frameworks = ["pythran"]
+#    frameworks = []
     if args['dace']:
         frameworks.append("dace_cpu")
 

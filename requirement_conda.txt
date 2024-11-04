@@ -1,0 +1,8 @@
+numpy=1.26.4
+dace
+matplotlib
+numba
+pandas
+scipy
+pythran
+numba-dpex

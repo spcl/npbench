@@ -1,7 +1,5 @@
-# Adapted from https://github.com/pmocz/nbody-python/blob/master/nbody.py
-# TODO: Add GPL-3.0 License
+import dpnp as np
 
-import numpy as np
 """
 Create Your Own N-body Simulation (With Python)
 Philip Mocz (2020) Princeton Univeristy, @PMocz
@@ -116,3 +114,4 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
         KE[i + 1], PE[i + 1] = getEnergy(pos, vel, mass, G)
 
     return KE, PE
+
