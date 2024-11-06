@@ -33,14 +33,6 @@ class JaxFramework(Framework):
         """
 
         arg_str = self.arg_str(bench, impl)
-        # param_str = self.param_str(bench, impl)
-        main_exec_str = "__npb_result = __npb_impl({a})".format(a=arg_str)
-        sync_str = """
-if isinstance(__npb_result, jax.Array):
-    __npb_result.block_until_ready()
-elif isinstance(__npb_result, tuple):
-    for item in __npb_result:
-        if isinstance(item, jax.Array):
-            item.block_until_ready()
-"""
-        return main_exec_str + sync_str
+        main_exec_str = "__npb_result = jax.block_until_ready(__npb_impl({a}))".format(a=arg_str)
+    
+        return main_exec_str
