@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH -D jd
 #SBATCH -p test
-#SBATCH --account=pr28fi --ntasks=1 --ear=off
+#SBATCH -A pr28fi --ntasks-per-node=1 --ear=off
 #SBATCH -J dpnp_cpu
 #SBATCH --array=1-26
-##SBATCH -d singleton
-#SBATCH --export=NONE  ## Added these ones, should be safer (get a new clean environment on the compute nodes)
+#SBATCH -d singleton
+##SBATCH --export=NONE
 ##SBATCH --get-user-env
 
 SZ=paper && VAL=0 && RR=10  && TT=100  # PRODUCTION
@@ -14,7 +14,7 @@ SZ=paper && VAL=0 && RR=10  && TT=100  # PRODUCTION
 FW=$SLURM_JOB_NAME
 
 module purge
-module swap spack/23
+module swap spack/latest
 module load intel
 module load slurm_setup
 #module load anaconda3
