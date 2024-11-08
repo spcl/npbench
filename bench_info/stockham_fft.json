@@ -9,18 +9,49 @@
         "domain": "Other",
         "dwarf": "spectral_methods",
         "parameters": {
-            "S": { "R":  2, "K": 15 },
-            "M": { "R":  2, "K": 18 },
-            "L": { "R":  2, "K": 21 },
-            "paper": { "R":  4, "K": 10 }
+            "S": {
+                "R": 2,
+                "K": 15
+            },
+            "M": {
+                "R": 2,
+                "K": 18
+            },
+            "L": {
+                "R": 2,
+                "K": 21
+            },
+            "paper": {
+                "R": 4,
+                "K": 10
+            }
         },
         "init": {
             "func_name": "initialize",
-            "input_args": ["R", "K"],
-            "output_args": ["N", "x", "y"]
+            "input_args": [
+                "R",
+                "K"
+            ],
+            "output_args": [
+                "N",
+                "x",
+                "y"
+            ]
         },
-        "input_args": ["N", "R", "K", "x", "y"],
-        "array_args": ["x", "y"],
-        "output_args": ["y"]
+        "input_args": [
+            "N",
+            "R",
+            "K",
+            "x",
+            "y"
+        ],
+        "array_args": [
+            "x",
+            "y"
+        ],
+        "output_args": [
+            "y"
+        ],
+        "autotuner_name": "autotuner"
     }
 }

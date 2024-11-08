@@ -9,18 +9,49 @@
         "domain": "Signals",
         "dwarf": "monte_carlo",
         "parameters": {
-            "S": { "M": 2000, "N": 2000 },
-            "M": { "M": 5000, "N": 5000 },
-            "L": { "M": 16000, "N": 16000 },
-            "paper": { "M": 12500, "N": 12500 }
+            "S": {
+                "M": 2000,
+                "N": 2000
+            },
+            "M": {
+                "M": 5000,
+                "N": 5000
+            },
+            "L": {
+                "M": 16000,
+                "N": 16000
+            },
+            "paper": {
+                "M": 12500,
+                "N": 12500
+            }
         },
         "init": {
             "func_name": "initialize",
-            "input_args": ["M", "N"],
-            "output_args": ["array_1", "array_2", "a", "b", "c"]
+            "input_args": [
+                "M",
+                "N"
+            ],
+            "output_args": [
+                "array_1",
+                "array_2",
+                "a",
+                "b",
+                "c"
+            ]
         },
-        "input_args": ["array_1", "array_2", "a", "b", "c"],
-        "array_args": ["array_1", "array_2"],
-        "output_args": []
+        "input_args": [
+            "array_1",
+            "array_2",
+            "a",
+            "b",
+            "c"
+        ],
+        "array_args": [
+            "array_1",
+            "array_2"
+        ],
+        "output_args": [],
+        "autotuner_name": "autotuner"
     }
 }

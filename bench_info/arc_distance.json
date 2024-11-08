@@ -9,18 +9,44 @@
         "domain": "kernels",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "N": 100000 },
-            "M": { "N": 1000000 },
-            "L": { "N": 10000000 },
-            "paper": { "N": 10000000 }
+            "S": {
+                "N": 100000
+            },
+            "M": {
+                "N": 1000000
+            },
+            "L": {
+                "N": 10000000
+            },
+            "paper": {
+                "N": 10000000
+            }
         },
         "init": {
             "func_name": "initialize",
-            "input_args": ["N"],
-            "output_args": ["theta_1", "phi_1", "theta_2", "phi_2"]
+            "input_args": [
+                "N"
+            ],
+            "output_args": [
+                "theta_1",
+                "phi_1",
+                "theta_2",
+                "phi_2"
+            ]
         },
-        "input_args": ["theta_1", "phi_1", "theta_2", "phi_2"],
-        "array_args": ["theta_1", "phi_1", "theta_2", "phi_2"],
-        "output_args": []
+        "input_args": [
+            "theta_1",
+            "phi_1",
+            "theta_2",
+            "phi_2"
+        ],
+        "array_args": [
+            "theta_1",
+            "phi_1",
+            "theta_2",
+            "phi_2"
+        ],
+        "output_args": [],
+        "autotuner_name": "autotuner"
     }
 }

@@ -9,18 +9,35 @@
         "domain": "Other",
         "dwarf": "combinatorial",
         "parameters": {
-            "S": { "N": 1600 },
-            "M": { "N": 16000 },
-            "L": { "N": 160000 },
-            "paper": { "N": 1000000 }
+            "S": {
+                "N": 1600
+            },
+            "M": {
+                "N": 16000
+            },
+            "L": {
+                "N": 160000
+            },
+            "paper": {
+                "N": 1000000
+            }
         },
         "init": {
             "func_name": "initialize",
-            "input_args": ["N"],
-            "output_args": ["data"]
+            "input_args": [
+                "N"
+            ],
+            "output_args": [
+                "data"
+            ]
         },
-        "input_args": ["data"],
-        "array_args": ["data"],
-        "output_args": []
+        "input_args": [
+            "data"
+        ],
+        "array_args": [
+            "data"
+        ],
+        "output_args": [],
+        "autotuner_name": "autotuner"
     }
 }

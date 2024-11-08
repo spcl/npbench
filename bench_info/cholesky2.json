@@ -9,18 +9,37 @@
         "domain": "Solver",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "N": 1000 },
-            "M": { "N": 2200 },
-            "L": { "N": 8000 },
-            "paper": { "N": 2000 }
+            "S": {
+                "N": 1000
+            },
+            "M": {
+                "N": 2200
+            },
+            "L": {
+                "N": 8000
+            },
+            "paper": {
+                "N": 2000
+            }
         },
         "init": {
             "func_name": "initialize",
-            "input_args": ["N"],
-            "output_args": ["A"]
+            "input_args": [
+                "N"
+            ],
+            "output_args": [
+                "A"
+            ]
         },
-        "input_args": ["A"],
-        "array_args": ["A"],
-        "output_args": ["A"]
+        "input_args": [
+            "A"
+        ],
+        "array_args": [
+            "A"
+        ],
+        "output_args": [
+            "A"
+        ],
+        "autotuner_name": "autotuner"
     }
 }

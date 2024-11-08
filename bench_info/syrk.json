@@ -9,18 +9,49 @@
         "domain": "LinAlg",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "M": 50, "N": 70 },
-            "M": { "M": 150, "N": 200 },
-            "L": { "M": 500, "N": 600 },
-            "paper": { "M": 1000, "N": 1200 }
+            "S": {
+                "M": 50,
+                "N": 70
+            },
+            "M": {
+                "M": 150,
+                "N": 200
+            },
+            "L": {
+                "M": 500,
+                "N": 600
+            },
+            "paper": {
+                "M": 1000,
+                "N": 1200
+            }
         },
         "init": {
             "func_name": "initialize",
-            "input_args": ["M", "N"],
-            "output_args": ["alpha", "beta", "C", "A"]
+            "input_args": [
+                "M",
+                "N"
+            ],
+            "output_args": [
+                "alpha",
+                "beta",
+                "C",
+                "A"
+            ]
         },
-        "input_args": ["alpha", "beta", "C", "A"],
-        "array_args": ["C", "A"],
-        "output_args": ["C"]
+        "input_args": [
+            "alpha",
+            "beta",
+            "C",
+            "A"
+        ],
+        "array_args": [
+            "C",
+            "A"
+        ],
+        "output_args": [
+            "C"
+        ],
+        "autotuner_name": "autotuner"
     }
 }

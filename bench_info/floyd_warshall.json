@@ -9,18 +9,37 @@
         "domain": "Graphs",
         "dwarf": "dynamic_programming",
         "parameters": {
-            "S": { "N": 200 },
-            "M": { "N": 400 },
-            "L": { "N": 850 },
-            "paper": { "N": 2800 }
+            "S": {
+                "N": 200
+            },
+            "M": {
+                "N": 400
+            },
+            "L": {
+                "N": 850
+            },
+            "paper": {
+                "N": 2800
+            }
         },
         "init": {
             "func_name": "initialize",
-            "input_args": ["N"],
-            "output_args": ["path"]
+            "input_args": [
+                "N"
+            ],
+            "output_args": [
+                "path"
+            ]
         },
-        "input_args": ["path"],
-        "array_args": ["path"],
-        "output_args": ["path"]
+        "input_args": [
+            "path"
+        ],
+        "array_args": [
+            "path"
+        ],
+        "output_args": [
+            "path"
+        ],
+        "autotuner_name": "autotuner"
     }
 }

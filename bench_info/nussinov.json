@@ -9,18 +9,36 @@
         "domain": "Chemistry",
         "dwarf": "dynamic_programming",
         "parameters": {
-            "S": { "N": 40 },
-            "M": { "N": 90 },
-            "L": { "N": 200 },
-            "paper": { "N": 500 }
+            "S": {
+                "N": 40
+            },
+            "M": {
+                "N": 90
+            },
+            "L": {
+                "N": 200
+            },
+            "paper": {
+                "N": 500
+            }
         },
         "init": {
             "func_name": "initialize",
-            "input_args": ["N"],
-            "output_args": ["seq"]
+            "input_args": [
+                "N"
+            ],
+            "output_args": [
+                "seq"
+            ]
         },
-        "input_args": ["N", "seq"],
-        "array_args": ["seq"],
-        "output_args": []
+        "input_args": [
+            "N",
+            "seq"
+        ],
+        "array_args": [
+            "seq"
+        ],
+        "output_args": [],
+        "autotuner_name": "autotuner"
     }
 }
