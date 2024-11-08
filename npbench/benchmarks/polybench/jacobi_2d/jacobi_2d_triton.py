@@ -1,28 +1,8 @@
 import triton
-import triton.language as tl
-import itertools
 import torch
+from npbench.infrastructure.triton_framework import TritonFramework
 
-# Automatically generate configurations based on block sizes
-# Define possible block sizes to explore
-block_sizes = [
-    4,
-    8,
-    16,
-    32,
-    64,
-    128
-]
-warp_counts = [1, 2, 4, 8, 16]
-# Automatically generate configurations based on block sizes
-configs = [
-    triton.Config({"BLOCK_SIZE_X": x, "BLOCK_SIZE_Y": y}, num_warps=w)
-    for x, y, w in list(itertools.product(block_sizes, block_sizes, warp_counts))
-    if w * 32 <= x * y and x * y <= 1024 and (x * y) % (w * 32) == 0
-]
-
-
-@triton.autotune(configs=configs, key=["N"])
+@triton.autotune(configs=TritonFramework.get_autotuner_configs_2D(), key=["N"])
 @triton.jit
 def _kernel(
     TSTEPS,

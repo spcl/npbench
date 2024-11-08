@@ -2,75 +2,45 @@ import numpy
 import pkg_resources
 from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
-import triton
-import itertools
 
-class TritonFramework(Framework):
-    """A class for reading and processing framework information specific to Triton."""
 
-    block_sizes = [4, 8, 16, 32, 64, 128, 256]
-    warp_counts = [1, 2, 4, 8, 16]
-    triton_configs_2D = [
-        triton.Config({"BLOCK_SIZE_X": x, "BLOCK_SIZE_Y": y}, num_warps=w)
-        for x, y, w in list(itertools.product(block_sizes, block_sizes, warp_counts))
-        if w * 32 <= x * y and x * y <= 1024 and (x * y) % (w * 32) == 0
-    ]
-    triton_configs_1D = [
-        triton.Config({"BLOCK_SIZE_X": x}, num_warps=w)
-        for x, w in list(itertools.product(block_sizes, warp_counts))
-        if w * 32 <= x and x <= 1024 and x % (w * 32) == 0
-    ]
-
-    @staticmethod
-    def get_autotuner_configs_2D():
-        return TritonFramework.triton_configs_2D
-
-    @staticmethod
-    def get_autotuner_configs_1D():
-        return TritonFramework.triton_configs_1D
+class TVMFramework(Framework):
+    """ A class for reading and processing framework information specific to TVM. """
 
     def __init__(self, fname: str):
-        """Reads framework information.
+        """ Reads framework information.
         :param fname: The framework name.
         """
         super().__init__(fname)
 
     def version(self) -> str:
-        """Return the Triton framework version."""
-        return [
-            p.version
-            for p in pkg_resources.working_set
-            if p.project_name.startswith("triton")
-        ][0]
+        """ Return the TVM framework version. """
+        return [p.version for p in pkg_resources.working_set if p.project_name.startswith("tvm")][0]
 
     def imports(self) -> Dict[str, Any]:
-        """Import Triton-specific modules."""
-        import triton
-        import triton.language as tl
+        """ Import TVM-specific modules. """
+        import tvm
         import torch
-
-        return {"triton": triton, "tl": tl, "torch": torch}
+        return {'tvm': tvm, 'torch': torch}
 
     def copy_func(self) -> Callable:
-        """Returns a method to copy the benchmark arguments to Triton-compatible tensors."""
+        """ Returns a method to copy the benchmark arguments to TVM-compatible tensors. """
         import torch
 
-        def to_triton_tensor(x):
+        def to_tvm_tensor(x):
             if isinstance(x, numpy.ndarray):
                 # Convert NumPy array to Torch tensor on GPU
-                return torch.tensor(x, device="cuda")
+                return torch.tensor(x, device='cuda')
             elif isinstance(x, torch.Tensor):
                 # Move existing Torch tensor to GPU if not already there
-                return x.to("cuda")
+                return x.to('cuda')
             else:
-                raise TypeError(
-                    "Input should be either a NumPy array or a Torch tensor."
-                )
+                raise TypeError("Input should be either a NumPy array or a Torch tensor.")
 
-        return to_triton_tensor
+        return to_tvm_tensor
 
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
-        """Generates the setup string to use before calling the benchmark implementation.
+        """ Generates the setup string to use before calling the benchmark implementation.
         :param bench: A benchmark.
         :param impl: A benchmark implementation.
         :returns: The corresponding setup-string.
@@ -85,7 +55,7 @@ class TritonFramework(Framework):
         return sync_str
 
     def exec_str(self, bench: Benchmark, impl: Callable = None) -> str:
-        """Generates the execution string to call the benchmark implementation.
+        """ Generates the execution string to call the benchmark implementation.
         :param bench: A benchmark.
         :param impl: A benchmark implementation.
         :returns: Execution command string.
@@ -97,7 +67,7 @@ class TritonFramework(Framework):
         return main_exec_str + "; " + sync_str
 
     def autotune_str(self, bench: Benchmark, impl: Callable = None) -> str:
-        """Generates the execution string to call the benchmark implementation.
+        """ Generates the execution string to call the benchmark implementation.
         :param bench: A benchmark.
         :param impl: A benchmark implementation.
         :returns: Execution command string.

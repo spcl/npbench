@@ -18,6 +18,7 @@ class Test(object):
         report_str = frmwrk.info["full_name"] + " - " + impl_name
         autotuner_report_str = frmwrk.info["full_name"] + " - " + autotuner_name + "(autotune)"
         autotuner_str = ""
+        print(report_str, autotuner, autotuner_report_str)
         try:
             copy = frmwrk.copy_func()
             setup_str = frmwrk.setup_str(self.bench, impl)
@@ -26,7 +27,7 @@ class Test(object):
                 autotuner_str = frmwrk.autotune_str(self.bench, impl)
         except Exception as e:
             print("Failed to load the {} implementation.".format(report_str))
-            print(e)
+            print("Error:", e)
             if not ignore_errors:
                 raise
             return None, None
@@ -38,7 +39,7 @@ class Test(object):
                                            '__npb_result')
         except Exception as e:
             print("Failed to execute the {} implementation.".format(report_str))
-            print(e)
+            print("Error:", e)
             if not ignore_errors:
                 raise
             return None, None
