@@ -54,7 +54,7 @@ class Test(object):
             out += [ldict[a] for a in self.frmwrk.args(self.bench)]
         return out, timelist
 
-    def run(self, preset: str, validate: bool, repeat: int, timeout: float = 200.0, ignore_errors: bool = True):
+    def run(self, preset: str, validate: bool, repeat: int, timeout: float = 200.0, ignore_errors: bool = True, skip_existing: bool = False):
         """ Tests the framework against the benchmark.
         :param preset: The preset to use for testing (S, M, L, paper).
         :param validate: If true, it validates the output against NumPy.
@@ -65,6 +65,26 @@ class Test(object):
                                                                            p=preset))
 
         bdata = self.bench.get_data(preset)
+
+        # create a database connection
+        database = r"npbench.db"
+        conn = util.create_connection(database)
+
+        # create tables
+        if conn is not None:
+            # create results table
+            util.create_table(conn, util.sql_create_results_table)
+        else:
+            print("Error! cannot create the database connection.")
+
+        if (util.check_entry_exists(conn,
+                                   self.bench.info["short_name"],
+                                   "main",
+                                   self.frmwrk.info["simple_name"],
+                                   self.frmwrk.version())
+            and skip_existing):
+            print(f"Entry already exists in database for mode '{self.bench.info["short_name"]}' and framework '{self.frmwrk.info["simple_name"]}', skipping measurement.")
+            return
 
         # Run NumPy for validation
         if validate and self.frmwrk.fname != "numpy" and self.numpy:

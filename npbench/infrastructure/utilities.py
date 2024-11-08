@@ -131,6 +131,15 @@ def inner(_it, _timer{init}):
     return _t1 - _t0, {output}
 """
 
+def check_entry_exists(conn, benchmark, mode, framework, version):
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT 1 FROM results
+        WHERE benchmark = ? AND mode = ? AND framework = ? AND version = ?
+        LIMIT 1
+    """, (benchmark, mode, framework, version))
+
+    return cur.fetchone() is not None
 
 def benchmark(stmt, setup="pass", out_text="", repeat=1, context={}, output=None, verbose=True):
 

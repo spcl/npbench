@@ -4,14 +4,14 @@ from multiprocessing import Process
 from npbench.infrastructure import (Benchmark, generate_framework, LineCount,
                                     Test, utilities as util)
 
-def run_benchmark(benchname, fname, preset, validate, repeat, timeout):
+def run_benchmark(benchname, fname, preset, validate, repeat, timeout, skip_existing):
         frmwrk = generate_framework(fname)
         numpy = generate_framework("numpy")
         bench = Benchmark(benchname)
         lcount = LineCount(bench, frmwrk, numpy)
         lcount.count()
         test = Test(bench, frmwrk, numpy)
-        test.run(preset, validate, repeat, timeout)
+        test.run(preset, validate, repeat, timeout, skip_existing)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -29,6 +29,14 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--repeat", type=int, nargs="?", default=10)
     parser.add_argument("-t", "--timeout", type=float, nargs="?", default=10.0)
     parser.add_argument("-d", "--dace", type=util.str2bool, nargs="?", default=True)
+    parser.add_argument(
+        "-e",
+        "--skip-existing",
+        type=util.str2bool,
+        nargs="?",
+        default=False,
+        help="If set, do not run the benchmark if an entry with the same mode and framework already exists in the database.",
+    )
     args = vars(parser.parse_args())
 
     benchmarks = [
@@ -47,7 +55,7 @@ if __name__ == "__main__":
             p = Process(
                 target=run_benchmark,
                 args=(benchname, fname, args["preset"],
-                    args["validate"], args["repeat"], args["timeout"])
+                    args["validate"], args["repeat"], args["timeout"], args["skip_existing"])
             )
             p.start()
             p.join()

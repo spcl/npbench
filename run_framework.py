@@ -9,14 +9,14 @@ from npbench.infrastructure import (Benchmark, generate_framework, LineCount,
 
 
 def run_benchmark(benchname, fname, preset, validate, repeat, timeout,
-                  ignore_errors, save_strict, load_strict):
+                  ignore_errors, save_strict, load_strict, skip_existing):
     frmwrk = generate_framework(fname, save_strict, load_strict)
     numpy = generate_framework("numpy")
     bench = Benchmark(benchname)
     lcount = LineCount(bench, frmwrk, numpy)
     lcount.count()
     test = Test(bench, frmwrk, numpy)
-    test.run(preset, validate, repeat, timeout, ignore_errors)
+    test.run(preset, validate, repeat, timeout, ignore_errors, skip_existing)
 
 
 if __name__ == "__main__":
@@ -57,6 +57,14 @@ if __name__ == "__main__":
                         type=util.str2bool,
                         nargs="?",
                         default=False)
+    parser.add_argument(
+        "-e",
+        "--skip-existing",
+        type=util.str2bool,
+        nargs="?",
+        default=False,
+        help="If set, do not run the benchmark if an entry with the same mode and framework already exists in the database.",
+    )
     args = vars(parser.parse_args())
 
     parent_folder = pathlib.Path(__file__).parent.absolute()
@@ -70,7 +78,7 @@ if __name__ == "__main__":
                     args=(benchname, args["framework"], args["preset"],
                           args["validate"], args["repeat"], args["timeout"],
                           args["ignore_errors"], args["save_strict_sdfg"],
-                          args["load_strict_sdfg"]))
+                          args["load_strict_sdfg"], args["skip_existing"]))
         p.start()
         p.join()
         exit_code = p.exitcode

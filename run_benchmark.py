@@ -42,6 +42,14 @@ if __name__ == "__main__":
                         type=util.str2bool,
                         nargs="?",
                         default=False)
+    parser.add_argument(
+        "-e",
+        "--skip-existing",
+        type=util.str2bool,
+        nargs="?",
+        default=False,
+        help="If set, do not run the benchmark if an entry with the same mode and framework already exists in the database.",
+    )
     args = vars(parser.parse_args())
 
     # print(args)
