@@ -14,20 +14,26 @@ class Test(object):
         self.numpy = npfrmwrk
 
     def _execute(self, frmwrk: Framework, impl: Callable, impl_name: str, mode: str, bdata: Dict[str, Any], repeat: int,
-                 ignore_errors: bool) -> Tuple[Any, Sequence[float]]:
+                 ignore_errors: bool, autotuner: Callable = None, autotuner_name: str = "") -> Tuple[Any, Sequence[float]]:
         report_str = frmwrk.info["full_name"] + " - " + impl_name
+        autotuner_report_str = frmwrk.info["full_name"] + " - " + autotuner_name + "(autotune)"
+        autotuner_str = ""
         try:
             copy = frmwrk.copy_func()
             setup_str = frmwrk.setup_str(self.bench, impl)
             exec_str = frmwrk.exec_str(self.bench, impl)
+            if autotuner is not None:
+                autotuner_str = frmwrk.autotune_str(self.bench, impl)
         except Exception as e:
             print("Failed to load the {} implementation.".format(report_str))
             print(e)
             if not ignore_errors:
                 raise
             return None, None
-        ldict = {'__npb_impl': impl, '__npb_copy': copy, **bdata}
+        ldict = {'__npb_impl': impl, '__npb_copy': copy, '__npb_autotune': autotuner, **bdata}
         try:
+            if autotuner_str != "":
+                util.benchmark(autotuner_str, setup_str, autotuner_report_str + " - " + mode, repeat, ldict, '__npb_autotune_result')
             out, timelist = util.benchmark(exec_str, setup_str, report_str + " - " + mode, repeat, ldict,
                                            '__npb_result')
         except Exception as e:
@@ -80,15 +86,18 @@ class Test(object):
         version = self.frmwrk.version()
 
         @tout.exit_after(timeout)
-        def first_execution(impl, impl_name):
-            return self._execute(self.frmwrk, impl, impl_name, "first/validation", context, 1, ignore_errors)
+        def first_execution(impl, impl_name, autotuner, autotuner_name):
+            return self._execute(self.frmwrk, impl, impl_name, "first/validation", context, 1, ignore_errors, autotuner, autotuner_name)
 
         bvalues = []
         context = {**bdata, **self.frmwrk.imports()}
+
+        autotuner, autotuner_name = self.frmwrk.autotuner(self.bench)
+
         for impl, impl_name in self.frmwrk.implementations(self.bench):
             # First execution
             try:
-                frmwrk_out, _ = first_execution(impl, impl_name)
+                frmwrk_out, _ = first_execution(impl, impl_name, autotuner, autotuner_name)
             except KeyboardInterrupt:
                 print("Implementation \"{}\" timed out.".format(impl_name), flush=True)
                 continue
@@ -116,7 +125,7 @@ class Test(object):
                     if not ignore_errors:
                         raise
             # Main execution
-            _, timelist = self._execute(self.frmwrk, impl, impl_name, "median", context, repeat, ignore_errors)
+            _, timelist = self._execute(self.frmwrk, impl, impl_name, "median", context, repeat, ignore_errors, autotuner, autotuner_name)
             if timelist:
                 for t in timelist:
                     bvalues.append(dict(details=impl_name, validated=valid, time=t))

@@ -39,7 +39,7 @@ class Framework(object):
         return {}
 
     def copy_func(self) -> Callable:
-        """ Returns the copy-method that should be used 
+        """ Returns the copy-method that should be used
         for copying the benchmark arguments. """
         return np.copy
 
@@ -72,12 +72,36 @@ class Framework(object):
 
         ldict = dict()
         try:
+            print(module_str, func_str, ldict)
             exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
         except Exception as e:
             print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=func_str))
             raise e
 
         return [(ldict['impl'], 'default')]
+
+    def autotuner(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
+        module_pypath = "npbench.benchmarks.{r}.{m}".format(r=bench.info["relative_path"].replace('/', '.'),
+                                                            m=bench.info["module_name"])
+        if "postfix" in self.info.keys():
+            postfix = self.info["postfix"]
+        else:
+            postfix = self.fname
+        module_str = "{m}_{p}".format(m=module_pypath, p=postfix)
+        try:
+            func_str = bench.info["autotuner_name"]
+        except Exception as e:
+            return (None, "")
+
+        ldict = dict()
+        try:
+            print(module_str, func_str, ldict)
+            exec("from {m} import {f} as autotuner".format(m=module_str, f=func_str), ldict)
+        except Exception as e:
+            print("Failed to load the {r} {f} autotuner.".format(r=self.info["full_name"], f=func_str))
+            raise e
+
+        return (ldict['autotuner'], 'default')
 
     def args(self, bench: Benchmark, impl: Callable = None):
         """ Generates the input arguments that should be used for calling
@@ -146,6 +170,9 @@ class Framework(object):
         # param_str = self.param_str(bench, impl)
         return "__npb_result = __npb_impl({a})".format(a=arg_str)
 
+    def autotune_str(self, bench: Benchmark, impl: Callable = None):
+        arg_str = self.arg_str(bench, impl)
+        return "__npb_autotune({a})".format(a=arg_str)
 
 def generate_framework(fname: str, save_strict: bool = False, load_strict: bool = False) -> Framework:
     """ Generates a framework object with the correct class.

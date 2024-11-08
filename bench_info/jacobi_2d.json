@@ -5,6 +5,7 @@
         "relative_path": "polybench/jacobi_2d",
         "module_name": "jacobi_2d",
         "func_name": "kernel",
+        "autotuner_name": "autotuner",
         "kind": "microbench",
         "domain": "Physics",
         "dwarf": "structured_grids",

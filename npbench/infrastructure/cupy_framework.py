@@ -24,7 +24,7 @@ class CupyFramework(Framework):
         return {'cpstream': cupy.cuda.stream}
 
     def copy_func(self) -> Callable:
-        """ Returns the copy-method that should be used 
+        """ Returns the copy-method that should be used
         for copying the benchmark arguments. """
         import cupy
         return cupy.asarray

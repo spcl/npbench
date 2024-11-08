@@ -1,10 +1,10 @@
 {
     "framework": {
-        "simple_name": "cupy",
-        "full_name": "CuPy",
+        "simple_name": "triton",
+        "full_name": "Triton",
         "prefix": "tl",
         "postfix": "triton",
-        "class": "TirtonFramework",
+        "class": "TritonFramework",
         "arch": "gpu"
     }
 }
