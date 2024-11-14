@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "tvm",
+        "full_name": "tvm",
+        "prefix": "tvm",
+        "postfix": "tvm",
+        "class": "TVMFramework",
+        "arch": "gpu"
+    }
+}
