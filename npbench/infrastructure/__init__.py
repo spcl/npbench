@@ -11,3 +11,4 @@ from .legate_framework import *
 from .numba_framework import *
 from .pythran_framework import *
 from .triton_framework import *
+from .tvm_framework import *
