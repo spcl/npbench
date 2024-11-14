@@ -4,9 +4,6 @@ from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
 import logging
 import sys
-import tvm
-import tvm.testing
-from tvm import autotvm
 import importlib
 
 

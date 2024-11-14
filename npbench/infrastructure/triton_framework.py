@@ -1,25 +1,33 @@
+import importlib
 import numpy
 import pkg_resources
 from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
-import triton
 import itertools
+
+# Allow compiling even if triton is not available
+triton_module = importlib.import_module("triton") if importlib.util.find_spec("triton") is not None else None
 
 class TritonFramework(Framework):
     """A class for reading and processing framework information specific to Triton."""
 
     block_sizes = [4, 8, 16, 32, 64, 128, 256]
     warp_counts = [1, 2, 4, 8, 16]
+
+
+
+    # Only define triton_configs_2D if Triton is available
     triton_configs_2D = [
-        triton.Config({"BLOCK_SIZE_X": x, "BLOCK_SIZE_Y": y}, num_warps=w)
-        for x, y, w in list(itertools.product(block_sizes, block_sizes, warp_counts))
-        if w * 32 <= x * y and x * y <= 1024 and (x * y) % (w * 32) == 0
-    ]
+        triton_module.Config({"BLOCK_SIZE_X": x, "BLOCK_SIZE_Y": y}, num_warps=w)
+        for x, y, w in itertools.product(block_sizes, block_sizes, warp_counts)
+        if w * 32 <= x * y <= 1024 and (x * y) % (w * 32) == 0
+    ] if importlib.util.find_spec("triton") is not None else []
     triton_configs_1D = [
-        triton.Config({"BLOCK_SIZE_X": x}, num_warps=w)
+        triton_module.Config({"BLOCK_SIZE_X": x}, num_warps=w)
         for x, w in list(itertools.product(block_sizes, warp_counts))
         if w * 32 <= x and x <= 1024 and x % (w * 32) == 0
-    ]
+    ] if importlib.util.find_spec("triton") is not None else []
+
 
     @staticmethod
     def get_autotuner_configs_2D():
