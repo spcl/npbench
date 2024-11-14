@@ -13,7 +13,8 @@
             "S": { "TSTEPS": 50, "N": 150 },
             "M": { "TSTEPS": 80, "N": 350 },
             "L": { "TSTEPS": 200, "N": 700 },
-            "paper": { "TSTEPS": 1000, "N": 2800 }
+            "paper": { "TSTEPS": 1000, "N": 2800 },
+            "XL": { "TSTEPS": 500, "N": 8192 }
         },
         "init": {
             "func_name": "initialize",

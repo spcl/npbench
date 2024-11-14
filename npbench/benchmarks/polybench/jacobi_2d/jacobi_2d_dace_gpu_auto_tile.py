@@ -23,6 +23,7 @@ _jacobi_2d_triton_best_config = None
 
 def autotuner(TSTEPS, A, B, N):
     global _jacobi_2d_triton_best_config
+    print(N)
     if _jacobi_2d_triton_best_config is not None:
         return
     _jacobi_2d_triton_best_config = DaceGPUAutoTileFramework.autotune(
