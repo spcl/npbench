@@ -2,6 +2,7 @@ import triton
 import torch
 from npbench.infrastructure.triton_framework import TritonFramework
 
+
 @triton.autotune(configs=TritonFramework.get_autotuner_configs_2D(), key=["N"])
 @triton.jit
 def _kernel(
@@ -57,6 +58,10 @@ _jacobi_2d_triton_best_config = None
 
 def autotuner(TSTEPS, A, B):
     global _jacobi_2d_triton_best_config
+
+    if _jacobi_2d_triton_best_config is not None:
+        return
+
     M = int(A.shape[0])
     N = int(A.shape[1])
     assert N == M
@@ -75,4 +80,3 @@ def kernel(TSTEPS, A, B):
         triton.cdiv(M, best_config.kwargs["BLOCK_SIZE_Y"]),
     )
     _kernel[grid](TSTEPS, A, B, M)
-    torch.cuda.synchronize()

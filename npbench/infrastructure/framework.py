@@ -97,7 +97,7 @@ class Framework(object):
             exec("from {m} import {f} as autotuner".format(m=module_str, f=func_str), ldict)
         except Exception as e:
             print("Failed to load the {r} {f} autotuner.".format(r=self.info["full_name"], f=func_str))
-            raise e
+            return (None, "")
 
         return (ldict['autotuner'], 'default')
 
