@@ -128,7 +128,7 @@ class DaceGPUAutoTileFramework(Framework):
         return autotune_str
 
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [2, 4, 6], [1, 2, 4])) if x >= y]
+        [2, 4, ], [1, 2, 4])) if x >= y]
     block_sizes_2D = [(x, y) for x, y in list(itertools.product(
         [16, 32], [4, 8, 16, 32]))
         if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 128 and x * y <= 512]

@@ -83,7 +83,7 @@ class Test(object):
                                    self.frmwrk.info["simple_name"],
                                    self.frmwrk.version())
             and skip_existing):
-            print(f"Entry already exists in database for mode '{self.bench.info["short_name"]}' and framework '{self.frmwrk.info["simple_name"]}', skipping measurement.")
+            print(f"Entry already exists in database for mode {self.bench.info['short_name']} and framework {self.frmwrk.info['simple_name']}, skipping measurement.")
             return
 
         # Run NumPy for validation
