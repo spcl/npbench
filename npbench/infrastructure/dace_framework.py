@@ -29,7 +29,7 @@ class DaceFramework(Framework):
         return pkg_resources.get_distribution("dace").version
 
     def copy_func(self) -> Callable:
-        """ Returns the copy-method that should be used 
+        """ Returns the copy-method that should be used
         for copying the benchmark arguments. """
         if self.fname == "dace_gpu":
             import cupy
@@ -68,6 +68,9 @@ class DaceFramework(Framework):
             from dace.transformation.dataflow import MapFusion, Vectorization, MapCollapse
             from dace.transformation.interstate import LoopToMap
             import dace.transformation.auto.auto_optimize as opt
+
+            if "auto_tile" in self.fname:
+                from dace.transformation.auto_tile.auto_apply import auto_apply
 
             exec("from {m} import {f} as ct_impl".format(m=module_str, f=func_str))
         except Exception as e:
@@ -182,9 +185,47 @@ class DaceFramework(Framework):
 
         ###########################################################
         ###### Standalone Test Auto - Opt after strict transformation
+        if "auto_tile" in self.fname and self.info["arch"] == "gpu":
+            try:
+
+                def autotile(sdfg, device, symbols):  #, nofuse):
+                    # Mark arrays as on the GPU
+                    if device == dtypes.DeviceType.GPU:
+                        for k, v in sdfg.arrays.items():
+                            if not v.transient and type(v) == dace.data.Array:
+                                v.storage = dace.dtypes.StorageType.GPU_Global
+
+                    # Auto-optimize SDFG
+                    auto_apply(
+                        auto_tile_sdfg,
+
+                    )
+
+                auto_tile_sdfg = copy.deepcopy(strict_sdfg)
+                auto_tile_sdfg._name = 'auto_tile'
+                ldict['auto_tile_sdfg'] = auto_opt_sdfg
+                device = dtypes.DeviceType.GPU
+
+                _, auto_time = util.benchmark(f"autotile(auto_tile_sdfg, device, symbols = locals())",
+                                            out_text="DaCe Auto-Tile",
+                                            context=locals(),
+                                            verbose=False)
+
+                sdfg_list.append(auto_tile_sdfg)
+                time_list.append(time_list[-1] + auto_time[0])
+
+            except Exception as e:
+                print("DaCe autoopt failed")
+                # print(e)
+                # traceback.print_exc()
+                auto_tile_sdfg = copy.deepcopy(strict_sdfg)
+                ldict['auto_tile_sdfg'] = auto_tile_sdfg
+
+        ###########################################################
+        ###### Standalone Test Auto Tile after autoopt transformation
         try:
 
-            def autoopt(sdfg, device, symbols):  #, nofuse):
+            def autotile(sdfg, device, symbols):  #, nofuse):
                 # Mark arrays as on the GPU
                 if device == dtypes.DeviceType.GPU:
                     for k, v in sdfg.arrays.items():
@@ -213,6 +254,7 @@ class DaceFramework(Framework):
             # traceback.print_exc()
             auto_opt_sdfg = copy.deepcopy(strict_sdfg)
             ldict['auto_opt_sdfg'] = auto_opt_sdfg
+
 
         def vectorize(sdfg, vec_len=None):
             matches = []

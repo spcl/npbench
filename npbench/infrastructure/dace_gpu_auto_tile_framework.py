@@ -18,6 +18,7 @@ import dace.transformation.auto.auto_optimize as opt
 
 from dace.transformation.auto_tile.auto_apply import auto_apply
 
+
 class DaceGPUAutoTileFramework(Framework):
     """ A class for reading and processing framework information. """
 
@@ -72,6 +73,11 @@ class DaceGPUAutoTileFramework(Framework):
             return arg_str + " = " + ", ".join(copy_args) + "; " + sync_str
         return sync_str
 
+    def imports(self):
+        """Import Triton-specific modules."""
+        import torch
+        return {"torch": torch}
+
     def params(self, bench: Benchmark, impl: Callable = None):
         return [p for p in bench.info["parameters"]['L'].keys() if p not in bench.info["input_args"]]
 
@@ -122,19 +128,19 @@ class DaceGPUAutoTileFramework(Framework):
         return autotune_str
 
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [2, 4, 6, 8], [1, 2, 4, 6, 8])) if x >= y]
+        [2, 4, 6], [1, 2, 4])) if x >= y]
     block_sizes_2D = [(x, y) for x, y in list(itertools.product(
-        [16, 32, 64, 128, 256], [4, 8, 16, 32, 64, 128, 256]))
+        [16, 32], [4, 8, 16, 32]))
         if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 128 and x * y <= 512]
     memory_tiling = [(8,), (16,), (32,)]
 
     @staticmethod
-    def autotune(_in_sdfg):
+    def autotune(_in_sdfg, inputs):
         def copy_to_gpu(sdfg):
             for k, v in sdfg.arrays.items():
                 if not v.transient and isinstance(v, dace.data.Array):
                     v.storage = dace.dtypes.StorageType.GPU_Global
-
+        print("A")
         copy_to_gpu(_in_sdfg)
 
         aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.GPU)
@@ -143,10 +149,11 @@ class DaceGPUAutoTileFramework(Framework):
             sdfg=aopt_sdfg,
             work_map_tiling_params=DaceGPUAutoTileFramework.memory_tiling,
             thread_coarsening_params=DaceGPUAutoTileFramework.thread_coarsening_2D,
-            thread_block_params=DaceGPUAutoTileFramework.thread_coarsening_2D,
+            thread_block_params=DaceGPUAutoTileFramework.block_sizes_2D,
             apply_explicit_memory_transfers=[(True, False)],
             apply_remainder_loop=[True],
-            output_name=None,
+            inputs=inputs,
+            output_name="auto_deduce",
             verbose=True,
             save_steps=False,
             save_individual_kernels=False,
@@ -154,7 +161,8 @@ class DaceGPUAutoTileFramework(Framework):
             theo_flops_and_mem_access=None,
             write_kernel_report_to_file=True,
             compare_runtime=True,
-            _threshold=500.0
+            _threshold=-1.0,
+            machine_peak_flops_and_mem_bandwidth=(200, 18000)
         )
 
         return tiled_sdfg

@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "dace_gpu_auto_tile",
+        "full_name": "DaCe GPU Auto-Tile",
+        "prefix": "dc",
+        "postfix": "dace_gpu_auto_tile",
+        "class": "DaceGPUAutoTileFramework",
+        "arch": "gpu"
+    }
+}

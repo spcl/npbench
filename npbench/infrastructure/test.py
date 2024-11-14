@@ -54,7 +54,7 @@ class Test(object):
             out += [ldict[a] for a in self.frmwrk.args(self.bench)]
         return out, timelist
 
-    def run(self, preset: str, validate: bool, repeat: int, timeout: float = 200.0, ignore_errors: bool = True, skip_existing: bool = False):
+    def run(self, preset: str, validate: bool, repeat: int, timeout: float = 2000.0, ignore_errors: bool = True, skip_existing: bool = False):
         """ Tests the framework against the benchmark.
         :param preset: The preset to use for testing (S, M, L, paper).
         :param validate: If true, it validates the output against NumPy.
@@ -63,7 +63,7 @@ class Test(object):
         print("***** Testing {f} with {b} on the {p} dataset *****".format(b=self.bench.bname,
                                                                            f=self.frmwrk.info["full_name"],
                                                                            p=preset))
-
+        print("EEEEEEEEEEEEEE")
         bdata = self.bench.get_data(preset)
 
         # create a database connection

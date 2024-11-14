@@ -181,6 +181,7 @@ def generate_framework(fname: str, save_strict: bool = False, load_strict: bool 
     parent_folder = pathlib.Path(__file__).parent.absolute()
     frmwrk_filename = "{f}.json".format(f=fname)
     frmwrk_path = parent_folder.joinpath("..", "..", "framework_info", frmwrk_filename)
+    print("FF", fname, frmwrk_filename)
     try:
         with open(frmwrk_path) as json_file:
             info = json.load(json_file)["framework"]

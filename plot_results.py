@@ -301,4 +301,5 @@ ax1.set_ylabel("Benchmarks", labelpad=0)
 
 plt.tight_layout()
 plt.savefig("heatmap.pdf", dpi=600)
+plt.savefig("heatmap.png", dpi=600)
 plt.show()
