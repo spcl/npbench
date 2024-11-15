@@ -18,20 +18,20 @@ def _kernel(TSTEPS: dc.int64, A: dc.float64[N, N], B: dc.float64[N, N]):
         )
 
 
-_jacobi_2d_triton_best_config = None
+_jacobi_2d_best_config = None
 
 
 def autotuner(TSTEPS, A, B, N):
-    global _jacobi_2d_triton_best_config
-    print(N)
-    if _jacobi_2d_triton_best_config is not None:
+    global _jacobi_2d_best_config
+    if _jacobi_2d_best_config is not None:
         return
-    _jacobi_2d_triton_best_config = DaceGPUAutoTileFramework.autotune(
+
+    _jacobi_2d_best_config = DaceGPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
         {"N": N, "A": A, "B": B, "TSTEPS": TSTEPS}
         ).compile()
 
 
 def kernel(TSTEPS, A, B, N):
-    global _jacobi_2d_triton_best_config
-    _jacobi_2d_triton_best_config(TSTEPS, A, B, N)
+    global _jacobi_2d_best_config
+    _jacobi_2d_best_config(TSTEPS=TSTEPS, A=A, B=B, N=N)

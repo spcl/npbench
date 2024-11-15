@@ -35,13 +35,20 @@ class Test(object):
         try:
             if autotuner_str != "":
                 util.benchmark(autotuner_str, setup_str, autotuner_report_str + " - " + mode, repeat, ldict, '__npb_autotune_result')
+        except Exception as e:
+            print("Failed to execute the {} autotuner.".format(report_str))
+            print("Error:", e)
+            if not ignore_errors:
+                raise e
+            return None, None
+        try:
             out, timelist = util.benchmark(exec_str, setup_str, report_str + " - " + mode, repeat, ldict,
                                            '__npb_result')
         except Exception as e:
             print("Failed to execute the {} implementation.".format(report_str))
             print("Error:", e)
             if not ignore_errors:
-                raise
+                raise e
             return None, None
         if out is not None:
             if isinstance(out, (tuple, list)):
@@ -63,7 +70,6 @@ class Test(object):
         print("***** Testing {f} with {b} on the {p} dataset *****".format(b=self.bench.bname,
                                                                            f=self.frmwrk.info["full_name"],
                                                                            p=preset))
-        print("EEEEEEEEEEEEEE")
         bdata = self.bench.get_data(preset)
 
         # create a database connection
@@ -180,5 +186,4 @@ class Test(object):
                 'time': d["time"]
             }
             result = tuple(new_d.values())
-            # print(result)
             util.create_result(conn, util.sql_insert_into_results_table, result)

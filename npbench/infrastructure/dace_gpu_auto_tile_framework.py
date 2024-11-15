@@ -128,11 +128,11 @@ class DaceGPUAutoTileFramework(Framework):
         return autotune_str
 
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [2, 4, 6, 8], [1, 2, 4, 6, 8])) if x >= y]
+        [2,], [1,])) if x >= y]
     block_sizes_2D = [(x, y) for x, y in list(itertools.product(
-        [16, 32, 64, 128, 256, 512], [1, 2, 4, 8, 16, 32]))
+        [16, ], [16,]))
         if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 128 and x * y <= 512]
-    memory_tiling = [(8,), (16,), (24,), (32,)]
+    memory_tiling = [(8,),]
 
     @staticmethod
     def autotune(_in_sdfg, inputs):
@@ -140,12 +140,12 @@ class DaceGPUAutoTileFramework(Framework):
             for k, v in sdfg.arrays.items():
                 if not v.transient and isinstance(v, dace.data.Array):
                     v.storage = dace.dtypes.StorageType.GPU_Global
-        print("A")
+
         copy_to_gpu(_in_sdfg)
 
         aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.GPU)
 
-        tiled_sdfg = auto_tile(
+        tiled_sdfg, _ = auto_tile(
             sdfg=aopt_sdfg,
             memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,
             thread_coarsening_parameters=DaceGPUAutoTileFramework.thread_coarsening_2D,
