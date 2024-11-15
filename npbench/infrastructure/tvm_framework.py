@@ -87,6 +87,8 @@ class TVMFramework(Framework):
     def autotune(kernel_name, module_name, args_tuple, target):
         module = importlib.import_module(module_name)
         func = getattr(module, kernel_name)
+        import tvm
+        from tvm import autotvm
 
         task1 = autotvm.task.create(kernel_name, args=args_tuple, target=target)
 
@@ -99,7 +101,7 @@ class TVMFramework(Framework):
         )
         tuner1 = autotvm.tuner.RandomTuner(task1)
         tuner1.tune(
-            n_trial=100,
+            n_trial=200,
             measure_option=measure_option,
             callbacks=[autotvm.callback.log_to_file(f"{kernel_name}.log")],
         )
