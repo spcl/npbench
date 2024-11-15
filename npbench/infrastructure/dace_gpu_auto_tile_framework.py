@@ -16,7 +16,7 @@ from dace.transformation.dataflow import MapFusion, Vectorization, MapCollapse
 from dace.transformation.interstate import LoopToMap
 import dace.transformation.auto.auto_optimize as opt
 
-from dace.transformation.auto_tile.auto_apply import auto_apply
+from dace.transformation.auto_tile.auto_tile import auto_tile
 
 
 class DaceGPUAutoTileFramework(Framework):
@@ -128,11 +128,11 @@ class DaceGPUAutoTileFramework(Framework):
         return autotune_str
 
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [2, 4, ], [1, 2, 4])) if x >= y]
+        [2, 4, ], [2, 4])) if x >= y]
     block_sizes_2D = [(x, y) for x, y in list(itertools.product(
-        [16, 32], [4, 8, 16, 32]))
+        [16, 32], [16, 32]))
         if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 128 and x * y <= 512]
-    memory_tiling = [(8,), (16,), (32,)]
+    memory_tiling = [(16,),]
 
     @staticmethod
     def autotune(_in_sdfg, inputs):
@@ -145,24 +145,17 @@ class DaceGPUAutoTileFramework(Framework):
 
         aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.GPU)
 
-        tiled_sdfg = auto_apply(
+        tiled_sdfg = auto_tile(
             sdfg=aopt_sdfg,
-            work_map_tiling_params=DaceGPUAutoTileFramework.memory_tiling,
-            thread_coarsening_params=DaceGPUAutoTileFramework.thread_coarsening_2D,
-            thread_block_params=DaceGPUAutoTileFramework.block_sizes_2D,
+            memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,
+            thread_coarsening_parameters=DaceGPUAutoTileFramework.thread_coarsening_2D,
+            thread_block_parameters=DaceGPUAutoTileFramework.block_sizes_2D,
             apply_explicit_memory_transfers=[(True, False)],
             apply_remainder_loop=[True],
             inputs=inputs,
-            output_name="auto_deduce",
-            verbose=True,
-            save_steps=False,
-            save_individual_kernels=False,
+            device_schedule = dace.dtypes.ScheduleType.GPU_Device,
             re_apply=True,
-            theo_flops_and_mem_access=None,
-            write_kernel_report_to_file=True,
-            compare_runtime=True,
-            _threshold=-1.0,
-            machine_peak_flops_and_mem_bandwidth=(200, 18000)
+            verbose=True,
         )
 
         return tiled_sdfg
