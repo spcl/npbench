@@ -161,22 +161,38 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
         ref = [ref]
     if not isinstance(val, (tuple, list)):
         val = [val]
-    valid = True
+
     for r, v in zip(ref, val):
-        if not np.allclose(r, v, rtol=rtol, atol=atol):
+        valid = True
+        assert (isinstance(r, np.ndarray))
+        if isinstance(v, np.ndarray):
+            valid = np.allclose(r, v, rtol=rtol, atol=atol)
+        else:
+            v_moved_to_cpu = False
             try:
                 import cupy
                 if isinstance(v, cupy.ndarray):
-                    relerror = relative_error(r, cupy.asnumpy(v))
-                else:
-                    relerror = relative_error(r, v)
+                    v = cupy.get()
+                    v_moved_to_cpu = True
             except Exception:
-                relerror = relative_error(r, v)
-            if relerror < norm_error:
-                continue
-            valid = False
-            print("Relative error: {}".format(relerror))
-            # return False
-    if not valid:
-        print("{} did not validate!".format(framework))
-    return valid
+                pass
+            try:
+                import torch
+                if isinstance(v, torch.Tensor):
+                    v = v.detach().cpu().numpy()
+                    v_moved_to_cpu = True
+            except Exception:
+                pass
+            if not v_moved_to_cpu:
+                raise Exception("v is not a cupy/torch/numpy array")
+            valid = np.allclose(r, v, rtol=rtol, atol=atol)
+
+        if not valid:
+            max_abs_diff = np.max(np.abs(r - v))
+            max_rel_diff = np.max(np.abs((r - v) / (r + np.finfo(r.dtype).eps) ))
+
+            print(f"Max Absolute Difference: {max_abs_diff}")
+            print(f"Max Relative Difference: {max_rel_diff}")
+            print("{} did not validate!".format(framework))
+            return False
+    return True

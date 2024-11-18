@@ -31,7 +31,7 @@ def autotuner(TSTEPS, A, B, N):
         {"N": N, "A": A, "B": B, "TSTEPS": TSTEPS}
         ).compile()
 
-
 def kernel(TSTEPS, A, B, N):
     global _jacobi_2d_best_config
     _jacobi_2d_best_config(TSTEPS=TSTEPS, A=A, B=B, N=N)
+    return A

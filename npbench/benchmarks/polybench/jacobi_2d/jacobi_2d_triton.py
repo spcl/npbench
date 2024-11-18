@@ -26,33 +26,28 @@ def _kernel(
     # Compute the offset for pointer arithmetic
 
     # Loop over time steps
-    for t in range(TSTEPS):
-        # Load values from A with boundary checks
-        A_center = triton.language.load(
-            A_ptr + (i + 1) * N + (j + 1), mask=(i < N - 2) & (j < N - 2), other=0.0
-        )
-        A_left = triton.language.load(
-            A_ptr + (i + 1) * N + (j), mask=(i < N - 2) & (j < N - 2), other=0.0
-        )
-        A_right = triton.language.load(
-            A_ptr + (i + 1) * N + (j + 2), mask=(i < N - 2) & (j < N - 2), other=0.0
-        )
-        A_top = triton.language.load(
-            A_ptr + (i) * N + (j + 1), mask=(i < N - 2) & (j < N - 2), other=0.0
-        )
-        A_bottom = triton.language.load(
-            A_ptr + (i + 2) * N + (j + 1), mask=(i < N - 2) & (j < N - 2), other=0.0
-        )
+    # Load values from A with boundary checks
+    A_center = triton.language.load(
+        A_ptr + (i + 1) * N + (j + 1), mask=(i < N - 2) & (j < N - 2), other=0.0
+    )
+    A_left = triton.language.load(
+        A_ptr + (i + 1) * N + (j), mask=(i < N - 2) & (j < N - 2), other=0.0
+    )
+    A_right = triton.language.load(
+        A_ptr + (i + 1) * N + (j + 2), mask=(i < N - 2) & (j < N - 2), other=0.0
+    )
+    A_top = triton.language.load(
+        A_ptr + (i) * N + (j + 1), mask=(i < N - 2) & (j < N - 2), other=0.0
+    )
+    A_bottom = triton.language.load(
+        A_ptr + (i + 2) * N + (j + 1), mask=(i < N - 2) & (j < N - 2), other=0.0
+    )
 
-        # Compute the new value for B at this position
-        B_new = 0.20 * (A_left + A_right + A_top + A_bottom + A_center)
-        triton.language.store(
-            B_ptr + (i + 1) * N + (j + 1), B_new, mask=(i < N - 2) & (j < N - 2)
-        )
-
-        # Swap A and B pointers for the next timestep
-        A_ptr, B_ptr = B_ptr, A_ptr
-
+    # Compute the new value for B at this position
+    B_new = 0.20 * (A_left + A_right + A_top + A_bottom + A_center)
+    triton.language.store(
+        B_ptr + (i + 1) * N + (j + 1), B_new, mask=(i < N - 2) & (j < N - 2)
+    )
 
 _jacobi_2d_triton_best_config = None
 
@@ -79,4 +74,7 @@ def kernel(TSTEPS, A, B):
         triton.cdiv(N, best_config.kwargs["BLOCK_SIZE_X"]),
         triton.cdiv(M, best_config.kwargs["BLOCK_SIZE_Y"]),
     )
-    _kernel[grid](TSTEPS, A, B, M)
+    for _ in range(1, TSTEPS):
+        _kernel[grid](TSTEPS, A, B, M)
+        _kernel[grid](TSTEPS, B, A, M)
+    return A

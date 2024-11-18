@@ -136,6 +136,7 @@ def kernel(TSTEPS, A, B):
     global _kernel1
     global _kernel2
 
-    for _ in range(TSTEPS):
+    for _ in range(1, TSTEPS):
         _kernel1(A, B)
         _kernel2(A, B)
+    return A
