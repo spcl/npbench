@@ -150,7 +150,7 @@ class DaceGPUAutoTileFramework(Framework):
             memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,
             thread_coarsening_parameters=DaceGPUAutoTileFramework.thread_coarsening_2D,
             thread_block_parameters=DaceGPUAutoTileFramework.block_sizes_2D,
-            apply_explicit_memory_transfers=[(True, False)],
+            apply_explicit_memory_transfers=[(True, False), (False, False)],
             apply_remainder_loop=[True],
             inputs=inputs,
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,

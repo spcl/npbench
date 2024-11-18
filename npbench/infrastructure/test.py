@@ -1,6 +1,8 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 import time
 
+import numpy as np
+
 from npbench.infrastructure import (Benchmark, Framework, timeout_decorator as tout, utilities as util)
 from typing import Any, Callable, Dict, Sequence, Tuple
 
@@ -93,6 +95,7 @@ class Test(object):
             return
 
         # Run NumPy for validation
+        print(validate and self.frmwrk.fname != "numpy" and self.numpy, validate, self.frmwrk.fname, self.numpy)
         if validate and self.frmwrk.fname != "numpy" and self.numpy:
             np_impl, np_impl_name = self.numpy.implementations(self.bench)[0]
             np_out, _ = self._execute(self.numpy, np_impl, np_impl_name, "validation", bdata, 1, ignore_errors)
