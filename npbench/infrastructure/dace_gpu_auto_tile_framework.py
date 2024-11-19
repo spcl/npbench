@@ -147,6 +147,7 @@ class DaceGPUAutoTileFramework(Framework):
 
         tiled_sdfg, _ = auto_tile(
             sdfg=aopt_sdfg,
+            exhaustive_search=True,
             memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,
             thread_coarsening_parameters=DaceGPUAutoTileFramework.thread_coarsening_2D,
             thread_block_parameters=DaceGPUAutoTileFramework.block_sizes_2D,
