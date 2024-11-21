@@ -44,7 +44,6 @@ def build_up_b(rho, dt, dx, dy, u, v):
 
 @partial(jax.jit, static_argnums=(0,))
 def pressure_poisson_periodic(nit, p, dx, dy, b):
-    pn = jnp.empty_like(p)
 
     def body_func(p, q):
         pn = p.copy()
@@ -79,14 +78,14 @@ def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
     udiff = 1
     stepcount = 0
 
-    array_vals = (udiff, stepcount, u, v, dt, dx, dy, p)
+    array_vals = (udiff, stepcount, u, v, p)
 
     def conf_func(array_vals):
-        udiff, _, _, _, _, _, _, _ = array_vals
+        udiff, _, _, _ , _ = array_vals
         return udiff > .001
     
     def body_func(array_vals):
-        _, stepcount, u, v, dt, dx, dy, p = array_vals
+        _, stepcount, u, v, p = array_vals
 
         un = u.copy()
         vn = v.copy()
@@ -166,8 +165,8 @@ def channel_flow(nit, u, v, dt, dx, dy, p, rho, nu, F):
         udiff = (jnp.sum(u) - jnp.sum(un)) / jnp.sum(u)
         stepcount += 1
 
-        return (udiff, stepcount, u, v, dt, dx, dy, p)
+        return (udiff, stepcount, u, v, p)
     
-    _, stepcount, _, _, _, _, _, _= lax.while_loop(conf_func, body_func, array_vals)
+    _, stepcount, _, _, _ = lax.while_loop(conf_func, body_func, array_vals)
     
     return stepcount
