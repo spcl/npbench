@@ -10,6 +10,7 @@
 
 import jax
 import jax.numpy as jnp
+from jax import lax
 from functools import partial
 
 
@@ -18,11 +19,14 @@ def azimint_naive(data, radius, npt):
     rmax = radius.max()
     res = jnp.zeros(npt, dtype=jnp.float64)
 
-    for i in range(npt):
+    def loop_body(i, res):
         r1 = rmax * i / npt
         r2 = rmax * (i + 1) / npt
         mask_r12 = jnp.logical_and((r1 <= radius), (radius < r2))
         mean = jnp.where(mask_r12, data, 0).mean(where=mask_r12)
         res = res.at[i].set(mean)
+        return res
+
+    res = lax.fori_loop(0, npt, loop_body, res)
 
     return res
