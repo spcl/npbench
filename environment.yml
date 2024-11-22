@@ -12,5 +12,5 @@ dependencies:
   - numba
   - pandas
   - scipy
-  - numba-dpex
   - dpnp
+  - pyitt
