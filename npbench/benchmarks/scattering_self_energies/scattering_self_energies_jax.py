@@ -13,7 +13,6 @@ def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
 
         return sigma.at[k, E, a].add(update), None
 
-    # Create all possible index combinations
     k_range = jnp.arange(G.shape[0])
     E_range = jnp.arange(G.shape[1])
     q_range = jnp.arange(D.shape[0])
@@ -23,17 +22,14 @@ def scattering_self_energies(neigh_idx, dH, G, D, Sigma):
     i_range = jnp.arange(D.shape[-2])
     j_range = jnp.arange(D.shape[-1])
 
-    # Create meshgrid of indices
-    indices = jnp.meshgrid(
+    indices = jnp.meshgrid( # Create meshgrid of indices
         k_range, E_range, q_range, w_range,
         a_range, b_range, i_range, j_range,
         indexing='ij'
     )
 
-    # Reshape indices into a single array of 8-tuples
-    indices = jnp.stack([idx.ravel() for idx in indices], axis=1)
+    indices = jnp.stack([idx.ravel() for idx in indices], axis=1) # Reshape indices into a single array of 8-tuples
 
-    # Use scan to iterate over all index combinations
-    result, _ = jax.lax.scan(body_fun, Sigma, indices)
+    result, _ = jax.lax.scan(body_fun, Sigma, indices) # Use scan to iterate over all index combinations
 
     return result

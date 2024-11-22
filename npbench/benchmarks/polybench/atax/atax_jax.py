@@ -2,5 +2,5 @@ import jax
 import jax.numpy as jnp
 
 @jax.jit
-def kernel(A: jax.Array, x: jax.Array):
+def kernel(A, x):
     return (A @ x) @ A

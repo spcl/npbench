@@ -4,7 +4,7 @@ import jax.numpy as jnp
 from functools import partial
 
 @partial(jax.jit, static_argnums=(0, 1, 2))
-def kernel(NR: int, NQ: int, NP: int, A:jax.Array, C4:jax.Array):
+def kernel(NR, NQ, NP, A, C4):
 
     # for r in range(NR):
     #     for q in range(NQ):
