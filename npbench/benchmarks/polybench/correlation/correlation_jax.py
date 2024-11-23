@@ -9,8 +9,10 @@ def kernel(M, float_n, data):
 
     def loop_body(i, loop_vars):
         corr, data = loop_vars
-        corr = lax.dynamic_update_slice(corr, jnp.roll(data[i, None], -(i + 1), axis=1), (i, i + 1))
-        corr = lax.dynamic_update_slice(corr, jnp.roll(data[i, None], -(i + 1), axis=1).T, (i + 1, i))
+        corr_update_x = jnp.where(jnp.arange(data.shape[0]) > i, data[i], corr[i])
+        corr_update_y = jnp.where(jnp.arange(data.shape[0]) > i, data[i], corr[:, i])
+        corr = lax.dynamic_update_slice(corr, corr_update_x[None, :], (i, 0))
+        corr = lax.dynamic_update_slice(corr, corr_update_y[:, None], (0, i))
 
         return corr, data
 
