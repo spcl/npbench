@@ -3,12 +3,11 @@ import jax.numpy as jnp
 from jax import lax
 
 def kernel(TSTEPS, N, u):
-    # Initialize arrays
+
     v = jnp.zeros_like(u)
     p = jnp.zeros_like(u)
     q = jnp.zeros_like(u)
 
-    # Constants
     DX = 1.0 / N
     DY = 1.0 / N
     DT = 1.0 / TSTEPS
@@ -34,7 +33,7 @@ def kernel(TSTEPS, N, u):
 
     def first_backward_j_loop_body(j, carry):
         v, p, q = carry
-        idx = N-2-j  # Calculate the actual index for backward iteration
+        idx = N-2-j
         v = v.at[idx, 1:N-1].set(p[1:N-1, idx] * v[idx+1, 1:N-1] + q[1:N-1, idx])
         return (v, p, q)
 
@@ -48,42 +47,35 @@ def kernel(TSTEPS, N, u):
 
     def second_backward_j_loop_body(j, carry):
         u, p, q = carry
-        idx = N-2-j  # Calculate the actual index for backward iteration
+        idx = N-2-j
         u = u.at[1:N-1, idx].set(p[1:N-1, idx] * u[1:N-1, idx+1] + q[1:N-1, idx])
         return (u, p, q)
 
     def time_step_body(t, carry):
         u, v, p, q = carry
 
-        # First part
         v = v.at[0, 1:N-1].set(1.0)
         p = p.at[1:N-1, 0].set(0.0)
         q = q.at[1:N-1, 0].set(v[0, 1:N-1])
 
-        # First j loop
         p, q, u = lax.fori_loop(1, N-1, first_j_loop_body, (p, q, u))
 
         v = v.at[N-1, 1:N-1].set(1.0)
 
-        # First backward j loop
         v, p, q = lax.fori_loop(0, N-2, first_backward_j_loop_body, (v, p, q))
 
-        # Second part
         u = u.at[1:N-1, 0].set(1.0)
         p = p.at[1:N-1, 0].set(0.0)
         q = q.at[1:N-1, 0].set(u[1:N-1, 0])
 
-        # Second j loop
         p, q, v = lax.fori_loop(1, N-1, second_j_loop_body, (p, q, v))
 
         u = u.at[1:N-1, N-1].set(1.0)
 
-        # Second backward j loop
         u, p, q = lax.fori_loop(0, N-2, second_backward_j_loop_body, (u, p, q))
 
         return (u, v, p, q)
 
-    # Main time loop
     u, v, p, q = lax.fori_loop(1, TSTEPS + 1, time_step_body, (u, v, p, q))
 
     return u

@@ -42,7 +42,6 @@ def kernel(alpha, imgIn):
 
     imgOut = c1 * (y1 + y2)
 
-    # First vertical pass
     y1 = jnp.empty_like(imgOut)
     y1 = y1.at[0, :].set(a5 * imgOut[0, :])
     y1 = y1.at[1, :].set(a5 * imgOut[1, :] + a6 * imgOut[0, :] + b1 * y1[0, :])
