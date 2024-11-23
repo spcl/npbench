@@ -92,8 +92,8 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     acc = getAcc(pos, mass, G, softening)
 
     # calculate initial energy of system
-    KE = jnp.zeros(Nt + 1, dtype=jnp.float64)
-    PE = jnp.zeros(Nt + 1, dtype=jnp.float64)
+    KE = jnp.empty(Nt + 1, dtype=jnp.float64)
+    PE = jnp.empty(Nt + 1, dtype=jnp.float64)
     ke, pe = getEnergy(pos, vel, mass, G)
     KE = KE.at[0].set(ke)
     PE = PE.at[0].set(pe)
