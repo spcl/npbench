@@ -98,3 +98,5 @@ def cavity_flow(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
     
     out_vals, _ = lax.scan(body_func, array_vals, jnp.arange(nt))
     u, v, p, b = out_vals
+
+    return u, v, p
