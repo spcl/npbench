@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH -D jd
-#SBATCH -p test
+#SBATCH -D jx
+#SBATCH -p general -t 30
 #SBATCH -A pr28fi --ntasks-per-node=1 --ear=off
 #SBATCH -J dpnp_cpu
 #SBATCH --array=1-26
 #SBATCH -d singleton
-##SBATCH --export=NONE
+#SBATCH --export=NONE
 ##SBATCH --get-user-env
 
 SZ=paper && VAL=0 && RR=10  && TT=100  # PRODUCTION
@@ -17,7 +17,7 @@ module purge
 module swap spack/latest
 module load intel
 module load slurm_setup
-#module load anaconda3
+module load anaconda3
 module load git
 module load cmake
 module load gmake
@@ -30,8 +30,8 @@ BMS=('adi' 'jacobi_1d' 'jacobi_2d' 'fdtd_2d' 'bicg' 'cavity_flow' \
      'vadv' 'heat_3d' 'scattering_self_energies' 'contour_integral' 'stockham_fft'\
      'trisolv' 'lu' )
 
-source deactivate
-conda activate npb
+#conda deactivate
+source activate npb
 
 BASE=${HOME}/npb-lrz
 IDX=$(( ${SLURM_ARRAY_TASK_ID} - 1 ))

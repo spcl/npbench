@@ -35,6 +35,8 @@ def getAcc(pos, mass, G, softening):
     ay = G * (dy * inv_r3) @ mass
     az = G * (dz * inv_r3) @ mass
 
+
+
     # pack together the acceleration components
     a = np.hstack((ax, ay, az))
 
@@ -81,7 +83,8 @@ def getEnergy(pos, vel, mass, G):
 def nbody(mass, pos, vel, N, Nt, dt, G, softening):
 
     # Convert to Center-of-Mass frame
-    vel -= np.mean(mass * vel, axis=0) / np.mean(mass)
+#    vel -= np.mean(mass * vel, axis=0) / np.mean(mass)
+    vel = np.subtract(vel,np.divide( np.mean(mass * vel, axis=0), np.mean(mass)))
 
     # calculate initial gravitational accelerations
     acc = getAcc(pos, mass, G, softening)
