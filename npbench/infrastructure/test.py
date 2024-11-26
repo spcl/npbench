@@ -99,9 +99,7 @@ class Test(object):
 
             # Validation
             valid = True
-            if np_out is None:
-               print("{} - {} - validation: SKIPPED for np_out is None".format(frmwrk_name, impl_name))
-            elif validate:
+            if validate and np_out is not None:
                 try:
                     if isinstance(frmwrk_out, (tuple, list)):
                         frmwrk_out = [self.frmwrk.copy_back_func()(a) for a in frmwrk_out]
