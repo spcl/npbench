@@ -57,6 +57,7 @@ $ pip install pygount
 $ wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e6ff8e9c-ee28-47fb-abd7-5c524c983e1c/l_BaseKit_p_2024.2.1.100_offline.sh
 ```
 
+Refer this [LINK](https://intelpython.github.io/dpnp/quick_start_guide.html#building-for-custom-sycl-targets) to know more on building custom SYCL targets or installing dpnp package from intel channel
 
 <br>
 <br>
