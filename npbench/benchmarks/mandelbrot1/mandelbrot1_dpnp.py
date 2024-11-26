@@ -14,7 +14,8 @@ def mandelbrot(xmin, xmax, ymin, ymax, xn, yn, maxiter, horizon=2.0):
         I = np.less(abs(Z), horizon)
         
         N[I] = n
-        Z[I] =np.power(Z[I],2) + C[I]
+       # Z[I] =np.power(Z[I],2) + C[I] 
+        Z[I] =Z[I]**2 + C[I]
     N[N == maxiter - 1] = 0
     
     return Z, N
