@@ -29,14 +29,19 @@ class DpnpFramework(Framework):
 
     def select_device(self):
         """ Selects the default SYCL device based on the framework name (CPU or GPU). """
+        imports = self.imports()  # Ensure imports are correctly fetched
+        dpctl = imports['dpctl']
+
         if   self.fname == "dpnp_cpu":
             os.environ["ONEAPI_DEVICE_SELECTOR"] ="*:cpu"
         elif self.fname == "dpnp_gpu":
-            os.environ["ONEAPI_DEVICE_SELECTOR"] ="*:gpu"
+            # extra lines of code for correct gpu device selection
+            gpu_device = dpctl.select_gpu_device()
+            selector = f"{gpu_device.backend.name}:{gpu_device.device_type.name}"
+            os.environ['ONEAPI_DEVICE_SELECTOR'] = selector
+#            os.environ["ONEAPI_DEVICE_SELECTOR"] ="*:gpu"
         else:
             os.environ["ONEAPI_DEVICE_SELECTOR"] ="*:*"
-        imports = self.imports()  # Ensure imports are correctly fetched
-        dpctl = imports['dpctl']
         return dpctl.select_default_device()
 
     def copy_func(self) -> Callable:
