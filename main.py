@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     ]
 
-    frameworks = ["numpy", "numba","dpnp"]
+    frameworks = ["numpy", "numba","dpnp_cpu","dpnp_gpu"]
 #    frameworks = ["pythran"]
 #    frameworks = []
     if args['dace']:
