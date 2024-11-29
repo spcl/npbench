@@ -3,14 +3,18 @@
 
 ## Quickstart
 
-To install NPBench, simply execute:
+IF DPNP is critical to you, see below. 
+
+Otherwise, to install NPBench, simply execute:
 ```
 python -m pip install -r requirements.txt
 python -m pip install .
 ```
+
 You can then run a subset of the benchmarks with NumPy, Numba, and DaCe and plot
 the speedup of DaCe and Numba against NumPy:
-```
+
+``` bash
 python -m pip install numba
 python -m pip install dace
 python quickstart.py
@@ -22,6 +26,7 @@ python plot_results.py
 Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
 - DaCe
+- Dpnp
 - Numba
 - NumPy
 - Pythran
@@ -54,6 +59,28 @@ python -m pip install dace
 However, you may want to install the latest version from the [GitHub repository](https://github.com/spcl/dace).
 To run NPBench with DaCe, you have to select as framework (see details below)
 either `dace_cpu` or `dace_gpu`.
+
+
+### DPNP
+
+DPNP strongly recommends conda instead of pip for its dependency on intel packages. Refer this 
+[LINK](https://intelpython.github.io/dpnp/quick_start_guide.html#building-for-custom-sycl-targets) to know more 
+on building custom SYCL targets or installing dpnp package from intel channel.
+
+Edit the `environment.yml` to include packages and optional dependencies (e.g. hardware-dependent).
+
+``` bash
+$ conda env create -f environment.yml    # environment.yml contains all the right dependencies
+$ python -m pip install pygount          # Not distributed with conda
+```
+If you are behind proxies, follow your system documentation. E.g. for pip you may have to specify:
+``` bash
+$ python -m pip --proxy=http://localhost:1234 install <...> # where "localhost:1234" is the value of the env var "HTTP_PROXY"
+```
+
+Unlike the pip installation, with `environment.yml` it is advised to try installing all packages at once.
+
+DPNP only contains a subset of the benchmarks, on a best-effort basis.
 
 ### Numba
 
@@ -138,6 +165,15 @@ Please cite NPBench as follows:
 }
 ```
 
+```bibtex
+@inproceedings{
+    npbench-dpnp,
+    author = {Ranjith et al.},
+    year = {2021},
+    title = {In prep.}
+}
+```
+
 ## Acknowledgements
 
 NPBench is a collection of scientific Python/NumPy codes from various domains that we adapted from the following sources:
@@ -153,7 +189,3 @@ NPBench is a collection of scientific Python/NumPy codes from various domains th
 - Pythran [benchmarks](https://github.com/serge-sans-paille/numpy-benchmarks/)
 - [Stockham-FFT](http://urn.kb.se/resolve?urn=urn:nbn:se:kth:diva-287731)
 - Weather stencils from [gt4py](https://github.com/GridTools/gt4py)
-
-
-
-
