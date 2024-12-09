@@ -1,20 +1,21 @@
 import dpnp as np
 
-# Deep learning convolutional operator (stride = 1)
+# Optimized Deep Learning Convolutional Operator (stride = 1)
 def conv2d(input, weights):
-    K = weights.shape[0]  # Assuming square kernel
-    N = input.shape[0]
-    H_out = input.shape[1] - K + 1
-    W_out = input.shape[2] - K + 1
-    C_out = weights.shape[3]
+    K = weights.shape[0]  # Kernel size (assuming square kernel)
+    N, H, W, C_in = input.shape  # Input dimensions
+    C_out = weights.shape[3]  # Output channels
+    H_out = H - K + 1
+    W_out = W - K + 1
     output = np.empty((N, H_out, W_out, C_out), dtype=np.float32)
 
-    for i in range(H_out):
-        for j in range(W_out):
-            output[:, i, j, :] = np.sum(
-                input[:, i:i + K, j:j + K, :, np.newaxis] *
-                weights[np.newaxis, :, :, :],
-                axis=(1, 2, 3),
+    # Perform convolution manually by iterating over the kernel dimensions
+    for i in range(K):
+        for j in range(K):
+            output += np.tensordot(
+                input[:, i:H_out + i, j:W_out + j, :],
+                weights[i, j, :, :],
+                axes=([3], [0])
             )
 
     return output
@@ -22,7 +23,7 @@ def conv2d(input, weights):
 def conv2d_bias(input, weights, bias):
     return conv2d(input, weights) + bias
 
-# Initialization function using DPNP
+# Optimized Initialization Function for DPNP
 def initialize(C_in, C_out, H, K, N, W):
     from dpnp.random import default_rng
     rng = default_rng(42)
@@ -30,5 +31,6 @@ def initialize(C_in, C_out, H, K, N, W):
     input = rng.random((N, H, W, C_in), dtype=np.float32)
     # Weights
     weights = rng.random((K, K, C_in, C_out), dtype=np.float32)
-    bias = rng.random((C_out, ), dtype=np.float32)
+    bias = rng.random((C_out,), dtype=np.float32)
     return input, weights, bias
+
