@@ -1,4 +1,5 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
+import pathlib
 import jax.numpy as jnp
 import jax
 jax.config.update("jax_enable_x64", True)
@@ -6,6 +7,10 @@ jax.config.update("jax_enable_x64", True)
 from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
 
+
+_impl = {
+    'lib-implementation': 'lib'
+}
 
 class JaxFramework(Framework):
     """ A class for reading and processing framework information. """
@@ -24,6 +29,66 @@ class JaxFramework(Framework):
         """ Returns the copy-method that should be used 
         for copying the benchmark arguments. """
         return jnp.array
+
+    def impl_files(self, bench: Benchmark):
+        """ Returns the framework's implementation files for a particular
+        benchmark.
+        :param bench: A benchmark.
+        :returns: A list of the benchmark implementation files.
+        """
+
+        parent_folder = pathlib.Path(__file__).parent.absolute()
+        implementations = []
+        for impl_name, impl_postfix in _impl.items():
+            pymod_path = parent_folder.joinpath(
+                "..", "..", "npbench", "benchmarks", bench.info["relative_path"],
+                bench.info["module_name"] + "_" + self.info["postfix"] + "_" + impl_postfix + ".py")
+            implementations.append((pymod_path, impl_name))
+        
+        # appending the default implementation
+        pymod_path = parent_folder.joinpath("..", "..", "npbench", "benchmarks", bench.info["relative_path"],
+                                            bench.info["module_name"] + "_" + self.info["postfix"] + ".py")
+        
+        implementations.append((pymod_path, 'default'))
+        return implementations
+    
+    def implementations(self, bench: Benchmark):
+        """ Returns the framework's implementations for a particular benchmark.
+        :param bench: A benchmark.
+        :returns: A list of the benchmark implementations.
+        """
+
+        module_pypath = "npbench.benchmarks.{r}.{m}".format(r=bench.info["relative_path"].replace('/', '.'),
+                                                            m=bench.info["module_name"])
+        if "postfix" in self.info.keys():
+            postfix = self.info["postfix"]
+        else:
+            postfix = self.fname
+        module_str = "{m}_{p}".format(m=module_pypath, p=postfix)
+        func_str = bench.info["func_name"]
+
+        implementations = []
+        for impl_name, impl_postfix in _impl.items():
+            ldict = dict()
+            try:
+                exec("from {m}_{p} import {f} as impl".format(m=module_str, p=impl_postfix, f=func_str), ldict)
+                implementations.append((ldict['impl'], impl_name))
+            except ImportError:
+                continue
+            except Exception:
+                print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=impl_name))
+                continue
+        
+        # appending the default implementation
+        try:
+            ldict = dict()
+            exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
+            implementations.append((ldict['impl'], 'default'))
+        except Exception as e:
+            print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=func_str))
+            raise e
+        
+        return implementations
 
     def exec_str(self, bench: Benchmark, impl: Callable = None):
         """ Generates the execution-string that should be used to call
