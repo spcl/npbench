@@ -39,17 +39,19 @@ class JaxFramework(Framework):
 
         parent_folder = pathlib.Path(__file__).parent.absolute()
         implementations = []
+
+        # appending the default implementation
+        pymod_path = parent_folder.joinpath("..", "..", "npbench", "benchmarks", bench.info["relative_path"],
+                                            bench.info["module_name"] + "_" + self.info["postfix"] + ".py")
+        
+        implementations.append((pymod_path, 'default'))
+
         for impl_name, impl_postfix in _impl.items():
             pymod_path = parent_folder.joinpath(
                 "..", "..", "npbench", "benchmarks", bench.info["relative_path"],
                 bench.info["module_name"] + "_" + self.info["postfix"] + "_" + impl_postfix + ".py")
             implementations.append((pymod_path, impl_name))
         
-        # appending the default implementation
-        pymod_path = parent_folder.joinpath("..", "..", "npbench", "benchmarks", bench.info["relative_path"],
-                                            bench.info["module_name"] + "_" + self.info["postfix"] + ".py")
-        
-        implementations.append((pymod_path, 'default'))
         return implementations
     
     def implementations(self, bench: Benchmark):
@@ -68,6 +70,16 @@ class JaxFramework(Framework):
         func_str = bench.info["func_name"]
 
         implementations = []
+
+        # appending the default implementation
+        try:
+            ldict = dict()
+            exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
+            implementations.append((ldict['impl'], 'default'))
+        except Exception as e:
+            print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=func_str))
+            raise e
+
         for impl_name, impl_postfix in _impl.items():
             ldict = dict()
             try:
@@ -78,15 +90,6 @@ class JaxFramework(Framework):
             except Exception:
                 print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=impl_name))
                 continue
-        
-        # appending the default implementation
-        try:
-            ldict = dict()
-            exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
-            implementations.append((ldict['impl'], 'default'))
-        except Exception as e:
-            print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=func_str))
-            raise e
         
         return implementations
 
