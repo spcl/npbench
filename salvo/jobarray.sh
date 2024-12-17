@@ -1,20 +1,20 @@
 #!/bin/bash
-#SBATCH -D jx
-#SBATCH -p general -t 30
-#SBATCH -A pr28fi --ntasks-per-node=1 --ear=off
-#SBATCH -J dpnp_cpu
+#SBATCH -D jc
+#SBATCH -p test -t 30
+#SBATCH -A pr28fa --ntasks-per-node=1 --ear=off
+#SBATCH -J dpnp_gpu
 #SBATCH --array=1-26
-#SBATCH -d singleton
+##SBATCH -d singleton
 #SBATCH --export=NONE
 ##SBATCH --get-user-env
 
 SZ=paper && VAL=0 && RR=10  && TT=100  # PRODUCTION
-#SZ=M     && VAL=1 && RR=1   && TT=5000 # VALIDATION (comment to toggle)
+#SZ=M     && VAL=1 && RR=3  && TT=5000 # VALIDATION (comment to toggle)
 
 FW=$SLURM_JOB_NAME
 
-module purge
-module swap spack/latest
+#module purge
+#module swap spack/latest
 module load intel
 module load slurm_setup
 module load anaconda3
