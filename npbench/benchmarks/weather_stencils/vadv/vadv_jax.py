@@ -18,19 +18,17 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
         ccol, dcol = loop_vars
         gcv = 0.25 * (wcon[1:, :, 0 + 1] + wcon[:-1, :, 0 + 1])
         cs = gcv * BET_M
-        ccol = ccol.at[:, :, k].set(gcv * BET_P)
-        bcol = dtr_stage - ccol[:, :, k]
+        bs = gcv * BET_P
+        bcol = dtr_stage - bs
 
         # update the d column
         correction_term = -cs * (u_stage[:, :, k + 1] - u_stage[:, :, k])
-        dcol = dcol.at[:, :, k].set((dtr_stage * u_pos[:, :, k] + utens[:, :, k] +
-                         utens_stage[:, :, k] + correction_term))
 
         # Thomas forward
         divided = 1.0 / bcol
-        ccol = ccol.at[:, :, k].set(ccol[:, :, k] * divided)
-        dcol = dcol.at[:, :, k].set(dcol[:, :, k] * divided)
-
+        ccol = ccol.at[:, :, k].set(bs * divided)
+        dcol = dcol.at[:, :, k].set((dtr_stage * u_pos[:, :, k] + utens[:, :, k] +
+                         utens_stage[:, :, k] + correction_term) * divided)
         return ccol, dcol
     
     ccol, dcol = lax.fori_loop(0, 1, loop1, (ccol, dcol))
@@ -42,22 +40,21 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
 
         as_ = gav * BET_M
         cs = gcv * BET_M
+        bs = gcv * BET_P
 
         acol = gav * BET_P
-        ccol = ccol.at[:, :, k].set(gcv * BET_P)
-        bcol = dtr_stage - acol - ccol[:, :, k]
+        bcol = dtr_stage - acol - bs
 
         # update the d column
         correction_term = -as_ * (u_stage[:, :, k - 1] -
                                   u_stage[:, :, k]) - cs * (
                                       u_stage[:, :, k + 1] - u_stage[:, :, k])
-        dcol = dcol.at[:, :, k].set((dtr_stage * u_pos[:, :, k] + utens[:, :, k] +
-                                     utens_stage[:, :, k] + correction_term))
 
         # Thomas forward
         divided = 1.0 / (bcol - ccol[:, :, k - 1] * acol)
-        ccol = ccol.at[:, :, k].set(ccol[:, :, k] * divided)
-        dcol = dcol.at[:, :, k].set((dcol[:, :, k] - (dcol[:, :, k - 1]) * acol) * divided)
+        ccol = ccol.at[:, :, k].set(bs * divided)
+        dcol = dcol.at[:, :, k].set(((dtr_stage * u_pos[:, :, k] + utens[:, :, k] +
+                                     utens_stage[:, :, k] + correction_term) - (dcol[:, :, k - 1]) * acol) * divided)
 
         return ccol, dcol
     
@@ -71,12 +68,11 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
 
         # update the d column
         correction_term = -as_ * (u_stage[:, :, k - 1] - u_stage[:, :, k])
-        dcol = dcol.at[:, :, k].set((dtr_stage * u_pos[:, :, k] + utens[:, :, k] +
-                         utens_stage[:, :, k] + correction_term))
         
         # Thomas forward
         divided = 1.0 / (bcol - ccol[:, :, k - 1] * acol)
-        dcol = dcol.at[:, :, k].set((dcol[:, :, k] - (dcol[:, :, k - 1]) * acol) * divided)
+        dcol = dcol.at[:, :, k].set(((dtr_stage * u_pos[:, :, k] + utens[:, :, k] +
+                         utens_stage[:, :, k] + correction_term) - (dcol[:, :, k - 1]) * acol) * divided)
 
         return dcol
     
