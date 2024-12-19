@@ -15,7 +15,7 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     data_col = jnp.empty((I, J), dtype=utens_stage.dtype)
 
     def loop1(k, loop_vars):
-        wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol = loop_vars
+        ccol, dcol = loop_vars
         gcv = 0.25 * (wcon[1:, :, 0 + 1] + wcon[:-1, :, 0 + 1])
         cs = gcv * BET_M
         ccol = ccol.at[:, :, k].set(gcv * BET_P)
@@ -31,12 +31,12 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
         ccol = ccol.at[:, :, k].set(ccol[:, :, k] * divided)
         dcol = dcol.at[:, :, k].set(dcol[:, :, k] * divided)
 
-        return wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol
+        return ccol, dcol
     
-    wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol = lax.fori_loop(0, 1, loop1, (wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol))
+    ccol, dcol = lax.fori_loop(0, 1, loop1, (ccol, dcol))
 
     def loop2(k, loop_vars):
-        wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol = loop_vars
+        ccol, dcol = loop_vars
         gav = -0.25 * (wcon[1:, :, k] + wcon[:-1, :, k])
         gcv = 0.25 * (wcon[1:, :, k + 1] + wcon[:-1, :, k + 1])
 
@@ -59,12 +59,11 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
         ccol = ccol.at[:, :, k].set(ccol[:, :, k] * divided)
         dcol = dcol.at[:, :, k].set((dcol[:, :, k] - (dcol[:, :, k - 1]) * acol) * divided)
 
-        return wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol
+        return ccol, dcol
     
-    wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol = lax.fori_loop(1, K - 1, loop2, (wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol))
+    ccol, dcol = lax.fori_loop(1, K - 1, loop2, (ccol, dcol))
 
-    def loop3(k, loop_vars):
-        wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol = loop_vars
+    def loop3(k, dcol):
         gav = -0.25 * (wcon[1:, :, k] + wcon[:-1, :, k])
         as_ = gav * BET_M
         acol = gav * BET_P
@@ -79,30 +78,30 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
         divided = 1.0 / (bcol - ccol[:, :, k - 1] * acol)
         dcol = dcol.at[:, :, k].set((dcol[:, :, k] - (dcol[:, :, k - 1]) * acol) * divided)
 
-        return wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol
+        return dcol
     
-    wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol = lax.fori_loop(K - 1, K, loop3, (wcon, u_stage, u_pos, utens, utens_stage, dtr_stage, ccol, dcol))
+    dcol = lax.fori_loop(K - 1, K, loop3, dcol)
 
     def loop4(k, loop_vars):
-        dcol, data_col, utens_stage, u_pos, dtr_stage = loop_vars
+        data_col, utens_stage = loop_vars
         datacol = dcol[:, :, k]
         data_col = data_col.at[:].set(datacol)
         utens_stage = utens_stage.at[:, :, k].set(dtr_stage * (datacol - u_pos[:, :, k]))
 
-        return dcol, data_col, utens_stage, u_pos, dtr_stage
+        return data_col, utens_stage
     
-    dcol, data_col, utens_stage, u_pos, dtr_stage = lax.fori_loop(K - 1, K, loop4, (dcol, data_col, utens_stage, u_pos, dtr_stage))
+    data_col, utens_stage = lax.fori_loop(K - 1, K, loop4, (data_col, utens_stage))
 
     def loop5(k, loop_vars):
-        dcol, data_col, utens_stage, u_pos, dtr_stage = loop_vars
+        data_col, utens_stage = loop_vars
         K = utens_stage.shape[2]
         k = K - 2 - k 
         datacol = dcol[:, :, k] - ccol[:, :, k] * data_col[:, :]
         data_col = data_col.at[:].set(datacol)
         utens_stage = utens_stage.at[:, :, k].set(dtr_stage * (datacol - u_pos[:, :, k]))
 
-        return dcol, data_col, utens_stage, u_pos, dtr_stage
+        return data_col, utens_stage
     
-    dcol, data_col, utens_stage, u_pos, dtr_stage = lax.fori_loop(0, K - 1, loop5, (dcol, data_col, utens_stage, u_pos, dtr_stage))
+    data_col, utens_stage = lax.fori_loop(0, K - 1, loop5, (data_col, utens_stage))
 
     return ccol, dcol, data_col, utens_stage
