@@ -11,8 +11,7 @@ def kernel(TSTEPS, N, A):
         def loop2(i, A):
             
             def loop3(j, A):
-                A = A.at[i, j].set(A[i, j] + A[i, j - 1])
-                A = A.at[i, j].set(A[i, j] / 9.0)
+                A = A.at[i, j].set((A[i, j] + A[i, j - 1]) / 9.0)
                 return A
             
             A = A.at[i, 1:-1].set(
