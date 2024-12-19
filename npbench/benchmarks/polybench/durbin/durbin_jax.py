@@ -11,16 +11,16 @@ def kernel(r):
     beta = 1.0
     y = y.at[0].set(-r[0])
 
-
     def loop_body(k, loop_vars):
         alpha, beta, y, r = loop_vars
         beta *= 1.0 - alpha * alpha
-        
-        r_slice = jnp.where(jnp.arange(r.shape[0]) < k, jnp.roll(jnp.flip(r), [k], 0), 0.0)
-        y_slice = jnp.where(jnp.arange(y.shape[0]) < k, y, 0.0)
-        alpha = -(r[k] + jnp.dot(r_slice, y_slice)) / beta
+        mask = jnp.arange(r.shape[0]) < k
 
-        y_update_slice = jnp.where(jnp.arange(y.shape[0]) < k, jnp.roll(jnp.flip(y), [k], 0) * alpha, 0.0)
+        products = jnp.where(mask, y * jnp.roll(jnp.flip(r), [k], 0),0.0)
+        dot_prod = jnp.sum(products)
+        alpha = -(r[k] + dot_prod) / beta
+
+        y_update_slice = jnp.where(mask, jnp.roll(jnp.flip(y), [k], 0) * alpha, 0.0)
         y += y_update_slice
         y = y.at[k].set(alpha)
 
