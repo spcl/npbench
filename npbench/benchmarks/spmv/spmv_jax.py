@@ -1,22 +1,12 @@
 # Sparse Matrix-Vector Multiplication (SpMV)
-import jax.numpy as jnp
-import jax
-from jax import lax
+from jax.experimental import sparse
+import scipy
 
 # Matrix-Vector Multiplication with the matrix given in Compressed Sparse Row
 # (CSR) format
-@jax.jit
 def spmv(A_row, A_col, A_val, x):
-    y = jnp.empty(A_row.size - 1, dtype=A_val.dtype)
+    dim = A_row.size - 1 # needed because for the "paper" test size, scipy auto-infers the dims wrong
+    csr_m = scipy.sparse.csr_matrix((A_val, A_col, A_row), shape=(dim, dim))
 
-    def row_update(i, y):
-        mask = (jnp.arange(A_col.size) >= A_row[i]) & (jnp.arange(A_col.size) < A_row[i + 1])
-
-        cols = jnp.where(mask, A_col, 0)
-        vals = jnp.where(mask, A_val, 0)
-        y = y.at[i].set(vals @ x[cols])
-
-        return y
-
-    y = lax.fori_loop(0, A_row.size - 1, row_update, y)
-    return y
+    bcoo_m = sparse.BCOO.from_scipy_sparse(csr_m)
+    return bcoo_m @ x
