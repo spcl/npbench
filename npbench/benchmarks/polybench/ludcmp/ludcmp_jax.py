@@ -13,8 +13,7 @@ def kernel(A, b):
             A_slice_1 = jnp.where(jnp.arange(A.shape[1]) < j, A[i, :], 0.0)
             A_slice_2 = jnp.where(jnp.arange(A.shape[0]) < j, A[:, j], 0.0)
 
-            A = A.at[i, j].set(A[i, j] - A_slice_1 @ A_slice_2)
-            A = A.at[i, j].set(A[i, j] / A[j, j])
+            A = A.at[i, j].set((A[i, j] - A_slice_1 @ A_slice_2) / A[j, j])
             return A
         
         def inner_loop_2(j, A):
