@@ -2,14 +2,18 @@ import jax
 import jax.numpy as jnp
 from jax import lax
 
+
 @jax.jit
 def kernel(L, x, b):
-    
-    def loop_body(i, x):
-        mask = jnp.arange(L.shape[1]) < i
-        L_slice = jnp.where(mask, L[i, :], 0.0)
-        x_slice = jnp.where(mask, x, 0.0)
 
-        return x.at[i].set((b[i] - jnp.dot(L_slice, x_slice)) / L[i, i])
+    def loop_body(i, loop_vars):
+        L, x, b = loop_vars
+        mask = jnp.arange(x.shape[0]) < i
+        products = jnp.where(mask, L[i, :] * x, 0.0) 
+        dot_product = jnp.sum(products)
+        x.at[i].set((b[i] - dot_product) / L[i, i])
+        return L, x, b
 
-    return lax.fori_loop(0, x.shape[0], loop_body, x)
+    _, x, _ = lax.fori_loop(0, x.shape[0], loop_body, (L, x, b))
+
+    return x
