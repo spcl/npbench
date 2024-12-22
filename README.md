@@ -22,6 +22,7 @@ python plot_results.py
 Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
 - DaCe
+- JAX
 - Numba
 - NumPy
 - Pythran
