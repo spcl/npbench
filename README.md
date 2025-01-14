@@ -62,8 +62,6 @@ conda init --all
 ```
 
 <br>
-<br>
-
 
 To use Nvidia GPUs, we need:
 
