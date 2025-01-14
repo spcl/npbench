@@ -50,14 +50,52 @@ NOTE: On SuperMUC-NG Phase 1/2, you need to have internet connection (to allow c
 On a CC instance, we have internet connection => no SSH Remote Forward necessary.<br>
 However, there are no modules to be loaded, so we need to install oneAPI with get, also nvidia plugin must be added to detect the gpus:
 
+NOTE: The CC Vm is empty initially: you have to install conda (we do it with miniconda):
 
 ```bash
-$ conda env create -f environment.yml
-$ pip install pygount 
-$ wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e6ff8e9c-ee28-47fb-abd7-5c524c983e1c/l_BaseKit_p_2024.2.1.100_offline.sh
+mkdir -p ~/.miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/.miniconda3/miniconda.sh
+bash ~/.miniconda3/miniconda.sh -b -u -p ~/.miniconda3
+rm ~/.miniconda3/miniconda.sh
+source ~/.miniconda3/bin/activate
+conda init --all
 ```
 
-Refer this [LINK](https://intelpython.github.io/dpnp/quick_start_guide.html#building-for-custom-sycl-targets) to know more on building custom SYCL targets or installing dpnp package from intel channel
+<br>
+<br>
+
+
+To use Nvidia GPUs, we need:
+
+- OneAPI Base Toolkit:
+  * <https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html>, choose your system and run the commands in the CLI
+- OneAPI driver for Nvidia:
+  * <https://developer.codeplay.com/products/oneapi/nvidia/download>, choose conda or apt (wget/curl only for windows)
+  * we choose conda way => we install it in the NPBench conda env => we install the driver after NPBench
+
+```bash
+# We install the OneAPI Base Toolkit
+#wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e6ff8e9c-ee28-47fb-abd7-5c524c983e1c/l_BaseKit_p_2024.2.1.100_offline.sh    # old version, doens't have asynchronoucity
+$ wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/dfc4a434-838c-4450-a6fe-2fa903b75aa7/intel-oneapi-base-toolkit-2025.0.1.46_offline.sh
+$ sudo sh ./intel-oneapi-base-toolkit-2025.0.1.46_offline.sh -a --silent --cli --eula accept
+
+# We install NPBench
+$ git clone https://gitlab.lrz.de/di52vum/npb-lrz.git && cd npb-lrz
+    # insert credentials if needed
+$ conda env create -f environment.yml
+$ conda activate npb
+(npb)$ pip install pygount                   # not available in conda, only pip
+
+# We install the OneAPI Driver for Nvidia
+(npb)$ conda config --add channels https://developer.codeplay.com/conda
+(npb)$ conda install oneapi-nvidia12.0
+(npb)$ source /opt/intel/oneapi/setvars.sh     # idk why
+
+# Now everything should work, try:
+(npb)$ python3 ./run_benchmark.py -b jacobi_1d -f dpnp_gpu -p paper -v 1 -r 10    
+```
+
+Another link: <https://intelpython.github.io/dpnp/quick_start_guide.html#building-for-custom-sycl-targets> to know more on building custom SYCL targets or installing dpnp package from intel channel.
 
 <br>
 <br>
