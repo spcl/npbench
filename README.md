@@ -12,7 +12,8 @@
   - [Conda env without licensing issues](#conda-env-without-licensing-issues)
 - [Supported Frameworks](#supported-frameworks)
   - [CuPy](#cupy)
-- [Running benchmarks](#running-benchmarks)
+- [Running all benchmarks](#running-all-benchmarks)
+- [Running OUR benchmarks](#running-our-benchmarks)
   - [Presets](#presets)
   - [Visualization](#visualization)
 - [Customization](#customization)
@@ -248,13 +249,16 @@ Below, we provide some tips about installing each of the above frameworks:
 ### CuPy
 
 If you already have CUDA installed, then you can install CuPy with pip:
-```
-python -m pip install cupy-cuda<version>
+
+```bash
+$ python -m pip install cupy-cuda<version>
 ```
 For example, if you have CUDA 11.1, then you should install CuPy with:
+
+```bash
+$ python -m pip install cupy-cuda111
 ```
-python -m pip install cupy-cuda111
-```
+
 For more installation options, consult the CuPy [installation guide](https://docs.cupy.dev/en/stable/install.html#install-cupy).
 
 <br>
@@ -274,13 +278,74 @@ For more installation options, consult the CuPy [installation guide](https://doc
 
 
 
-## Running benchmarks
+## Running all benchmarks
 
 You can then run a subset of the benchmarks with NumPy, Numba, DaCe, Dpnp and Numba-dpex,
 and plot the speedup of DaCe and Numba against NumPy:
 
 ```bash
 $ python main.py
+$ python plot_results.py
+```
+
+To run individual bencharks, you can use the `$ run_benchmark` script:
+
+```bash
+$ python run_benchmark.py -b <benchmark> -f <framework>
+```
+
+- the available benchmarks are listed in the `bench_info` folder
+- the supported frameworks are listed in the `framework_info` folder
+- lease use the corresponding JSON filenames for both of them
+
+
+For example, to run `adi` with NumPy, execute the following:
+
+```bash
+$ python run_benchmark.py -b adi -f numpy
+```
+
+You can run all the available benchmarks with a specific framework using the `run_framework` script:
+
+```bash
+python run_framework.py -f <framework>
+```
+
+<br>
+<br>
+<br>
+
+
+
+
+
+## Running OUR benchmarks
+
+We created our lists of benchmarks (i.e. the subset of them that we are interested in) two new framework for DPNP (`dpnp_cpu` and `dpnp_gpu`),
+and inserted them in the script `main.py` that runs them (replacing `run_framework.py`)
+
+From `main.py`:
+
+```python
+    benchmarks = [
+                'adi', 'jacobi_1d', 'jacobi_2d', 'fdtd_2d', 'bicg', 'cavity_flow',
+        'cholesky', 'nbody', 'channel_flow', 'covariance', 'gemm', 'conv2d_bias',
+        'softmax', 'k2mm', 'atax', 'crc16', 'mandelbrot1', 'seidel_2d', 'hdiff',
+        'vadv','heat_3d','scattering_self_energies','contour_intergral','stockham_fft'
+        ,'trisolv','lu'
+
+    ]
+
+    frameworks = ["numpy", "cupy", "dpnp_gpu", "dpnp_cpu", "numba", "pythran"]
+```
+
+```bash
+(npb)$ python3 main.py -p paper -v 0 -r 10 -t 1200 -d 1 | tee output_main.logs
+# -v <n> : validation (0 no, 1 yes)
+# -r <n> : sample dimention for getting a statistical meaningful median
+# -p {paper|} : dimention of the framework run
+# -t <secs> : timeout; 1200 or greater required for some
+# -d 1 : required for dace_cpu
 $ python plot_results.py
 ```
 
