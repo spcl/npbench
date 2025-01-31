@@ -44,7 +44,10 @@ class Test(object):
         else:
             out = []
         if "output_args" in self.bench.info.keys():
-            out += [ldict[a] for a in frmwrk.args(self.bench)]
+            num_return_args = len(out)
+            num_output_args = len(self.bench.info["output_args"])
+            out += [ldict[a] for a in frmwrk.inout_args(self.bench)]
+            assert len(out) == num_return_args + num_output_args, "Number of output arguments does not match."
         return out, timelist
 
     def run(self, preset: str, validate: bool, repeat: int, timeout: float = 200.0, ignore_errors: bool = True):
