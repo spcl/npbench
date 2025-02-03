@@ -1,8 +1,13 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 import pathlib
-import jax.numpy as jnp
-import jax
-jax.config.update("jax_enable_x64", True)
+
+try:
+    import jax.numpy as jnp
+    import jax
+    jax.config.update("jax_enable_x64", True)
+except ImportError:
+    print("WARNING: JAX is not installed. " 
+          "Please install JAX to run benchmarks with the JAX framework.")
 
 from npbench.infrastructure import Benchmark, Framework
 from typing import Any, Callable, Dict
