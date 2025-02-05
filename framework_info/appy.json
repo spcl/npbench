@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "appy",
+        "full_name": "APPy",
+        "prefix": "ap",
+        "postfix": "appy",
+        "class": "APPyFramework",
+        "arch": "gpu"
+    }
+}
