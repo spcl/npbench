@@ -22,6 +22,7 @@ python plot_results.py
 Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
 - DaCe
+- JAX
 - Numba
 - NumPy
 - Pythran
@@ -54,6 +55,24 @@ python -m pip install dace
 However, you may want to install the latest version from the [GitHub repository](https://github.com/spcl/dace).
 To run NPBench with DaCe, you have to select as framework (see details below)
 either `dace_cpu` or `dace_gpu`.
+
+### Jax
+
+JAX can be installed with pip:
+- CPU-only (Linux/macOS/Windows)
+    ```sh
+    pip install -U jax
+    ```
+- GPU (NVIDIA, CUDA 12)
+    ```sh
+    pip install -U "jax[cuda12]"
+    ```
+- TPU (Google Cloud TPU VM)
+  ```sh
+  pip install -U "jax[tpu]" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+  ```
+For more installation options, please consult the JAX [installation guide](https://jax.readthedocs.io/en/latest/installation.html#installation).
+
 
 ### Numba
 

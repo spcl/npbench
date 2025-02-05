@@ -104,7 +104,7 @@ class Test(object):
             valid = True
             if validate and np_out is not None:
                 try:
-                    frmwrk_name = self.frmwrk.info["full_name"]
+                    frmwrk_name = self.frmwrk.info["full_name"] + " - " + impl_name
 
                     rtol = 1e-5 if not 'rtol' in self.bench.info else self.bench.info['rtol']
                     atol = 1e-8 if not 'atol' in self.bench.info else self.bench.info['atol']
