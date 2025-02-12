@@ -18,8 +18,6 @@ import warnings
 
 from npbench.infrastructure import Framework, Benchmark
 
-
-
 # Run the shell command and capture the output
 class DaceCPUAutoTileFramework(Framework):
     """ A class for reading and processing framework information. """
@@ -115,7 +113,7 @@ class DaceCPUAutoTileFramework(Framework):
         return autotune_str
 
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [8, 16, 32, 64, 128, 256, 512], [1, 2, 4]))
+        [256, 512], [2]))
         if x >= y]
     memory_tiling = [[(128,), (64,), (32,)],]
     #block_sizes_2D = [(x, y) for x, y in list(itertools.product(
@@ -148,7 +146,6 @@ class DaceCPUAutoTileFramework(Framework):
                 if isinstance(n, dace.sdfg.nodes.MapEntry):
                     if n.map.schedule == dace.dtypes.ScheduleType.CPU_Multicore:
                         n.map.schedule = dace.dtypes.ScheduleType.Default
-
         num_cores, num_threads = DaceCPUAutoTileFramework.get_num_cores()
 
         _sdfg = None
@@ -162,7 +159,7 @@ class DaceCPUAutoTileFramework(Framework):
                 print("Setting OMP_NUM_THREADS failed")
                 raise Exception("Setting OMP_NUM_THREADS failed")
             block_sizes_2D = [(x, y) for x, y in list(itertools.product(
-                [1, 2, 4, 8, 16], [1, 2, 4, 8, 16]))
+                [1, 2], [4, 16]))
                 if x * y == int(os.environ['OMP_NUM_THREADS'])]
             combinations = list(
                 itertools.product(
@@ -174,19 +171,20 @@ class DaceCPUAutoTileFramework(Framework):
                     [True],
                 )
             )
-            tiled_sdfg, d, _ct = auto_tile_cpu(
+            tiled_sdfg, d = auto_tile_cpu(
                 sdfg=copy.deepcopy(aopt_sdfg),
                 exhaustive_search=True,
                 memory_tiling_parameters=DaceCPUAutoTileFramework.memory_tiling,
                 thread_coarsening_parameters=DaceCPUAutoTileFramework.thread_coarsening_2D,
                 thread_block_parameters=block_sizes_2D,
                 apply_remainder_loop=[True],
-                combinations=combinations,
+                combinations=None, #if Not None currently crashes
                 inputs=inputs,
                 re_apply=True,
                 verbose=True,
                 num_cores=int(os.environ['OMP_NUM_THREADS'])
             )
+            _ct = len(combinations)
             candidates_tried += _ct
             if _sdfg is None:
                 for v in d.values():

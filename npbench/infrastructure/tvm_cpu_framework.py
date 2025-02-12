@@ -100,12 +100,13 @@ class TVMCPUFramework(Framework):
         #    measure_option=measure_option,
         #    callbacks=[autotvm.callback.log_to_file(f"{kernel_name}.log")],
         #)
-        tuner1 = autotvm.tuner.GATuner(task1)
+        #tuner1 = autotvm.tuner.GATuner(task1)
+        tuner1 = autotvm.tuner.GridSearchTuner(task1)
         tuner1.tune(
             n_trial=200,
             measure_option=measure_option,
             callbacks=[autotvm.callback.log_to_file(f"{kernel_name}.log") ],
-            early_stopping=20
+            early_stopping=40
         )
 
         with autotvm.apply_history_best(f"{kernel_name}.log"):

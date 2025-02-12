@@ -28,7 +28,7 @@ def autotuner(TSTEPS, A, B, N):
 
     _best_config = DaceGPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
-        {"N": N, "A": A, "B": B, "TSTEPS": 2}
+        {"N": N, "A": A, "B": B, "TSTEPS": TSTEPS}
         )
     _jacobi_2d_best_config = _best_config.compile()
 
