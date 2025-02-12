@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "tvm_cpu",
+        "full_name": "tvm_cpu",
+        "prefix": "tvm_cpu",
+        "postfix": "tvm_cpu",
+        "class": "TVMCPUFramework",
+        "arch": "cpu"
+    }
+}
