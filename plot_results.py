@@ -82,7 +82,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p",
                         "--preset",
-                        choices=['S', 'M', 'L', 'paper'],
+                        choices=['S', 'M', 'L', 'paper', 'XL'],
                         nargs="?",
                         default='S')
     args = vars(parser.parse_args())

@@ -43,7 +43,7 @@ def _kernel(
         A_ptr + (i + 2) * N + (j + 1), mask=(i < N - 2) & (j < N - 2), other=0.0
     )
 
-    # Compute the new value for B at this position
+    ...
     B_new = 0.20 * (A_left + A_right + A_top + A_bottom + A_center)
     triton.language.store(
         B_ptr + (i + 1) * N + (j + 1), B_new, mask=(i < N - 2) & (j < N - 2)

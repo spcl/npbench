@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "dace_cpu_auto_tile",
+        "full_name": "DaCe CPU Auto-Tile",
+        "prefix": "dc",
+        "postfix": "dace_cpu_auto_tile",
+        "class": "DaceCPUAutoTileFramework",
+        "arch": "cpu"
+    }
+}

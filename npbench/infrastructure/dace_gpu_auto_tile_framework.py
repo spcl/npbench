@@ -16,7 +16,7 @@ from dace.transformation.dataflow import MapFusion, Vectorization, MapCollapse
 from dace.transformation.interstate import LoopToMap
 import dace.transformation.auto.auto_optimize as opt
 
-from dace.transformation.auto_tile.auto_tile import auto_tile
+from dace.transformation.auto_tile.auto_tile_gpu import auto_tile_gpu
 
 
 class DaceGPUAutoTileFramework(Framework):
@@ -145,7 +145,7 @@ class DaceGPUAutoTileFramework(Framework):
 
         aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.GPU)
 
-        tiled_sdfg, _ = auto_tile(
+        tiled_sdfg, _ = auto_tile_gpu(
             sdfg=aopt_sdfg,
             exhaustive_search=True,
             memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,

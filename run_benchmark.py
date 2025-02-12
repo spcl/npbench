@@ -17,7 +17,7 @@ if __name__ == "__main__":
                         default="numpy")
     parser.add_argument("-p",
                         "--preset",
-                        choices=['S', 'M', 'L', 'paper'],
+                        choices=['S', 'M', 'L', 'paper', 'XL'],
                         nargs="?",
                         default='S')
     parser.add_argument("-m", "--mode", type=str, nargs="?", default="main")
