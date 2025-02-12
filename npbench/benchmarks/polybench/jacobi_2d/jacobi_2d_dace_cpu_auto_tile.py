@@ -30,8 +30,8 @@ def autotuner(TSTEPS, A, B, N):
 
     _best_config, _tcount = DaceCPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
-        {"N": N, "A": A, "B": B, "TSTEPS": TSTEPS}
-        )
+        {"N": N, "A": A, "B": B, "TSTEPS": 2}
+    )
     tcount = _tcount
     _jacobi_2d_best_config = _best_config.compile()
     _best_config.save("jacobi_2d_best_config.sdfg")

@@ -170,7 +170,7 @@ class DaceCPUAutoTileFramework(Framework):
                         DaceCPUAutoTileFramework.thread_coarsening_2D),
                     DaceCPUAutoTileFramework.validate_and_pad_params_to_three(
                         block_sizes_2D),
-                    [False],
+                    [True],
                 )
             )
             tiled_sdfg, d = auto_tile_cpu(
@@ -179,7 +179,7 @@ class DaceCPUAutoTileFramework(Framework):
                 memory_tiling_parameters=DaceCPUAutoTileFramework.memory_tiling,
                 thread_coarsening_parameters=DaceCPUAutoTileFramework.thread_coarsening_2D,
                 thread_block_parameters=block_sizes_2D,
-                apply_remainder_loop=[False],
+                apply_remainder_loop=[True],
                 combinations=combinations,
                 inputs=inputs,
                 re_apply=True,
