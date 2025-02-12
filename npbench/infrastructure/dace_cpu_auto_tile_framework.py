@@ -115,7 +115,7 @@ class DaceCPUAutoTileFramework(Framework):
         return autotune_str
 
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [8, 16, 32, 64, 128, 256, 512], [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]))
+        [8, 16, 32, 64, 128, 256, 512], [1, 2, 4]))
         if x >= y]
     memory_tiling = [[(128,), (64,), (32,)],]
     #block_sizes_2D = [(x, y) for x, y in list(itertools.product(
@@ -154,6 +154,7 @@ class DaceCPUAutoTileFramework(Framework):
         _sdfg = None
         best_total_time = 0.0
         tcount = None
+        candidates_tried = 0
         for thread_count, msg in [(num_threads, "with hyperthreading"), (num_cores, "without hyperthreading")]:
             print(f"Start Autotuning {msg}")
             os.environ['OMP_NUM_THREADS'] = str(thread_count)
@@ -173,7 +174,7 @@ class DaceCPUAutoTileFramework(Framework):
                     [True],
                 )
             )
-            tiled_sdfg, d = auto_tile_cpu(
+            tiled_sdfg, d, _ct = auto_tile_cpu(
                 sdfg=copy.deepcopy(aopt_sdfg),
                 exhaustive_search=True,
                 memory_tiling_parameters=DaceCPUAutoTileFramework.memory_tiling,
@@ -186,6 +187,7 @@ class DaceCPUAutoTileFramework(Framework):
                 verbose=True,
                 num_cores=int(os.environ['OMP_NUM_THREADS'])
             )
+            candidates_tried += _ct
             if _sdfg is None:
                 for v in d.values():
                     best_total_time += v[2]
@@ -203,4 +205,5 @@ class DaceCPUAutoTileFramework(Framework):
                 print("SDFG must have been assigned at this stage")
                 raise Exception("SDFG must have been assigned at this stage")
             print(f"End Autotuning {msg}")
+            print(f"Autotuning tried {candidates_tried} configurations")
         return _sdfg, tcount

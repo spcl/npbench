@@ -93,11 +93,19 @@ class TVMCPUFramework(Framework):
             builder=autotvm.LocalBuilder(n_parallel=1, do_fork=False),
             runner=autotvm.LocalRunner(number=1, repeat=1)
         )
-        tuner1 = autotvm.tuner.RandomTuner(task1)
+        #autotvm.tuner.GATuner
+        #tuner1 = autotvm.tuner.RandomTuner(task1)
+        #tuner1.tune(
+        #    n_trial=200,
+        #    measure_option=measure_option,
+        #    callbacks=[autotvm.callback.log_to_file(f"{kernel_name}.log")],
+        #)
+        tuner1 = autotvm.tuner.GATuner(task1)
         tuner1.tune(
             n_trial=200,
             measure_option=measure_option,
-            callbacks=[autotvm.callback.log_to_file(f"{kernel_name}.log")],
+            callbacks=[autotvm.callback.log_to_file(f"{kernel_name}.log") ],
+            early_stopping=20
         )
 
         with autotvm.apply_history_best(f"{kernel_name}.log"):
