@@ -43,12 +43,11 @@ def jacobi_2d_1(N, dtype):
             ),
             name="B_comp"
         )
-
     B_comp = compute_step(A)
     s = te.create_schedule(B_comp.op)
 
+
     cfg = autotvm.get_config()
-    """
     cfg.define_split("tile_y", N, num_outputs=2)
     cfg.define_split("tile_x", N, num_outputs=2)
 
@@ -59,7 +58,7 @@ def jacobi_2d_1(N, dtype):
 
     # Reorder axes for B_comp
     s[B_comp].reorder(by1, bx1, ty1, tx1)
-    """
+
     return s, [A, B_comp]
 
 @autotvm.template("jacobi_2d_2")
@@ -83,12 +82,10 @@ def jacobi_2d_2(N, dtype):
             ),
             name="B_comp"
         )
-
     A_comp = compute_step(B)
     s = te.create_schedule(A_comp.op)
 
     cfg = autotvm.get_config()
-    """
     cfg.define_split("tile_y", N, num_outputs=2)
     cfg.define_split("tile_x", N, num_outputs=2)
 
@@ -99,7 +96,7 @@ def jacobi_2d_2(N, dtype):
 
     # Reorder axes for B_comp
     s[A_comp].reorder(by1, bx1, ty1, tx1)
-    """
+
     return s, [A_comp, B]
 
 
@@ -114,7 +111,7 @@ def autotuner(TSTEPS, A, B):
     M = int(A.shape[0])
     N = int(A.shape[1])
     assert M == N
-    target = tvm.target.create("llvm")
+    target = tvm.target.Target("llvm")
 
     _kernel1 = TVMCPUFramework.autotune("jacobi_2d_1", __name__, (N, dtype), target)
     _kernel2 = TVMCPUFramework.autotune("jacobi_2d_2", __name__, (N, dtype), target)

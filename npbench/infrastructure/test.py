@@ -21,37 +21,21 @@ class Test(object):
         autotuner_report_str = frmwrk.info["full_name"] + " - " + autotuner_name + "(autotune)"
         autotuner_str = ""
         print(report_str, autotuner, autotuner_report_str)
-        try:
-            copy = frmwrk.copy_func()
-            setup_str = frmwrk.setup_str(self.bench, impl)
-            exec_str = frmwrk.exec_str(self.bench, impl)
-            if autotuner is not None:
-                autotuner_str = frmwrk.autotune_str(self.bench, impl)
-        except Exception as e:
-            print("Failed to load the {} implementation.".format(report_str))
-            print("Error:", e)
-            if not ignore_errors:
-                raise
-            return None, None
+
+        copy = frmwrk.copy_func()
+        setup_str = frmwrk.setup_str(self.bench, impl)
+        exec_str = frmwrk.exec_str(self.bench, impl)
+        if autotuner is not None:
+            autotuner_str = frmwrk.autotune_str(self.bench, impl)
+
         ldict = {'__npb_impl': impl, '__npb_copy': copy, '__npb_autotune': autotuner, **bdata}
-        try:
-            if autotuner_str != "":
-                util.benchmark(autotuner_str, setup_str, autotuner_report_str + " - " + mode, repeat, ldict, '__npb_autotune_result')
-        except Exception as e:
-            print("Failed to execute the {} autotuner.".format(report_str))
-            print("Error:", e)
-            if not ignore_errors:
-                raise e
-            return None, None
-        try:
-            out, timelist = util.benchmark(exec_str, setup_str, report_str + " - " + mode, repeat, ldict,
+
+        if autotuner_str != "":
+            util.benchmark(autotuner_str, setup_str, autotuner_report_str + " - " + mode, repeat, ldict, '__npb_autotune_result')
+
+        out, timelist = util.benchmark(exec_str, setup_str, report_str + " - " + mode, repeat, ldict,
                                            '__npb_result')
-        except Exception as e:
-            print("Failed to execute the {} implementation.".format(report_str))
-            print("Error:", e)
-            if not ignore_errors:
-                raise e
-            return None, None
+
         if out is not None:
             if isinstance(out, (tuple, list)):
                 out = list(out)
@@ -126,34 +110,25 @@ class Test(object):
 
         for impl, impl_name in self.frmwrk.implementations(self.bench):
             # First execution
-            try:
-                frmwrk_out, _ = first_execution(impl, impl_name, autotuner, autotuner_name)
-            except KeyboardInterrupt:
-                print("Implementation \"{}\" timed out.".format(impl_name), flush=True)
-                continue
-            except Exception:
-                if not ignore_errors:
-                    raise
-                continue
+
+            frmwrk_out, _ = first_execution(impl, impl_name, autotuner, autotuner_name)
+
 
             # Validation
             valid = True
             if validate and np_out is not None:
-                try:
-                    frmwrk_name = self.frmwrk.info["full_name"]
 
-                    rtol = 1e-5 if not 'rtol' in self.bench.info else self.bench.info['rtol']
-                    atol = 1e-8 if not 'atol' in self.bench.info else self.bench.info['atol']
-                    norm_error = 1e-5 if not 'norm_error' in self.bench.info else self.bench.info['norm_error']
-                    valid = util.validate(np_out, frmwrk_out, frmwrk_name, rtol=rtol, atol=atol, norm_error=norm_error)
-                    if valid:
-                        print("{} - {} - validation: SUCCESS".format(frmwrk_name, impl_name))
-                    elif not ignore_errors:
-                        raise ValueError("{} did not validate!".format(frmwrk_name))
-                except Exception:
-                    print("Failed to run {} validation.".format(self.frmwrk.info["full_name"]))
-                    if not ignore_errors:
-                        raise
+                frmwrk_name = self.frmwrk.info["full_name"]
+
+                rtol = 1e-5 if not 'rtol' in self.bench.info else self.bench.info['rtol']
+                atol = 1e-8 if not 'atol' in self.bench.info else self.bench.info['atol']
+                norm_error = 1e-5 if not 'norm_error' in self.bench.info else self.bench.info['norm_error']
+                valid = util.validate(np_out, frmwrk_out, frmwrk_name, rtol=rtol, atol=atol, norm_error=norm_error)
+                if valid:
+                    print("{} - {} - validation: SUCCESS".format(frmwrk_name, impl_name))
+                elif not ignore_errors:
+                    raise ValueError("{} did not validate!".format(frmwrk_name))
+
             # Main execution
             _, timelist = self._execute(self.frmwrk, impl, impl_name, "median", context, repeat, ignore_errors, autotuner, autotuner_name)
             if timelist:

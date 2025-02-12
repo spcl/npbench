@@ -183,6 +183,13 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
                     v_moved_to_cpu = True
             except Exception:
                 pass
+            try:
+                import tvm
+                if isinstance(v, tvm.nd.NDArray):
+                    v = v.asnumpy()
+                    v_moved_to_cpu = True
+            except Exception:
+                pass
             if not v_moved_to_cpu:
                 raise Exception("v is not a cupy/torch/numpy array")
             valid = np.allclose(r, v, rtol=rtol, atol=atol)

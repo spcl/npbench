@@ -45,5 +45,7 @@ def autotuner(TSTEPS, A, B, N):
 
 def kernel(TSTEPS, A, B, N):
     global _jacobi_2d_best_config
+    global tcount
+    assert(os.environ['OMP_NUM_THREADS'] == str(tcount))
     _jacobi_2d_best_config(TSTEPS=TSTEPS, A=A, B=B, N=N)
     return A

@@ -50,8 +50,8 @@ class DaceCPUAutoTileFramework(Framework):
         """
 
         num_cores, num_threads = DaceCPUAutoTileFramework.get_num_cores()
-        if os.environ['OMP_NUM_THREADS'] is None or (os.environ['OMP_NUM_THREADS'] != str(num_cores) and os.environ['OMP_NUM_THREADS'] != str(num_threads)):
-            raise ValueError(f"OMP_NUM_THREADS not set correctly, ensure it is set to number of CPU cores {num_cores} or number of hyperthreads {num_threads}, found {os.environ['OMP_NUM_THREADS']}")
+        #if os.environ['OMP_NUM_THREADS'] is None or (os.environ['OMP_NUM_THREADS'] != str(num_cores) and os.environ['OMP_NUM_THREADS'] != str(num_threads)):
+        #    raise ValueError(f"OMP_NUM_THREADS not set correctly, ensure it is set to number of CPU cores {num_cores} or number of hyperthreads {num_threads}, found {os.environ['OMP_NUM_THREADS']}")
 
         self.save_strict = save_strict
         self.load_strict = load_strict
@@ -112,9 +112,12 @@ class DaceCPUAutoTileFramework(Framework):
         autotune_str = f"__npb_autotune_result =__npb_autotune({arg_str})"
         return autotune_str
 
+    #thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
+    #    [16, 128, 32, 256, 512, 1024, 2048, 4096], [32, 8, 16, 128]))
+    #    if x >= y]
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [256, 512], [2]))
-        if x >= y]
+        [16,32,64,128,256,512,1024,2048,4096,8192], [2,4,8,16,32,64,128,256,512,1024]))
+        if x >= y and x * y <= 8192*8192//128]
     memory_tiling = [[(128,), (64,), (32,)],]
     #block_sizes_2D = [(x, y) for x, y in list(itertools.product(
     #    [1, 2, 4, 8, 16], [1, 2, 4, 8, 16]))
@@ -159,7 +162,7 @@ class DaceCPUAutoTileFramework(Framework):
                 print("Setting OMP_NUM_THREADS failed")
                 raise Exception("Setting OMP_NUM_THREADS failed")
             block_sizes_2D = [(x, y) for x, y in list(itertools.product(
-                [1, 2], [4, 16]))
+                [1,2,4,8,16,32,64], [1,2,4,8,16,32,64]))
                 if x * y == int(os.environ['OMP_NUM_THREADS'])]
             combinations = list(
                 itertools.product(
@@ -178,7 +181,6 @@ class DaceCPUAutoTileFramework(Framework):
                 thread_coarsening_parameters=DaceCPUAutoTileFramework.thread_coarsening_2D,
                 thread_block_parameters=block_sizes_2D,
                 apply_remainder_loop=[True],
-                combinations=None, #if Not None currently crashes
                 inputs=inputs,
                 re_apply=True,
                 verbose=True,
