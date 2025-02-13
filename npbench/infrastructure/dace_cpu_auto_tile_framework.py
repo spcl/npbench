@@ -182,7 +182,7 @@ class DaceCPUAutoTileFramework(Framework):
                 thread_block_parameters=block_sizes_2D,
                 apply_remainder_loop=[True],
                 inputs=inputs,
-                re_apply=True,
+                re_apply=False,
                 verbose=True,
                 num_cores=int(os.environ['OMP_NUM_THREADS'])
             )
