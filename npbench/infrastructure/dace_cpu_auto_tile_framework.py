@@ -155,7 +155,7 @@ class DaceCPUAutoTileFramework(Framework):
         best_total_time = 0.0
         tcount = None
         candidates_tried = 0
-        for thread_count, msg in [(num_threads, "with hyperthreading"), (num_cores, "without hyperthreading")]:
+        for thread_count, msg in [(num_cores, "without hyperthreading")]:
             print(f"Start Autotuning {msg}")
             os.environ['OMP_NUM_THREADS'] = str(thread_count)
             if os.environ['OMP_NUM_THREADS'] != str(thread_count):

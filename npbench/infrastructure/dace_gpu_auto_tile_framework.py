@@ -128,11 +128,11 @@ class DaceGPUAutoTileFramework(Framework):
         return autotune_str
 
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [2, 4, 6, 8], [1, 2, 4, 6, 8])) if x >= y]
+        [1, 2, 4, 8], [1, 2, 4, 8])) if x >= y]
     block_sizes_2D = [(x, y) for x, y in list(itertools.product(
-        [16, 32, 64, 128, 256, 512], [1, 2, 4, 8, 16, 32]))
-        if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 128 and x * y <= 512]
-    memory_tiling = [(8,), (16,), (24,), (32,)]
+        [16, 32, 64, 128, 256], [1, 2, 4, 8, 16]))
+        if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 32 and x * y <= 512]
+    memory_tiling = [(32,)]
 
     @staticmethod
     def autotune(_in_sdfg, inputs):
@@ -151,11 +151,11 @@ class DaceGPUAutoTileFramework(Framework):
             memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,
             thread_coarsening_parameters=DaceGPUAutoTileFramework.thread_coarsening_2D,
             thread_block_parameters=DaceGPUAutoTileFramework.block_sizes_2D,
-            apply_explicit_memory_transfers=[(True, False), (False, False)],
-            apply_remainder_loop=[True],
+            apply_explicit_memory_transfers=[(True, False, True), (True, False, False), (False, False, False)],
+            apply_remainder_loop=[False],
             inputs=inputs,
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,
-            re_apply=True,
+            re_apply=False,
             verbose=True,
         )
 
