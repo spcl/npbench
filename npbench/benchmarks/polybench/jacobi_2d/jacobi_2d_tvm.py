@@ -26,23 +26,6 @@ def jacobi_2d_1(N, dtype):
             ),
             name="B_comp"
         )
-    def compute_step(A):
-        return te.compute(
-            (N, N),
-            lambda i, j:
-            te.if_then_else(
-                te.all(i >= 1, i < N-1, j >= 1, j < N-1),
-                0.2 * (
-                    A[i, j] +   # center
-                    A[i, j - 1] + # left
-                    A[i, j + 1] + # right
-                    A[i - 1, j] + # top
-                    A[i + 1, j]   # bottom
-                ),
-                A[i, j]
-            ),
-            name="B_comp"
-        )
 
     B_comp = compute_step(A)
     s = te.create_schedule(B_comp.op)
@@ -86,7 +69,7 @@ def jacobi_2d_2(N, dtype):
                 ),
                 B[i, j]
             ),
-            name="B_comp"
+            name="A_comp"
         )
 
     A_comp = compute_step(B)
