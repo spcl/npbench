@@ -32,18 +32,23 @@ class DaceCPUAutoTileFramework(Framework):
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
         # Convert the output to an integer
-        cpu_cores = int(result.stdout.strip())
-
-        num_cores = cpu_cores
+        num_cores = int(result.stdout.strip())
 
         command = "nproc"
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
         # Convert the output to an integer
-        cpu_cores = int(result.stdout.strip())
+        hyperthreads = int(result.stdout.strip())
 
-        hyperthreads = cpu_cores
         return num_cores, hyperthreads
+
+    @staticmethod
+    def get_numa_nodes():
+        command = 'lscpu | awk \'/NUMA node\\(s\\)/ {print $3}\''
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        numa_nodes = int(result.stdout.strip())
+
+        return numa_nodes
 
     def __init__(self, fname: str, save_strict: bool = False, load_strict: bool = False):
         """ Reads framework information.
@@ -153,6 +158,7 @@ class DaceCPUAutoTileFramework(Framework):
                     if n.map.schedule == dace.dtypes.ScheduleType.CPU_Multicore:
                         n.map.schedule = dace.dtypes.ScheduleType.Default
         num_cores, num_threads = DaceCPUAutoTileFramework.get_num_cores()
+        numa_nodes = DaceCPUAutoTileFramework.get_numa_nodes()
 
         IndirectAccessFromNestedSDFGToMap().apply_pass(sdfg=aopt_sdfg, _={})
         aopt_sdfg.save("aopt_sdfg_prep.sdfg")
@@ -163,7 +169,7 @@ class DaceCPUAutoTileFramework(Framework):
         best_total_time = 0.0
         tcount = None
         candidates_tried = 0
-        for thread_count, msg in [(num_cores, "without hyperthreading")]:
+        for i, (thread_count, msg) in enumerate([(num_cores, "without hyperthreading"), (num_threads, "with hyperthreading")]):
             print(f"Start Autotuning {msg}")
             os.environ['OMP_NUM_THREADS'] = str(thread_count)
             if os.environ['OMP_NUM_THREADS'] != str(thread_count):
@@ -171,7 +177,10 @@ class DaceCPUAutoTileFramework(Framework):
                 raise Exception("Setting OMP_NUM_THREADS failed")
             block_sizes_2D = [(x, y) for x, y in list(itertools.product(
                 [1,2,4,8,16,32,64], [1,2,4,8,16,32,64]))
-                if x * y == num_cores]
+                if x * y == num_cores or x * y == numa_nodes * 2]
+            cores_per_numa = num_cores // numa_nodes
+            os.environ["OMP_PLACES"] = ",".join([f"{{{_i*cores_per_numa}:{cores_per_numa}}}" for _i in range(thread_count // cores_per_numa)])
+            print("OMP_PLACES STRING:", ",".join([f"{{{_i*cores_per_numa}:{cores_per_numa}}}" for _i in range(thread_count // cores_per_numa)]))
             combinations = list(
                 itertools.product(
                     DaceCPUAutoTileFramework.memory_tiling,
