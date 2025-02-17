@@ -145,6 +145,9 @@ class DaceGPUAutoTileFramework(Framework):
 
         aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.GPU)
 
+        dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
+        dace.Config.set('compiler', 'cuda', 'args', value='-march=native --use_fast_math -O3 -std=c++17 --compiler-options=\"-Ofast\"')
+
         tiled_sdfg, _ = auto_tile_gpu(
             sdfg=aopt_sdfg,
             exhaustive_search=True,

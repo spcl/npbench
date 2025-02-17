@@ -17,6 +17,9 @@ import subprocess
 import warnings
 
 from npbench.infrastructure import Framework, Benchmark
+from dace.transformation.passes.indirect_access_from_nested_sdfg_to_map import (
+    IndirectAccessFromNestedSDFGToMap,
+)
 
 # Run the shell command and capture the output
 class DaceCPUAutoTileFramework(Framework):
@@ -151,6 +154,11 @@ class DaceCPUAutoTileFramework(Framework):
                         n.map.schedule = dace.dtypes.ScheduleType.Default
         num_cores, num_threads = DaceCPUAutoTileFramework.get_num_cores()
 
+        IndirectAccessFromNestedSDFGToMap().apply_pass(sdfg=aopt_sdfg, _={})
+        aopt_sdfg.save("aopt_sdfg_prep.sdfg")
+
+        dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
+
         _sdfg = None
         best_total_time = 0.0
         tcount = None
@@ -163,7 +171,7 @@ class DaceCPUAutoTileFramework(Framework):
                 raise Exception("Setting OMP_NUM_THREADS failed")
             block_sizes_2D = [(x, y) for x, y in list(itertools.product(
                 [1,2,4,8,16,32,64], [1,2,4,8,16,32,64]))
-                if x * y == int(os.environ['OMP_NUM_THREADS'])]
+                if x * y == num_cores]
             combinations = list(
                 itertools.product(
                     DaceCPUAutoTileFramework.memory_tiling,
