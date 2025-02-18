@@ -9,7 +9,6 @@ N = dace.symbol("N")
 def _kernel(A : dace.float64[N, N, N],
             B : dace.float64[N, N, N]):
     B = np.transpose(A, (2, 1, 0))
-    return B
 
 
 _best_config = None
