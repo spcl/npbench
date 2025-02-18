@@ -1,6 +1,8 @@
 
+import inspect
 import tvm
 from tvm import te
+from tvm import relay
 import tvm.testing
 from tvm import autotvm
 from npbench.infrastructure.tvm_framework import TVMFramework
@@ -14,7 +16,7 @@ def jacobi_2d_1(N, dtype):
             (N, N),
             lambda i, j:
             te.if_then_else(
-                te.all(i >= 1, i < N-1, j >= 1, j < N-1),
+                te.all(i > 0, i < N-1, j > 0, j < N-1),
                 0.2 * (
                     A[i, j] +   # center
                     A[i, j - 1] + # left
@@ -29,6 +31,7 @@ def jacobi_2d_1(N, dtype):
 
     B_comp = compute_step(A)
     s = te.create_schedule(B_comp.op)
+
 
     cfg = autotvm.get_config()
     cfg.define_split("tile_y", N, num_outputs=2)
@@ -46,8 +49,9 @@ def jacobi_2d_1(N, dtype):
     s[B_comp].bind(tx1, te.thread_axis("threadIdx.x"))
 
     # Reorder axes for B_comp
+    """
     s[B_comp].reorder(by1, bx1, ty1, tx1)
-
+    """
     return s, [A, B_comp]
 
 @autotvm.template("jacobi_2d_2")
@@ -59,7 +63,7 @@ def jacobi_2d_2(N, dtype):
             (N, N),
             lambda i, j:
             te.if_then_else(
-                te.all(i >= 1, i < N-1, j >= 1, j < N-1),
+                te.all(i > 0, i < N-1, j > 0, j < N-1),
                 0.2 * (
                     B[i, j] +   # center
                     B[i, j - 1] + # left
@@ -75,6 +79,7 @@ def jacobi_2d_2(N, dtype):
     A_comp = compute_step(B)
     s = te.create_schedule(A_comp.op)
 
+
     cfg = autotvm.get_config()
     cfg.define_split("tile_y", N, num_outputs=2)
     cfg.define_split("tile_x", N, num_outputs=2)
@@ -89,10 +94,10 @@ def jacobi_2d_2(N, dtype):
     s[A_comp].bind(bx1, te.thread_axis("blockIdx.x"))
     s[A_comp].bind(ty1, te.thread_axis("threadIdx.y"))
     s[A_comp].bind(tx1, te.thread_axis("threadIdx.x"))
-
+    """
     # Reorder axes for B_comp
     s[A_comp].reorder(by1, bx1, ty1, tx1)
-
+    """
     return s, [A_comp, B]
 
 
@@ -122,4 +127,5 @@ def kernel(TSTEPS, A, B):
     for _ in range(1, TSTEPS):
         _kernel1(A, B)
         _kernel2(A, B)
+
     return A

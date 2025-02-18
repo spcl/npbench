@@ -4,7 +4,7 @@ import numpy as np
 
 
 def initialize(N, datatype=np.float64):
-    A = np.fromfunction(lambda i, j: i * (j + 2) / N, (N, N), dtype=datatype)
-    B = np.fromfunction(lambda i, j: i * (j + 3) / N, (N, N), dtype=datatype)
-
+    A = np.fromfunction(lambda i, j: (i + j + 2) / N, (N, N), dtype=datatype)
+    B = np.zeros((N, N), dtype=datatype)
+    B[:,:] = A[:,:]
     return A, B
