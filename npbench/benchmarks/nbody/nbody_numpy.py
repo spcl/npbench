@@ -80,7 +80,7 @@ def getEnergy(pos, vel, mass, G):
     return KE, PE
 
 
-def nbody(mass, pos, vel, N, Nt, dt, G, softening):
+def nbody(mass, pos, vel, N, Nt, dt, G, softening, KE, PE):
 
     # Convert to Center-of-Mass frame
     vel -= np.mean(mass * vel, axis=0) / np.mean(mass)
@@ -89,8 +89,6 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     acc = getAcc(pos, mass, G, softening)
 
     # calculate initial energy of system
-    KE = np.ndarray(Nt + 1, dtype=np.float64)
-    PE = np.ndarray(Nt + 1, dtype=np.float64)
     KE[0], PE[0] = getEnergy(pos, vel, mass, G)
 
     t = 0.0

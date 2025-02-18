@@ -3,6 +3,8 @@
 
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
+
 """
 Create Your Own N-body Simulation (With Python)
 Philip Mocz (2020) Princeton Univeristy, @PMocz
@@ -123,7 +125,7 @@ def getEnergy(pos: dc.float64[N, 3], vel: dc.float64[N, 3],
 
 
 @dc.program
-def nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
+def _nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
           dt: dc.float64, G: dc.float64, softening: dc.float64,
           KE: dc.float64[N+1], PE: dc.float64[N+1]):
 
@@ -139,6 +141,7 @@ def nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
     # calculate initial gravitational accelerations
     acc = getAcc(pos, mass, G, softening)
 
+    # calculate initial energy of system
     KE[0], PE[0] = getEnergy(pos, vel, mass, G)
 
     t = 0.0
@@ -163,3 +166,23 @@ def nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
         # get energy of system
         KE[i + 1], PE[i + 1] = getEnergy(pos, vel, mass, G)
 
+    return KE, PE
+
+
+_best_config = None
+
+def autotuner(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, tEnd):
+    global _best_config
+    if _best_config is not None:
+        return
+
+    __best_config = DaceGPUAutoTileFramework.autotune(
+        _nbody.to_sdfg(),
+        {"mass":mass, "pos":pos, "vel":vel, "N":N, "Nt":Nt, "dt":dt, "G":G, "softening":softening, "KE":KE, "PE":PE, "tEnd":tEnd}
+        )
+    _best_config = __best_config.compile()
+
+def nbody(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, tEnd):
+    global _best_config
+    _best_config(mass=mass, pos=pos, vel=vel, N=N,  Nt=Nt, dt=dt, G=G, softening=softening, KE=KE, PE=PE, tEnd=tEnd)
+    return KE, PE

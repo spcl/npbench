@@ -38,10 +38,8 @@ class TVMFramework(Framework):
             if isinstance(x, numpy.ndarray):
                 # Convert NumPy array to Torch tensor on GPU
                 return tvm.nd.array(x, tvm.cuda(0))
-            elif isinstance(x, torch.Tensor):
-                raise TypeError("Input should be either a NumPy array.")
             else:
-                raise TypeError("Input should be either a NumPy array.")
+                raise TypeError("Input should be a NumPy array.")
 
         return to_tvm_tensor
 

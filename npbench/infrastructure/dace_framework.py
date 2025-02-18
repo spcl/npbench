@@ -5,7 +5,7 @@ import traceback
 
 from npbench.infrastructure import Benchmark, Framework, utilities as util
 from typing import Callable, Sequence, Tuple
-
+import dace.sdfg.utils as sdutil
 
 class DaceFramework(Framework):
     """ A class for reading and processing framework information. """
@@ -173,6 +173,7 @@ class DaceFramework(Framework):
                                        verbose=False)
             sdfg_list.append(parallel_sdfg)
             time_list.append(time_list[-1] + ptime1[0] + ptime2[0])
+            parallel_sdfg.save("parallel.sdfg")
 
         except Exception as e:
             print("DaCe LoopToMap failed")
@@ -186,13 +187,21 @@ class DaceFramework(Framework):
 
             def autoopt(sdfg, device, symbols):  #, nofuse):
                 # Mark arrays as on the GPU
+                sdfg.simplify()
+                #sdutil.map_over_free_tasklet(sdfg)
+
                 if device == dtypes.DeviceType.GPU:
                     for k, v in sdfg.arrays.items():
                         if not v.transient and type(v) == dace.data.Array:
                             v.storage = dace.dtypes.StorageType.GPU_Global
+                        if v.transient and type(v) == dace.data.Array and v.storage == dace.dtypes.StorageType.Default:
+                            v.storage = dace.dtypes.StorageType.GPU_Global
 
                 # Auto-optimize SDFG
-                opt.auto_optimize(auto_opt_sdfg, device, symbols=symbols)
+                if device == dtypes.DeviceType.GPU:
+                    sdfg.apply_gpu_transformations(validate=True, simplify=True)
+
+                opt.auto_optimize(sdfg, device, symbols=symbols)
 
             auto_opt_sdfg = copy.deepcopy(strict_sdfg)
             auto_opt_sdfg._name = 'auto_opt'
@@ -233,6 +242,8 @@ class DaceFramework(Framework):
             for k, v in sdfg.arrays.items():
                 if not v.transient and isinstance(v, dace.data.Array):
                     v.storage = dace.dtypes.StorageType.GPU_Global
+                if v.transient and isinstance(v, dace.data.Array) and v.storage == dace.dtypes.StorageType.Default:
+                    v.storage = dace.dtypes.StorageType.GPU_Global
 
         if self.info["arch"] == "gpu":
             import cupy as cp
@@ -257,6 +268,7 @@ class DaceFramework(Framework):
                                                   out_text="DaCe GPU transformation time2",
                                                   context=locals(),
                                                   verbose=False)
+
                     _, gpu_time3 = util.benchmark("sdfg.simplify()",
                                                   out_text="DaCe GPU transformation time3",
                                                   context=locals(),

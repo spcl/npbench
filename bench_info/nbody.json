@@ -49,7 +49,9 @@
                 "mass",
                 "pos",
                 "vel",
-                "Nt"
+                "Nt",
+                "KE",
+                "PE"
             ]
         },
         "input_args": [
@@ -60,12 +62,16 @@
             "Nt",
             "dt",
             "G",
-            "softening"
+            "softening",
+            "KE",
+            "PE"
         ],
         "array_args": [
             "mass",
             "pos",
-            "vel"
+            "vel",
+            "KE",
+            "PE"
         ],
         "output_args": [],
         "norm_error": 0.1,
