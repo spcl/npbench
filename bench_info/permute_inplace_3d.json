@@ -1,0 +1,28 @@
+{
+    "benchmark": {
+        "name": "3D Tensor Permutation",
+        "short_name": "permute_inplace_3d",
+        "relative_path": "permute/permute_inplace_3d",
+        "module_name": "permute_inplace_3d",
+        "func_name": "kernel",
+        "autotuner_name": "autotuner",
+        "kind": "microbench",
+        "domain": "Physics",
+        "dwarf": "linear_algebra",
+        "parameters": {
+            "S": { "N": 128 },
+            "M": { "N": 256 },
+            "L": { "N": 384 },
+            "paper": { "N": 512 },
+            "XL": { "N": 640 }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["N"],
+            "output_args": ["A"]
+        },
+        "input_args": ["A"],
+        "array_args": ["A"],
+        "output_args": ["B"]
+    }
+}

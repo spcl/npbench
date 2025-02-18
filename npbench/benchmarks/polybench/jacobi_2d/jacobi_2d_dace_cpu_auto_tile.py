@@ -19,23 +19,23 @@ def _kernel(TSTEPS: dc.int64, A: dc.float64[N, N], B: dc.float64[N, N]):
         )
 
 
-_jacobi_2d_best_config = None
+_best_configg = None
 tcount = None
 
 def autotuner(TSTEPS, A, B, N):
-    global _jacobi_2d_best_config
+    global _best_configg
     global tcount
-    if _jacobi_2d_best_config is not None:
+    if _best_configg is not None:
         return
 
-    _best_config, _tcount = DaceCPUAutoTileFramework.autotune(
+    __best_config, _tcount = DaceCPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
-        {"N": N, "A": A, "B": B, "TSTEPS": TSTEPS}
+        {"N": N, "A": A, "B": B, "TSTEPS": TSTEPS},
+        dims=2
     )
     tcount = _tcount
-    _jacobi_2d_best_config = _best_config.compile()
-    _best_config.save("jacobi_2d_best_config.sdfg")
-    if tcount is None or _jacobi_2d_best_config is None:
+    _best_config = __best_config.compile()
+    if tcount is None or _best_configg is None:
         print("tcount or autotuned SDFG is None")
         raise  Exception("tcount or autotuned SDFG is None")
     os.environ['OMP_NUM_THREADS'] = str(tcount)
@@ -44,8 +44,8 @@ def autotuner(TSTEPS, A, B, N):
         raise Exception("Setting OMP_NUM_THREADS failed")
 
 def kernel(TSTEPS, A, B, N):
-    global _jacobi_2d_best_config
+    global _best_configg
     global tcount
     assert(os.environ['OMP_NUM_THREADS'] == str(tcount))
-    _jacobi_2d_best_config(TSTEPS=TSTEPS, A=A, B=B, N=N)
+    _best_configg(TSTEPS=TSTEPS, A=A, B=B, N=N)
     return A

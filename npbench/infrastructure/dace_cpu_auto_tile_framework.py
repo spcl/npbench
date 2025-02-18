@@ -147,7 +147,7 @@ class DaceCPUAutoTileFramework(Framework):
         return validated_params
 
     @staticmethod
-    def autotune(_in_sdfg, inputs):
+    def autotune(_in_sdfg, inputs, dims):
 
 
         aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.CPU)

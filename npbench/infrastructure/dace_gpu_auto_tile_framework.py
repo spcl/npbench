@@ -132,18 +132,53 @@ class DaceGPUAutoTileFramework(Framework):
     block_sizes_2D = [(x, y) for x, y in list(itertools.product(
         [16, 32, 64, 128, 256], [1, 2, 4, 8, 16]))
         if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 32 and x * y <= 512]
-    memory_tiling = [(32,)]
+
+    memory_tiling = [(32,), (64,), (128,), (256,)]
+
+    thread_coarsening_3D = [(x, y, z) for x, y, z in list(itertools.product(
+        [1, 2, 4, 8], [1, 2, 4, 8], [1, 2, 4, 8])) if x >= y and y >= z]
+    block_sizes_3D = [(x, y, z) for x, y, z in list(itertools.product(
+        [16, 32, 64, 128, 256], [1, 2, 4, 8, 16], [1, 2, 4, 8, 16]))
+        if x * y * z <= 1024 and (x * y * z) % (32) == 0 and x * y * z >= 32 and x * y * z <= 512 and x * y >= 32]
 
     @staticmethod
-    def autotune(_in_sdfg, inputs):
+    def autotune(_in_sdfg, inputs, dims):
+        assert dims >= 0 and dims <= 3
+
         def copy_to_gpu(sdfg):
             for k, v in sdfg.arrays.items():
                 if not v.transient and isinstance(v, dace.data.Array):
                     v.storage = dace.dtypes.StorageType.GPU_Global
 
-        copy_to_gpu(_in_sdfg)
+        #copy_to_gpu(_in_sdfg)
+        if dims == 3:
+            thread_coarsening = DaceGPUAutoTileFramework.thread_coarsening_3D
+            block_sizes = DaceGPUAutoTileFramework.block_sizes_3D
+        elif dims == 2:
+            thread_coarsening = DaceGPUAutoTileFramework.thread_coarsening_2D
+            block_sizes = DaceGPUAutoTileFramework.block_sizes_2D
+        else:
+            raise ValueError("Only 2D and 3D supported.")
 
-        aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.GPU)
+
+        """
+        _in_sdfg.simplify()
+        _in_sdfg.save("simplified.sdfg")
+        cpu_opt = opt.auto_optimize(sdfg=_in_sdfg,
+                                    device=dace.dtypes.DeviceType.CPU,
+                                    validate=True,
+                                    validate_all=True)
+        cpu_opt.save("cpu_aopt.sdfg")
+        cpu_opt.validate()
+        """
+
+        copy_to_gpu(_in_sdfg)
+        aopt_sdfg = opt.auto_optimize(sdfg=_in_sdfg, device=dace.dtypes.DeviceType.GPU,
+                                      validate=True, validate_all=True, use_gpu_storage=True)
+
+        aopt_sdfg.save("aopt_sdfg1.sdfg")
+        aopt_sdfg.validate()
+
 
         dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
         dace.Config.set('compiler', 'cuda', 'args', value='-march=native --use_fast_math -O3 -std=c++17 --compiler-options=\"-Ofast\"')
@@ -152,8 +187,8 @@ class DaceGPUAutoTileFramework(Framework):
             sdfg=aopt_sdfg,
             exhaustive_search=True,
             memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,
-            thread_coarsening_parameters=DaceGPUAutoTileFramework.thread_coarsening_2D,
-            thread_block_parameters=DaceGPUAutoTileFramework.block_sizes_2D,
+            thread_coarsening_parameters=thread_coarsening,
+            thread_block_parameters=block_sizes,
             apply_explicit_memory_transfers=[(True, False, True), (True, False, False), (False, False, False)],
             apply_remainder_loop=[False],
             inputs=inputs,
