@@ -138,8 +138,8 @@ class DaceGPUAutoTileFramework(Framework):
     thread_coarsening_3D = [(x, y, z) for x, y, z in list(itertools.product(
         [1, 2, 4, 8], [1, 2, 4, 8], [1, 2, 4, 8])) if x >= y and y >= z and x * y * z < 255]
     block_sizes_3D = [(x, y, z) for x, y, z in list(itertools.product(
-        [16, 32, 64, 128, 256], [1, 2, 4, 8, 16], [1, 2, 4, 8, 16]))
-        if x * y * z <= 1024 and (x * y * z) % (32) == 0 and x * y * z >= 32 and x * y * z <= 512 and x * y >= 32]
+        [1, 2, 4, 8, 16, 32, 64, 128, 256], [1, 2, 4, 8, 16, 32], [1, 2, 4, 8, 16, 32]))
+        if x * y * z <= 1024 and (x * y * z) % (32) == 0 and x * y * z >= 32 and x * y * z <= 512]
 
     @staticmethod
     def autotune(_in_sdfg, inputs, dims):
