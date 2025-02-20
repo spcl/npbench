@@ -124,12 +124,20 @@ class DaceCPUAutoTileFramework(Framework):
     #    [16, 128, 32, 256, 512, 1024, 2048, 4096], [32, 8, 16, 128]))
     #    if x >= y]
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [16,32,64,128,256,512,1024,2048,4096,8192], [2,4,8,16,32,64,128,256,512,1024]))
+        list(reversed([16,32,64,128,256,512,1024,2048,4096,8192])),
+        list(reversed([16,32,64,128,256,512,1024,2048,4096,8192])),
+        ))
         if x >= y and x * y <= 8192*8192//128]
     memory_tiling = [[(128,), (64,), (32,)],]
     #block_sizes_2D = [(x, y) for x, y in list(itertools.product(
     #    [1, 2, 4, 8, 16], [1, 2, 4, 8, 16]))
     #    if x * y == int(os.environ['OMP_NUM_THREADS'])]
+
+    thread_coarsening_3D = [(x, y, z) for x, y, z in list(itertools.product(
+        list(reversed([16,32,64,128,256,512,1024,2048,4096,8192])),
+        list(reversed([16,32,64,128,256,512,1024,2048,4096,8192])),
+        list(reversed([16,32,64,128,256,512,1024,2048,4096,8192]))))
+        if x >= y and x * y <= 8192*8192//128]
 
     @staticmethod
     def validate_and_pad_params_to_three(params):
@@ -148,7 +156,7 @@ class DaceCPUAutoTileFramework(Framework):
 
     @staticmethod
     def autotune(_in_sdfg, inputs, dims):
-
+        assert dims >= 0 and dims <= 3
 
         aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.CPU)
 
@@ -169,7 +177,7 @@ class DaceCPUAutoTileFramework(Framework):
         best_total_time = 0.0
         tcount = None
         candidates_tried = 0
-        for i, (thread_count, msg) in enumerate([(num_cores, "without hyperthreading"), (num_threads, "with hyperthreading")]):
+        for i, (thread_count, msg) in enumerate([(num_cores, "without hyperthreading")]):
             print(f"Start Autotuning {msg}")
             os.environ['OMP_NUM_THREADS'] = str(thread_count)
             if os.environ['OMP_NUM_THREADS'] != str(thread_count):
@@ -177,17 +185,29 @@ class DaceCPUAutoTileFramework(Framework):
                 raise Exception("Setting OMP_NUM_THREADS failed")
             block_sizes_2D = [(x, y) for x, y in list(itertools.product(
                 [1,2,4,8,16,32,64], [1,2,4,8,16,32,64]))
-                if x * y == num_cores or x * y == numa_nodes * 2]
+                if x * y == num_cores]
+            block_sizes_3D = [(x, y, z) for x, y, z in list(itertools.product(
+                [1,2,4,8,16,32,64], [1,2,4,8,16,32,64], [1,2,4,8,16,32,64]))
+                if x * y * z == num_cores]
             cores_per_numa = num_cores // numa_nodes
             os.environ["OMP_PLACES"] = ",".join([f"{{{_i*cores_per_numa}:{cores_per_numa}}}" for _i in range(thread_count // cores_per_numa)])
             print("OMP_PLACES STRING:", ",".join([f"{{{_i*cores_per_numa}:{cores_per_numa}}}" for _i in range(thread_count // cores_per_numa)]))
+            if dims == 3:
+                thread_coarsening = DaceCPUAutoTileFramework.thread_coarsening_3D
+                block_sizes = block_sizes_3D
+            elif dims == 2:
+                thread_coarsening = DaceCPUAutoTileFramework.thread_coarsening_2D
+                block_sizes = block_sizes_2D
+            else:
+                raise ValueError("Only 2D and 3D supported.")
+
             combinations = list(
                 itertools.product(
                     DaceCPUAutoTileFramework.memory_tiling,
                     DaceCPUAutoTileFramework.validate_and_pad_params_to_three(
-                        DaceCPUAutoTileFramework.thread_coarsening_2D),
+                        thread_coarsening),
                     DaceCPUAutoTileFramework.validate_and_pad_params_to_three(
-                        block_sizes_2D),
+                        block_sizes),
                     [True],
                 )
             )
@@ -195,8 +215,8 @@ class DaceCPUAutoTileFramework(Framework):
                 sdfg=copy.deepcopy(aopt_sdfg),
                 exhaustive_search=True,
                 memory_tiling_parameters=DaceCPUAutoTileFramework.memory_tiling,
-                thread_coarsening_parameters=DaceCPUAutoTileFramework.thread_coarsening_2D,
-                thread_block_parameters=block_sizes_2D,
+                thread_coarsening_parame=thread_coarsening,
+                thread_block_parameters=block_sizes,
                 apply_remainder_loop=[True],
                 inputs=inputs,
                 re_apply=False,
