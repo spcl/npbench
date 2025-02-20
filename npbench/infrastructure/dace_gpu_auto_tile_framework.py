@@ -187,7 +187,7 @@ class DaceGPUAutoTileFramework(Framework):
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,
             re_apply=False,
             verbose=True,
-            timeout=300,
+            timeout=2,
             random_iter=True,
         )
 

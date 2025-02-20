@@ -12,10 +12,11 @@ def _kernel(A : dace.float64[N, N, N],
 
 
 _best_config = None
-
+__b = None
 
 def autotuner(A, B, N):
     global _best_config
+    global __b
     if _best_config is not None:
         return
 
@@ -25,8 +26,22 @@ def autotuner(A, B, N):
         dims=3
         )
     _best_config = __best_config.compile()
+    args = {}
+    kwargs = {"A": A, "B": B, "N": N}
+    kwargs.update(
+        # `_construct_args` will handle all of its arguments as kwargs.
+        {aname: arg
+            for aname, arg in zip(_best_config.argnames, args)})
+    argtuple, initargtuple = _best_config._construct_args(kwargs)  # Missing arguments will be detected here.
+    # Return values are cached in `self._lastargs`.
+    #return self.fast_call(argtuple, initargtuple, do_gpu_check=True)
+    __b = lambda: _best_config.fast_call(argtuple, initargtuple, False)
+
+
 
 def kernel(A, B, N):
     global _best_config
-    _best_config(A=A, B=B, N=N)
+    global __b
+    #_best_config(A=A, B=B, N=N)
+    __b()
     return B

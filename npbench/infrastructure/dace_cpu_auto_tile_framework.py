@@ -137,7 +137,7 @@ class DaceCPUAutoTileFramework(Framework):
         list(reversed([16,32,64,128,256,512,1024,2048,4096,8192])),
         list(reversed([16,32,64,128,256,512,1024,2048,4096,8192])),
         list(reversed([16,32,64,128,256,512,1024,2048,4096,8192]))))
-        if x >= y and x * y <= 8192*8192//128]
+        if x * y * z <= 8192*8192//128]
 
     @staticmethod
     def validate_and_pad_params_to_three(params):
@@ -169,7 +169,19 @@ class DaceCPUAutoTileFramework(Framework):
         numa_nodes = DaceCPUAutoTileFramework.get_numa_nodes()
 
         IndirectAccessFromNestedSDFGToMap().apply_pass(sdfg=aopt_sdfg, _={})
-        aopt_sdfg.save("aopt_sdfg_prep.sdfg")
+
+        from dace.transformation.interstate import InlineSDFG, InlineMultistateSDFG
+        aopt_sdfg.apply_transformations_repeated(InlineSDFG)
+        aopt_sdfg.simplify()
+
+        for s in aopt_sdfg.states():
+            for n in s.nodes():
+                if isinstance(n, dace.nodes.MapEntry) and n.map.schedule == dace.ScheduleType.CPU_Multicore:
+                    n.map.schedule = dace.ScheduleType.Default
+
+        #aopt_sdfg.save("aopt_sdfg1.sdfg")
+        aopt_sdfg.validate()
+        aopt_sdfg.save("aopt_sdfg_prep2.sdfg")
 
         dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
 
@@ -222,7 +234,9 @@ class DaceCPUAutoTileFramework(Framework):
                 inputs=inputs,
                 re_apply=False,
                 verbose=True,
-                num_cores=int(os.environ['OMP_NUM_THREADS'])
+                num_cores=int(os.environ['OMP_NUM_THREADS']),
+                timeout=300,
+                random_iter=True
             )
             _ct = len(combinations)
             candidates_tried += _ct
