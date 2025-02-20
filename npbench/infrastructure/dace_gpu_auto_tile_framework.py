@@ -131,7 +131,7 @@ class DaceGPUAutoTileFramework(Framework):
         [1, 2, 4, 8], [1, 2, 4, 8])) if x >= y]
     block_sizes_2D = [(x, y) for x, y in list(itertools.product(
         [16, 32, 64, 128, 256], [1, 2, 4, 8, 16]))
-        if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 32 and x * y <= 512]
+        if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 32]
 
     memory_tiling = [(32,), (64,), (128,), (256,)]
 
@@ -139,7 +139,7 @@ class DaceGPUAutoTileFramework(Framework):
         [1, 2, 4, 8], [1, 2, 4, 8], [1, 2, 4, 8])) if x >= y and y >= z and x * y * z < 255]
     block_sizes_3D = [(x, y, z) for x, y, z in list(itertools.product(
         [1, 2, 4, 8, 16, 32, 64, 128, 256], [1, 2, 4, 8, 16, 32], [1, 2, 4, 8, 16, 32]))
-        if x * y * z <= 1024 and (x * y * z) % (32) == 0 and x * y * z >= 32 and x * y * z <= 512]
+        if x * y * z <= 1024 and (x * y * z) % (32) == 0 and x * y * z >= 32]
 
     @staticmethod
     def autotune(_in_sdfg, inputs, dims):
@@ -187,6 +187,8 @@ class DaceGPUAutoTileFramework(Framework):
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,
             re_apply=False,
             verbose=True,
+            timeout=300,
+            random_iter=True,
         )
 
         return tiled_sdfg
