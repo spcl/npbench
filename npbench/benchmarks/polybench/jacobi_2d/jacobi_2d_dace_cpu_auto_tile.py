@@ -19,33 +19,20 @@ def _kernel(TSTEPS: dc.int64, A: dc.float64[N, N], B: dc.float64[N, N]):
         )
 
 
-_best_configg = None
-tcount = None
+_best_config = None
 
 def autotuner(TSTEPS, A, B, N):
-    global _best_configg
-    global tcount
-    if _best_configg is not None:
+    global _best_config
+    if _best_config is not None:
         return
 
-    __best_config, _tcount = DaceCPUAutoTileFramework.autotune(
+    _best_config, _ = DaceCPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
         {"N": N, "A": A, "B": B, "TSTEPS": TSTEPS},
         dims=2
     )
-    tcount = _tcount
-    _best_config = __best_config.compile()
-    if tcount is None or _best_configg is None:
-        print("tcount or autotuned SDFG is None")
-        raise  Exception("tcount or autotuned SDFG is None")
-    os.environ['OMP_NUM_THREADS'] = str(tcount)
-    if os.environ['OMP_NUM_THREADS'] != str(tcount):
-        print("Setting OMP_NUM_THREADS failed")
-        raise Exception("Setting OMP_NUM_THREADS failed")
 
 def kernel(TSTEPS, A, B, N):
-    global _best_configg
-    global tcount
-    assert(os.environ['OMP_NUM_THREADS'] == str(tcount))
-    _best_configg(TSTEPS=TSTEPS, A=A, B=B, N=N)
+    global _best_config
+    _best_config(TSTEPS=TSTEPS, A=A, B=B, N=N)
     return A

@@ -3,12 +3,13 @@ import inspect
 import tvm
 from tvm import te
 from tvm import relay
+from tvm import auto_scheduler
 import tvm.testing
 from tvm import autotvm
 from npbench.infrastructure.tvm_framework import TVMFramework
 
-@autotvm.template("jacobi_2d_1")
-def jacobi_2d_1(N, dtype):
+@auto_scheduler.register_workload("jacobi_2d_1_gpu")
+def jacobi_2d_1_gpu(N, dtype):
     A = te.placeholder((N, N), name="A", dtype=dtype)
 
     def compute_step(A):
@@ -30,32 +31,11 @@ def jacobi_2d_1(N, dtype):
         )
 
     B_comp = compute_step(A)
-    s = te.create_schedule(B_comp.op)
 
+    return [A, B_comp]
 
-    cfg = autotvm.get_config()
-    cfg.define_split("tile_y", N, num_outputs=2)
-    cfg.define_split("tile_x", N, num_outputs=2)
-
-    # Schedule B_comp
-    b_y, b_x = s[B_comp].op.axis
-    by1, ty1 = cfg["tile_y"].apply(s, B_comp, b_y)
-    bx1, tx1 = cfg["tile_x"].apply(s, B_comp, b_x)
-
-    # Bind the threads for B_comp
-    s[B_comp].bind(by1, te.thread_axis("blockIdx.y"))
-    s[B_comp].bind(bx1, te.thread_axis("blockIdx.x"))
-    s[B_comp].bind(ty1, te.thread_axis("threadIdx.y"))
-    s[B_comp].bind(tx1, te.thread_axis("threadIdx.x"))
-
-    # Reorder axes for B_comp
-    """
-    s[B_comp].reorder(by1, bx1, ty1, tx1)
-    """
-    return s, [A, B_comp]
-
-@autotvm.template("jacobi_2d_2")
-def jacobi_2d_2(N, dtype):
+@auto_scheduler.register_workload("jacobi_2d_2_gpu")
+def jacobi_2d_2_gpu(N, dtype):
     B = te.placeholder((N, N), name="B", dtype=dtype)
 
     def compute_step(B):
@@ -77,29 +57,12 @@ def jacobi_2d_2(N, dtype):
         )
 
     A_comp = compute_step(B)
-    s = te.create_schedule(A_comp.op)
+
+    return [A_comp, B]
 
 
-    cfg = autotvm.get_config()
-    cfg.define_split("tile_y", N, num_outputs=2)
-    cfg.define_split("tile_x", N, num_outputs=2)
-
-    # Schedule B_comp
-    b_y, b_x = s[A_comp].op.axis
-    by1, ty1 = cfg["tile_y"].apply(s, A_comp, b_y)
-    bx1, tx1 = cfg["tile_x"].apply(s, A_comp, b_x)
-
-    # Bind the threads for B_comp
-    s[A_comp].bind(by1, te.thread_axis("blockIdx.y"))
-    s[A_comp].bind(bx1, te.thread_axis("blockIdx.x"))
-    s[A_comp].bind(ty1, te.thread_axis("threadIdx.y"))
-    s[A_comp].bind(tx1, te.thread_axis("threadIdx.x"))
-    """
-    # Reorder axes for B_comp
-    s[A_comp].reorder(by1, bx1, ty1, tx1)
-    """
-    return s, [A_comp, B]
-
+_kernel1 = None
+_kernel2 = None
 
 def autotuner(TSTEPS, A, B):
     global _kernel1
@@ -112,13 +75,10 @@ def autotuner(TSTEPS, A, B):
     M = int(A.shape[0])
     N = int(A.shape[1])
     assert M == N
-    target = tvm.target.cuda()
 
-    _kernel1 = TVMFramework.autotune("jacobi_2d_1", __name__, (N, dtype), target)
-    _kernel2 = TVMFramework.autotune("jacobi_2d_2", __name__, (N, dtype), target)
+    _kernel1 = TVMFramework.autotune(func=jacobi_2d_1_gpu, name="jacobi_2d_1_gpu", args=(N, dtype), target=tvm.target.cuda())
+    _kernel2 = TVMFramework.autotune(func=jacobi_2d_2_gpu, name="jacobi_2d_1_gpu", args=(N, dtype), target=tvm.target.cuda())
 
-_kernel1 = None
-_kernel2 = None
 
 def kernel(TSTEPS, A, B):
     global _kernel1

@@ -1,12 +1,13 @@
 
 import tvm
 from tvm import te
+from tvm import auto_scheduler
 import tvm.testing
 from tvm import autotvm
 from npbench.infrastructure.tvm_cpu_framework import TVMCPUFramework
 
-@autotvm.template("jacobi_2d_1")
-def jacobi_2d_1(N, dtype):
+@auto_scheduler.register_workload("jacobi_2d_2_cpu")
+def jacobi_2d_1_cpu(N, dtype):
     A = te.placeholder((N, N), name="A", dtype=dtype)
 
     def compute_step(A):
@@ -28,12 +29,11 @@ def jacobi_2d_1(N, dtype):
         )
 
     B_comp = compute_step(A)
-    s = te.create_schedule(B_comp.op)
 
-    return s, [A, B_comp]
+    return [A, B_comp]
 
-@autotvm.template("jacobi_2d_2")
-def jacobi_2d_2(N, dtype):
+@auto_scheduler.register_workload("jacobi_2d_2_cpu")
+def jacobi_2d_2_cpu(N, dtype):
     B = te.placeholder((N, N), name="B", dtype=dtype)
 
     def compute_step(B):
@@ -54,10 +54,11 @@ def jacobi_2d_2(N, dtype):
             name="B_comp"
         )
     A_comp = compute_step(B)
-    s = te.create_schedule(A_comp.op)
 
-    return s, [A_comp, B]
+    return [A_comp, B]
 
+_kernel1 = None
+_kernel2 = None
 
 def autotuner(TSTEPS, A, B):
     global _kernel1
@@ -70,13 +71,11 @@ def autotuner(TSTEPS, A, B):
     M = int(A.shape[0])
     N = int(A.shape[1])
     assert M == N
-    target = tvm.target.Target("llvm")
 
-    _kernel1 = TVMCPUFramework.autotune("jacobi_2d_1", __name__, (N, dtype), target)
-    _kernel2 = TVMCPUFramework.autotune("jacobi_2d_2", __name__, (N, dtype), target)
+    _kernel1 = TVMCPUFramework.autotune(func=jacobi_2d_1_cpu, name="jacobi_2d_1_cpu", args=(N, dtype), target=tvm.target.Target("llvm"))
+    _kernel2 = TVMCPUFramework.autotune(func=jacobi_2d_2_cpu, name="jacobi_2d_2_cpu", args=(N, dtype), target=tvm.target.Target("llvm"))
 
-_kernel1 = None
-_kernel2 = None
+
 
 def kernel(TSTEPS, A, B):
     global _kernel1

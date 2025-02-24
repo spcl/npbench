@@ -18,22 +18,21 @@ def _kernel(TSTEPS: dc.int64, A: dc.float64[N, N], B: dc.float64[N, N]):
         )
 
 
-_best_configg = None
+_best_config = None
 
 
 def autotuner(TSTEPS, A, B, N):
-    global _best_configg
-    if _best_configg is not None:
+    global _best_config
+    if _best_config is not None:
         return
 
-    __best_config = DaceGPUAutoTileFramework.autotune(
+    _best_config = DaceGPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
         {"N": N, "A": A, "B": B, "TSTEPS": TSTEPS},
         dims=2
         )
-    _best_configg = __best_config.compile()
 
 def kernel(TSTEPS, A, B, N):
-    global _best_configg
-    _best_configg(TSTEPS=TSTEPS, A=A, B=B, N=N)
+    global _best_config
+    _best_config(TSTEPS=TSTEPS, A=A, B=B, N=N)
     return A

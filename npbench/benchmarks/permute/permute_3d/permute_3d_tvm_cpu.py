@@ -2,8 +2,8 @@ import tvm
 from tvm import te, autotvm, auto_scheduler
 from npbench.infrastructure.tvm_framework import TVMFramework
 
-@auto_scheduler.register_workload("permute3d_gpu")
-def permute3d_gpu(N, dtype):
+@auto_scheduler.register_workload("permute3d_cpu")
+def permute3d_cpu(N, dtype):
     A = te.placeholder((N, N, N), name="A", dtype=dtype)
     B = te.compute((N, N, N), lambda i, j, k: A[k, j, i], name="B")
     cfg = autotvm.get_config()
@@ -23,7 +23,7 @@ def autotuner(A, B):
     N = int(A.shape[1])
     K = int(A.shape[2])
     assert M == N and N == K
-    _kernel = TVMFramework.autotune(func=permute3d_gpu, name="permute3d_gpu", args=(N, dtype), target=tvm.target.cuda())
+    _kernel = TVMFramework.autotune(func=permute3d_cpu, name="permute3d_cpu", args=(N, dtype), target=tvm.target.Target("llvm"))
 
 _kernel = None
 

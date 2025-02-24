@@ -6,6 +6,8 @@ import logging
 import sys
 import importlib
 
+from tvm import auto_scheduler
+
 
 class TVMFramework(Framework):
     """ A class for reading and processing framework information specific to TVM. """
@@ -82,30 +84,24 @@ class TVMFramework(Framework):
         return autotune_str
 
     @staticmethod
-    def autotune(kernel_name, module_name, args_tuple, target):
-        module = importlib.import_module(module_name)
-        func = getattr(module, kernel_name)
+    def autotune(func, name, args, target):
         import tvm
         from tvm import autotvm
 
-        task1 = autotvm.task.create(kernel_name, args=args_tuple, target=target)
 
-        logging.getLogger("autotvm").setLevel(logging.DEBUG)
-        logging.getLogger("autotvm").addHandler(logging.StreamHandler(sys.stdout))
+        task = auto_scheduler.SearchTask(func=func, args=args, target=target)
 
-        measure_option = autotvm.measure_option(
-            builder=autotvm.LocalBuilder(n_parallel=1, do_fork=False),
-            runner=autotvm.LocalRunner(number=1, repeat=1)
+        tune_option = auto_scheduler.TuningOptions(
+            num_measure_trials=2000,
+            measure_callbacks=[auto_scheduler.RecordToFile(f"{name}.json")],
+            verbose=2,
         )
-        tuner1 = autotvm.tuner.RandomTuner(task1)
-        tuner1.tune(
-            n_trial=200,
-            measure_option=measure_option,
-            callbacks=[autotvm.callback.log_to_file(f"{kernel_name}.log")],
-        )
+        # Run the search
+        task.tune(tuning_options=tune_option, search_policy=auto_scheduler.SketchPolicy(task))
 
-        with autotvm.apply_history_best(f"{kernel_name}.log"):
-            with target:
-                s1, arg_bufs1 = func(*args_tuple)
-                _kernel = tvm.build(s1, arg_bufs1)
-                return _kernel
+        sch, args = task.apply_best(f"{name}.json")
+
+        with tvm.target.Target(target):
+            _kernel = tvm.build(sch, args)
+
+        return _kernel

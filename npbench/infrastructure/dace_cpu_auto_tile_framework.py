@@ -201,10 +201,6 @@ class DaceCPUAutoTileFramework(Framework):
             block_sizes_3D = [(x, y, z) for x, y, z in list(itertools.product(
                 [1,2,4,8,16,32,64], [1,2,4,8,16,32,64], [1,2,4,8,16,32,64]))
                 if x * y * z == num_cores]
-            #cores_per_numa = num_cores // numa_nodes
-            #os.environ["OMP_PLACES"] = "cores"
-            #os.environ["OMP_PLACES"] = ",".join([f"{{{_i*cores_per_numa}:{cores_per_numa}}}" for _i in range(thread_count // cores_per_numa)])
-            #print("OMP_PLACES STRING:", ",".join([f"{{{_i*cores_per_numa}:{cores_per_numa}}}" for _i in range(thread_count // cores_per_numa)]))
             if dims == 3:
                 thread_coarsening = DaceCPUAutoTileFramework.thread_coarsening_3D
                 block_sizes = block_sizes_3D
@@ -258,4 +254,8 @@ class DaceCPUAutoTileFramework(Framework):
                 raise Exception("SDFG must have been assigned at this stage")
             print(f"End Autotuning {msg}")
             print(f"Autotuning tried {candidates_tried} configurations")
-        return _sdfg, tcount
+
+        csdfg = _sdfg.compile()
+        csdfg(*copy.deepcopy(inputs))
+
+        return csdfg, tcount
