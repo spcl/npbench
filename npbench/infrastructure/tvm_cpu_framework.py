@@ -1,3 +1,4 @@
+import copy
 import numpy
 import pkg_resources
 from npbench.infrastructure import Benchmark, Framework
@@ -99,5 +100,6 @@ class TVMCPUFramework(Framework):
 
         with tvm.target.Target(target):
             _kernel = tvm.build(sch, args)
+        _kernel(*copy.deepcopy(args))
 
         return _kernel

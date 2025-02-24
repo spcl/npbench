@@ -258,4 +258,4 @@ class DaceCPUAutoTileFramework(Framework):
         csdfg = _sdfg.compile()
         csdfg(*copy.deepcopy(inputs))
 
-        return csdfg, tcount
+        return csdfg

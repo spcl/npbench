@@ -19,7 +19,7 @@ def autotuner(A, B, N):
     if _best_config is not None:
         return
 
-    _best_config, _ = DaceCPUAutoTileFramework.autotune(
+    _best_config = DaceCPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
         {"N": N, "A": A, "B": B},
         dims=3
