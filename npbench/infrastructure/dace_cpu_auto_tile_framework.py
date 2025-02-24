@@ -256,6 +256,6 @@ class DaceCPUAutoTileFramework(Framework):
             print(f"Autotuning tried {candidates_tried} configurations")
 
         csdfg = _sdfg.compile()
-        csdfg(*copy.deepcopy(inputs))
+        csdfg(**copy.deepcopy(inputs))
 
         return csdfg

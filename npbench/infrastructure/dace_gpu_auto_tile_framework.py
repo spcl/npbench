@@ -191,6 +191,6 @@ class DaceGPUAutoTileFramework(Framework):
             random_iter=True,
         )
         csdfg = tiled_sdfg.compile()
-        csdfg(*copy.deepcopy(inputs))
+        csdfg(**copy.deepcopy(inputs))
 
         return csdfg
