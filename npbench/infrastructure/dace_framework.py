@@ -32,14 +32,28 @@ class DaceFramework(Framework):
         """ Returns the copy-method that should be used
         for copying the benchmark arguments. """
         if self.fname == "dace_gpu":
-            import cupy
+            try:
+                import cupy
+                def cp_copy_func(arr):
+                    darr = cupy.asarray(arr)
+                    cupy.cuda.stream.get_current_stream().synchronize()
+                    return darr
 
-            def cp_copy_func(arr):
-                darr = cupy.asarray(arr)
-                cupy.cuda.stream.get_current_stream().synchronize()
-                return darr
+                return cp_copy_func
+            except Exception:
+                print("CuPy not found, falling back to Torch.")
+            try:
+                import torch
+                def cp_copy_func(arr, device='cuda'):
+                    darr = torch.tensor(arr).to(device)
+                    torch.cuda.synchronize()
+                    return darr
 
-            return cp_copy_func
+                return cp_copy_func
+            except Exception as e:
+                print("Torch not found.")
+                raise e
+
         return super().copy_func()
 
     def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
@@ -246,7 +260,15 @@ class DaceFramework(Framework):
                     v.storage = dace.dtypes.StorageType.GPU_Global
 
         if self.info["arch"] == "gpu":
-            import cupy as cp
+            try:
+                import cupy as cp
+            except Exception:
+                print("CuPy not found, falling back to Torch.")
+            try:
+                import torch
+            except Exception as e:
+                print("Torch not found.")
+                raise e
 
         implementations = []
         for sdfg, t in zip(sdfg_list, time_list):

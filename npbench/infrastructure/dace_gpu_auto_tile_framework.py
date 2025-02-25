@@ -45,7 +45,7 @@ class DaceGPUAutoTileFramework(Framework):
         """Returns a method to copy the benchmark arguments to Triton-compatible tensors."""
         import torch
 
-        def to_triton_tensor(x):
+        def to_dev_tensor(x):
             if isinstance(x, numpy.ndarray):
                 # Convert NumPy array to Torch tensor on GPU
                 return torch.tensor(x, device="cuda")
@@ -57,7 +57,7 @@ class DaceGPUAutoTileFramework(Framework):
                     "Input should be either a NumPy array or a Torch tensor."
                 )
 
-        return to_triton_tensor
+        return to_dev_tensor
 
     def setup_str(self, bench: Benchmark, impl: Callable = None) -> str:
         """Generates the setup string to use before calling the benchmark implementation.
