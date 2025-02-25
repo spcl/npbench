@@ -44,8 +44,8 @@ class DaceFramework(Framework):
                 print(f"CuPy not found, falling back to Torch, exception: {e}")
             try:
                 import torch
-                def cp_copy_func(arr, device='cuda'):
-                    darr = torch.tensor(arr).to(device)
+                def cp_copy_func(arr):
+                    darr = torch.tensor(arr).to(device="cuda")
                     torch.cuda.synchronize()
                     return darr
 
