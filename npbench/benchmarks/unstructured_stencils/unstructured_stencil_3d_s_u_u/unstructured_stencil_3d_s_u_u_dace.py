@@ -1,19 +1,11 @@
-import copy
-import typing
 import dace
 import numpy as np
-
-from dace.sdfg.utils import inline_sdfgs
-import dace.transformation
-from dace.transformation.interstate import InlineSDFG, InlineMultistateSDFG
-
-from npbench.infrastructure import DaceCPUAutoTileFramework
 
 N = dace.symbol("N")
 
 
 @dace.program
-def _kernel(
+def kernel(
     TSTEPS: dace.int64,
     vals_A: dace.float64[N, N, N],
     vals_B: dace.float64[N, N, N],
@@ -40,35 +32,4 @@ def _kernel(
                 + vals_B[i + 1, j + 1 + neighbors[i, j, k, 2], k + 1 + neighbors[i, j, k, 6]]
                 + vals_B[i + 1, j + 1 + neighbors[i, j, k, 3], k + 1 + neighbors[i, j, k, 7]]
             )
-    return vals_A
-
-
-_best_config = None
-
-
-def autotuner(TSTEPS, vals_A, vals_B, neighbors, N):
-    global _best_config
-    if _best_config is not None:
-        return
-
-    _sdfg = _kernel.to_sdfg()
-
-    _best_config = DaceCPUAutoTileFramework.autotune(
-        _sdfg,
-        {
-            "N": N,
-            "vals_A": vals_A,
-            "vals_B": vals_B,
-            "neighbors": neighbors,
-            "TSTEPS": TSTEPS,
-        },
-        dims=3,
-    )
-
-
-def kernel(TSTEPS, vals_A, vals_B, neighbors, N):
-    global _best_config
-    _best_config(
-        TSTEPS=TSTEPS, vals_A=vals_A, vals_B=vals_B, neighbors=neighbors, N=N
-    )
     return vals_A

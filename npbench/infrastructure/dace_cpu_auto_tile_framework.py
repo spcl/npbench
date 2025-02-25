@@ -168,10 +168,6 @@ class DaceCPUAutoTileFramework(Framework):
         num_cores, num_threads = DaceCPUAutoTileFramework.get_num_cores()
         numa_nodes = DaceCPUAutoTileFramework.get_numa_nodes()
 
-        IndirectAccessFromNestedSDFGToMap().apply_pass(sdfg=aopt_sdfg, _={})
-
-        from dace.transformation.interstate import InlineSDFG, InlineMultistateSDFG
-        aopt_sdfg.apply_transformations_repeated(InlineSDFG)
         aopt_sdfg.simplify()
 
         for s in aopt_sdfg.states():

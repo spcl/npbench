@@ -7,7 +7,7 @@ from dace.sdfg.utils import inline_sdfgs
 import dace.transformation
 from dace.transformation.interstate import InlineSDFG, InlineMultistateSDFG
 
-from npbench.infrastructure import DaceCPUAutoTileFramework
+from npbench.infrastructure import DaceGPUAutoTileFramework
 
 N = dace.symbol("N")
 
@@ -54,7 +54,7 @@ def autotuner(TSTEPS, vals_A, vals_B, neighbors, N):
 
     _sdfg = _kernel.to_sdfg()
 
-    _best_config = DaceCPUAutoTileFramework.autotune(
+    _best_config = DaceGPUAutoTileFramework.autotune(
         _sdfg,
         {
             "N": N,

@@ -25,6 +25,11 @@
                 "TSTEPS": 500,
                 "N": 120
             }
+            ,
+            "XL": {
+                "TSTEPS": 200,
+                "N": 512
+            }
         },
         "init": {
             "func_name": "initialize",

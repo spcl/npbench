@@ -32,6 +32,12 @@
                 "NM": 1000,
                 "slab_per_bc": 2,
                 "num_int_pts": 32
+            },
+            "XL": {
+                "NR": 1024,
+                "NM": 2048,
+                "slab_per_bc": 2,
+                "num_int_pts": 32
             }
         },
         "init": {

@@ -3,6 +3,7 @@ import os
 import pkg_resources
 import traceback
 import numpy
+from dace.transformation.passes.indirect_access_from_nested_sdfg_to_map import IndirectAccessFromNestedSDFGToMap
 from npbench.infrastructure import Benchmark, Framework, utilities as util
 from typing import Callable, Sequence, Tuple
 import itertools
@@ -167,21 +168,20 @@ class DaceGPUAutoTileFramework(Framework):
         from dace.transformation.interstate import InlineSDFG, InlineMultistateSDFG
         aopt_sdfg.apply_transformations_repeated(InlineSDFG)
         aopt_sdfg.simplify()
-
-        #aopt_sdfg.save("aopt_sdfg1.sdfg")
         aopt_sdfg.validate()
 
 
         dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
         dace.Config.set('compiler', 'cuda', 'args', value='-march=native --use_fast_math -O3 -std=c++17 --compiler-options=\"-Ofast\"')
 
+        """
         tiled_sdfg, _ = auto_tile_gpu(
             sdfg=aopt_sdfg,
             exhaustive_search=True,
             memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,
             thread_coarsening_parameters=thread_coarsening,
             thread_block_parameters=block_sizes,
-            apply_explicit_memory_transfers=[(True, False, True), (True, False, False), (True, True, True), (True, True, False), (False, False, False)],
+            apply_explicit_memory_transfers=[(False, False, False)],#[(True, False, True), (True, False, False), (True, True, True), (True, True, False), (False, False, False)],
             apply_remainder_loop=[False],
             inputs=inputs,
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,
@@ -190,6 +190,13 @@ class DaceGPUAutoTileFramework(Framework):
             timeout=300,
             random_iter=True,
         )
+        """
+        aopt_sdfg.name = "suu"
+        aopt_sdfg.save("suu.sdfg")
+        IndirectAccessFromNestedSDFGToMap().apply_pass(aopt_sdfg, {})
+        tiled_sdfg = aopt_sdfg
+        aopt_sdfg.name = "no_nsdfg_suu"
+        aopt_sdfg.save("suu_no_nsdfg2.sdfg")
         csdfg = tiled_sdfg.compile()
         csdfg(**copy.deepcopy(inputs))
 
