@@ -40,8 +40,8 @@ class DaceFramework(Framework):
                     return darr
 
                 return cp_copy_func
-            except Exception:
-                print("CuPy not found, falling back to Torch.")
+            except Exception as e:
+                print(f"CuPy not found, falling back to Torch, exception: {e}")
             try:
                 import torch
                 def cp_copy_func(arr, device='cuda'):
@@ -51,7 +51,7 @@ class DaceFramework(Framework):
 
                 return cp_copy_func
             except Exception as e:
-                print("Torch not found.")
+                print(f"Torch not found, exception: {e}")
                 raise e
 
         return super().copy_func()
