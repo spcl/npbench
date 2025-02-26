@@ -1,4 +1,4 @@
-name: npbench-dpnp
+name: npb
 channels:
   - conda-forge
   - https://software.repos.intel.com/python/conda
@@ -12,7 +12,6 @@ dependencies:
   - dace
   - numba
   - pythran
-#  - cupy    # hardware-locked frameworks
-#  - legate
-#  - pyitt   # optional utilities
-#  - ipython
+  - cupy
+  - ipython
+  #- pyitt

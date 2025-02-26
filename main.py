@@ -40,7 +40,9 @@ if __name__ == "__main__":
 
     ]
 
-    frameworks = ["numpy", "numba","dpnp_cpu","dpnp_gpu","pythran"]
+    frameworks = ["numpy", "cupy", "dpnp_gpu", "dpnp_cpu", "numba"]
+#    frameworks = ["pythran"]
+#    frameworks = []
     if args['dace']:
         frameworks.append("dace_cpu")
 
@@ -54,18 +56,17 @@ if __name__ == "__main__":
             p.start()
             p.join()
 
-    numpy = generate_framework("numpy")
-    numba = generate_framework("numba")
-    dpnp  = generate_framework("dpnp_cpu")
+    # numpy = generate_framework("numpy")
+    # numba = generate_framework("numba")
 
-    for benchname in benchmarks:
-        bench = Benchmark(benchname)
-        for frmwrk in [numpy, numba, dpnp_cpu]:
-            lcount = LineCount(bench, frmwrk, numpy)
-            lcount.count()
-            test = Test(bench, frmwrk, numpy)
-            try:
-                test.run(args["preset"], args["validate"], args["repeat"],
-                         args["timeout"])
-            except:
-                continue
+    # for benchname in benchmarks:
+    #     bench = Benchmark(benchname)
+    #     for frmwrk in [numpy, numba]:
+    #         lcount = LineCount(bench, frmwrk, numpy)
+    #         lcount.count()
+    #         test = Test(bench, frmwrk, numpy)
+    #         try:
+    #             test.run(args["preset"], args["validate"], args["repeat"],
+    #                      args["timeout"])
+    #         except:
+    #             continue
