@@ -165,7 +165,6 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
     for r, v in zip(ref, val):
 
         valid = True
-        print(type(r), type(v))
 
         if isinstance(r, (int, float)):
             r = np.array([r])
