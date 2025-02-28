@@ -29,7 +29,8 @@ class DaceGPUAutoTileFramework(Framework):
         :param save_strict: If True, saves the simplified SDFG.
         :param load_strict: If True, loads the simplified SDFG.
         """
-
+        import dace
+        dace.Config.set('cache',value='unique')
         self.save_strict = save_strict
         self.load_strict = load_strict
 

@@ -20,6 +20,9 @@ class DaceFramework(Framework):
         self.save_strict = save_strict
         self.load_strict = load_strict
 
+        import dace
+        dace.Config.set('cache',value='unique')
+
         import warnings
         warnings.filterwarnings("ignore")
         super().__init__(fname)

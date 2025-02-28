@@ -56,7 +56,8 @@ class DaceCPUAutoTileFramework(Framework):
         :param save_strict: If True, saves the simplified SDFG.
         :param load_strict: If True, loads the simplified SDFG.
         """
-
+        import dace
+        dace.Config.set('cache',value='unique')
         num_cores, num_threads = DaceCPUAutoTileFramework.get_num_cores()
         #if os.environ['OMP_NUM_THREADS'] is None or (os.environ['OMP_NUM_THREADS'] != str(num_cores) and os.environ['OMP_NUM_THREADS'] != str(num_threads)):
         #    raise ValueError(f"OMP_NUM_THREADS not set correctly, ensure it is set to number of CPU cores {num_cores} or number of hyperthreads {num_threads}, found {os.environ['OMP_NUM_THREADS']}")
