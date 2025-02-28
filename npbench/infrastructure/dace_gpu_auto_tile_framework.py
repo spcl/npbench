@@ -130,7 +130,7 @@ class DaceGPUAutoTileFramework(Framework):
         return autotune_str
 
     thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-        [1, 2, 4, 8], [1, 2, 4, 8])) if x >= y]
+        [1, 2, 4, 8], [1, 2, 4, 8]))]
     block_sizes_2D = [(x, y) for x, y in list(itertools.product(
         [16, 32, 64, 128, 256], [1, 2, 4, 8, 16]))
         if x * y <= 1024 and (x * y) % (32) == 0 and x * y >= 32]
@@ -138,7 +138,7 @@ class DaceGPUAutoTileFramework(Framework):
     memory_tiling = [(32,), (64,), (128,), (256,)]
 
     thread_coarsening_3D = [(x, y, z) for x, y, z in list(itertools.product(
-        [1, 2, 4, 8], [1, 2, 4, 8], [1, 2, 4, 8])) if x >= y and y >= z and x * y * z < 255]
+        [1, 2, 4, 8], [1, 2, 4, 8], [1, 2, 4, 8])) if x * y * z < 128]
     block_sizes_3D = [(x, y, z) for x, y, z in list(itertools.product(
         [1, 2, 4, 8, 16, 32, 64, 128, 256], [1, 2, 4, 8, 16, 32], [1, 2, 4, 8, 16, 32]))
         if x * y * z <= 1024 and (x * y * z) % (32) == 0 and x * y * z >= 32]
@@ -175,14 +175,14 @@ class DaceGPUAutoTileFramework(Framework):
         dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
         dace.Config.set('compiler', 'cuda', 'args', value='-march=native --use_fast_math -O3 -std=c++17 --compiler-options=\"-Ofast\"')
 
-        """
+
         tiled_sdfg, _ = auto_tile_gpu(
             sdfg=aopt_sdfg,
             exhaustive_search=True,
             memory_tiling_parameters=DaceGPUAutoTileFramework.memory_tiling,
             thread_coarsening_parameters=thread_coarsening,
             thread_block_parameters=block_sizes,
-            apply_explicit_memory_transfers=[(False, False, False)],#[(True, False, True), (True, False, False), (True, True, True), (True, True, False), (False, False, False)],
+            apply_explicit_memory_transfers=[(True, False, True), (True, False, False), (True, True, True), (True, True, False), (False, False, False)],
             apply_remainder_loop=[False],
             inputs=inputs,
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,
@@ -191,14 +191,10 @@ class DaceGPUAutoTileFramework(Framework):
             timeout=300,
             random_iter=True,
         )
-        """
-        aopt_sdfg.name = "suu"
-        aopt_sdfg.save("suu.sdfg")
-        IndirectAccessFromNestedSDFGToMap().apply_pass(aopt_sdfg, {})
+
         tiled_sdfg = aopt_sdfg
-        aopt_sdfg.name = "no_nsdfg_suu"
-        aopt_sdfg.save("suu_no_nsdfg2.sdfg")
         csdfg = tiled_sdfg.compile()
         csdfg(**copy.deepcopy(inputs))
+
 
         return csdfg

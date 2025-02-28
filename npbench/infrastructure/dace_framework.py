@@ -19,7 +19,6 @@ class DaceFramework(Framework):
 
         self.save_strict = save_strict
         self.load_strict = load_strict
-
         import dace
         dace.Config.set('cache',value='unique')
 
@@ -36,6 +35,19 @@ class DaceFramework(Framework):
         for copying the benchmark arguments. """
         if self.fname == "dace_gpu":
             try:
+                import torch
+                import numpy
+                def cp_copy_func(arr):
+                    assert isinstance(arr, numpy.ndarray)
+                    darr = torch.from_numpy(arr).cuda()
+                    torch.cuda.synchronize()
+                    return darr
+
+                return cp_copy_func
+            except Exception as e:
+                print(f"Torch not found, exception: {e}")
+                raise e
+            try:
                 import cupy
                 def cp_copy_func(arr):
                     darr = cupy.asarray(arr)
@@ -45,17 +57,7 @@ class DaceFramework(Framework):
                 return cp_copy_func
             except Exception as e:
                 print(f"CuPy not found, falling back to Torch, exception: {e}")
-            try:
-                import torch
-                def cp_copy_func(arr):
-                    darr = torch.tensor(arr).to(device="cuda")
-                    torch.cuda.synchronize()
-                    return darr
 
-                return cp_copy_func
-            except Exception as e:
-                print(f"Torch not found, exception: {e}")
-                raise e
 
         return super().copy_func()
 
@@ -264,14 +266,15 @@ class DaceFramework(Framework):
 
         if self.info["arch"] == "gpu":
             try:
-                import cupy as cp
-            except Exception:
-                print("CuPy not found, falling back to Torch.")
-            try:
                 import torch
             except Exception as e:
                 print("Torch not found.")
                 raise e
+            try:
+                import cupy as cp
+            except Exception:
+                print("CuPy not found, falling back to Torch.")
+
 
         implementations = []
         for sdfg, t in zip(sdfg_list, time_list):
