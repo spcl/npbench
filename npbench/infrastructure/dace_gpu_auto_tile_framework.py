@@ -138,7 +138,7 @@ class DaceGPUAutoTileFramework(Framework):
     memory_tiling = [(32,), (64,), (128,), (256,)]
 
     thread_coarsening_3D = [(x, y, z) for x, y, z in list(itertools.product(
-        [1, 2, 4, 8], [1, 2, 4, 8], [1, 2, 4, 8])) if x * y * z < 128]
+        [1, 2, 4, 8], [1, 2, 4, 8], [1, 2, 4, 8]))]
     block_sizes_3D = [(x, y, z) for x, y, z in list(itertools.product(
         [1, 2, 4, 8, 16, 32, 64, 128, 256], [1, 2, 4, 8, 16, 32], [1, 2, 4, 8, 16, 32]))
         if x * y * z <= 1024 and (x * y * z) % (32) == 0 and x * y * z >= 32]
@@ -190,6 +190,7 @@ class DaceGPUAutoTileFramework(Framework):
             verbose=True,
             timeout=300,
             random_iter=True,
+            static_sram_limit=48*1024
         )
 
         tiled_sdfg = aopt_sdfg
