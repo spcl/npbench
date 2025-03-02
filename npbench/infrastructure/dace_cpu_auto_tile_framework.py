@@ -176,10 +176,6 @@ class DaceCPUAutoTileFramework(Framework):
                 if isinstance(n, dace.nodes.MapEntry) and n.map.schedule == dace.ScheduleType.CPU_Multicore:
                     n.map.schedule = dace.ScheduleType.Default
 
-        #aopt_sdfg.save("aopt_sdfg1.sdfg")
-        aopt_sdfg.validate()
-        aopt_sdfg.save("aopt_sdfg_prep2.sdfg")
-
         dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
 
         _sdfg = None

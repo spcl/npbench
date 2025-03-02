@@ -57,7 +57,7 @@ def _kernel(TSTEPS: dc.int64, u: dc.float64[N, N]):
 
 _best_config = None
 
-def autotuner(TSTEPS, u):
+def autotuner(TSTEPS, N, u):
     global _best_config
     if _best_config is not None:
         return
@@ -68,11 +68,11 @@ def autotuner(TSTEPS, u):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
-        {"TSTEPS": TSTEPS, "u": u},
+        {"TSTEPS": TSTEPS, "u": u, "N": N},
         dims=get_max_ndim([TSTEPS, u])
     )
 
-def kernel(TSTEPS, u):
+def kernel(TSTEPS, N, u):
     global _best_config
-    _best_config(TSTEPS, u)
+    _best_config(TSTEPS, N, u)
     return u
