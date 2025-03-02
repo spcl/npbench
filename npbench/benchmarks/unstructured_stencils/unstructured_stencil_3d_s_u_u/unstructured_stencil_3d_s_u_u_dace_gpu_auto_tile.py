@@ -1,13 +1,5 @@
-import copy
-import typing
 import dace
 import numpy as np
-
-from dace.sdfg.utils import inline_sdfgs
-import dace.transformation
-from dace.transformation.interstate import InlineSDFG, InlineMultistateSDFG
-
-from npbench.infrastructure import DaceGPUAutoTileFramework
 
 N = dace.symbol("N")
 
@@ -42,33 +34,24 @@ def _kernel(
             )
     return vals_A
 
-
 _best_config = None
 
-
-def autotuner(TSTEPS, vals_A, vals_B, neighbors, N):
+def autotuner(TSTEPS, vals_A, vals_B, neighbors):
     global _best_config
     if _best_config is not None:
         return
 
-    _sdfg = _kernel.to_sdfg()
+    def get_max_ndim(inputs):
+        return max((arg.ndim for arg in inputs if hasattr(arg, "ndim")), default=0)
 
+    from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
-        _sdfg,
-        {
-            "N": N,
-            "vals_A": vals_A,
-            "vals_B": vals_B,
-            "neighbors": neighbors,
-            "TSTEPS": TSTEPS,
-        },
-        dims=3,
+        _kernel.to_sdfg(),
+        {"TSTEPS": TSTEPS, "vals_A": vals_A, "vals_B": vals_B, "neighbors": neighbors},
+        dims=get_max_ndim([TSTEPS, vals_A, vals_B, neighbors])
     )
 
-
-def kernel(TSTEPS, vals_A, vals_B, neighbors, N):
+def kernel(TSTEPS, vals_A, vals_B, neighbors):
     global _best_config
-    _best_config(
-        TSTEPS=TSTEPS, vals_A=vals_A, vals_B=vals_B, neighbors=neighbors, N=N
-    )
+    _best_config(TSTEPS, vals_A, vals_B, neighbors)
     return vals_A

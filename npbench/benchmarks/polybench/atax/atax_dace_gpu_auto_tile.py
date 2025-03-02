@@ -1,17 +1,17 @@
-import dace
 import numpy as np
+import dace as dc
 
-N = dace.symbol("N")
+M, N = (dc.symbol(s, dtype=dc.int64) for s in ('M', 'N'))
 
-@dace.program
-def _kernel(A : dace.float64[N, N, N],
-           B : dace.float64[N, N, N]):
-    B = np.transpose(A, (2, 1, 0))
-    return B
+
+@dc.program
+def _kernel(A: dc.float64[M, N], x: dc.float64[N]):
+
+    return (A @ x) @ A
 
 _best_config = None
 
-def autotuner(A, B):
+def autotuner(A, x):
     global _best_config
     if _best_config is not None:
         return
@@ -22,11 +22,11 @@ def autotuner(A, B):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
-        {"A": A, "B": B},
-        dims=get_max_ndim([A, B])
+        {"A": A, "x": x},
+        dims=get_max_ndim([A, x])
     )
 
-def kernel(A, B):
+def kernel(A, x):
     global _best_config
-    _best_config(A, B)
-    return B
+    R = _best_config(A, x)
+    return R

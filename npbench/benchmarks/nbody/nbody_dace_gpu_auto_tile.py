@@ -3,8 +3,6 @@
 
 import numpy as np
 import dace as dc
-from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
-
 """
 Create Your Own N-body Simulation (With Python)
 Philip Mocz (2020) Princeton Univeristy, @PMocz
@@ -141,7 +139,6 @@ def _nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
     # calculate initial gravitational accelerations
     acc = getAcc(pos, mass, G, softening)
 
-    # calculate initial energy of system
     KE[0], PE[0] = getEnergy(pos, vel, mass, G)
 
     t = 0.0
@@ -166,23 +163,25 @@ def _nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
         # get energy of system
         KE[i + 1], PE[i + 1] = getEnergy(pos, vel, mass, G)
 
-    return KE, PE
-
 
 _best_config = None
 
-def autotuner(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, tEnd):
+def autotuner(mass, pos, vel, dt, G, softening, KE, PE):
     global _best_config
     if _best_config is not None:
         return
 
-    __best_config = DaceGPUAutoTileFramework.autotune(
-        _nbody.to_sdfg(),
-        {"mass":mass, "pos":pos, "vel":vel, "N":N, "Nt":Nt, "dt":dt, "G":G, "softening":softening, "KE":KE, "PE":PE, "tEnd":tEnd}
-        )
-    _best_config = __best_config.compile()
+    def get_max_ndim(inputs):
+        return max((arg.ndim for arg in inputs if hasattr(arg, "ndim")), default=0)
 
-def nbody(mass, pos, vel, N, Nt, dt, G, softening, KE, PE, tEnd):
+    from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
+    _best_config = DaceGPUAutoTileFramework.autotune(
+        _nbody.to_sdfg(),
+        {"mass": mass, "pos": pos, "vel": vel, "dt": dt, "G": G, "softening": softening, "KE": KE, "PE": PE},
+        dims=get_max_ndim([mass, pos, vel, dt, G, softening, KE, PE])
+    )
+
+def nbody(mass, pos, vel, dt, G, softening, KE, PE):
     global _best_config
-    _best_config(mass=mass, pos=pos, vel=vel, N=N,  Nt=Nt, dt=dt, G=G, softening=softening, KE=KE, PE=PE, tEnd=tEnd)
+    _best_config(mass, pos, vel, dt, G, softening, KE, PE)
     return KE, PE
