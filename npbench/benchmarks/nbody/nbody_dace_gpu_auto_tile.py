@@ -166,7 +166,7 @@ def _nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
 
 _best_config = None
 
-def autotuner(mass, pos, vel, dt, G, softening, KE, PE):
+def autotuner(mass, pos, vel, dt, G, softening, KE, PE, N, Nt, tEnd):
     global _best_config
     if _best_config is not None:
         return
@@ -177,11 +177,11 @@ def autotuner(mass, pos, vel, dt, G, softening, KE, PE):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _nbody.to_sdfg(),
-        {"mass": mass, "pos": pos, "vel": vel, "dt": dt, "G": G, "softening": softening, "KE": KE, "PE": PE},
+        {"mass": mass, "pos": pos, "vel": vel, "dt": dt, "G": G, "softening": softening, "KE": KE, "PE": PE, "N":N, "Nt":Nt, "tEnd":tEnd},
         dims=get_max_ndim([mass, pos, vel, dt, G, softening, KE, PE])
     )
 
-def nbody(mass, pos, vel, dt, G, softening, KE, PE):
+def nbody(mass, pos, vel, dt, G, softening, KE, PE, N, Nt, tEnd):
     global _best_config
-    _best_config(mass, pos, vel, dt, G, softening, KE, PE)
+    _best_config(mass, pos, vel, dt, G, softening, KE, PE, N, Nt, tEnd)
     return KE, PE

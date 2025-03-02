@@ -37,7 +37,7 @@ def _azimint_naive(data: dc.float64[N], radius: dc.float64[N]):
 
 _best_config = None
 
-def autotuner(data, radius):
+def autotuner(data, radius, N, npt):
     global _best_config
     if _best_config is not None:
         return
@@ -48,11 +48,11 @@ def autotuner(data, radius):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _azimint_naive.to_sdfg(),
-        {"data": data, "radius": radius},
+        {"data": data, "radius": radius, "N":N, "npt":npt},
         dims=get_max_ndim([data, radius])
     )
 
-def azimint_naive(data, radius):
+def azimint_naive(data, radius, N, npt):
     global _best_config
-    res = _best_config(data, radius)
+    res = _best_config(data=data, radius=radius, N=N, npt=npt)
     return res

@@ -16,7 +16,7 @@ def _go_fast(a: dc.float64[N, N]):
 
 _best_config = None
 
-def autotuner(a):
+def autotuner(a, N):
     global _best_config
     if _best_config is not None:
         return
@@ -27,11 +27,11 @@ def autotuner(a):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _go_fast.to_sdfg(),
-        {"a": a},
+        {"a": a, "N":N},
         dims=get_max_ndim([a])
     )
 
 def go_fast(a):
     global _best_config
-    r = _best_config(a)
+    r = _best_config(a, N)
     return r

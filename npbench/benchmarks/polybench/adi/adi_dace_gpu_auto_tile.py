@@ -74,5 +74,5 @@ def autotuner(TSTEPS, N, u):
 
 def kernel(TSTEPS, N, u):
     global _best_config
-    _best_config(TSTEPS, N, u)
+    _best_config(TSTEPS=TSTEPS, N=N, u=u)
     return u

@@ -50,7 +50,7 @@ def pressure_poisson(p: dc.float64[ny, nx], dx: dc.float64, dy: dc.float64,
 def _cavity_flow(nt: dc.int64, nit: dc.int64, u: dc.float64[ny, nx],
                 v: dc.float64[ny, nx], dt: dc.float64, dx: dc.float64,
                 dy: dc.float64, p: dc.float64[ny, nx], rho: dc.float64,
-                nu: dc.float64):
+                nu: dc.float64, un, vn, b):
     un = np.empty_like(u)
     vn = np.empty_like(v)
     b = np.zeros((ny, nx))
@@ -95,7 +95,7 @@ def _cavity_flow(nt: dc.int64, nit: dc.int64, u: dc.float64[ny, nx],
 
 _best_config = None
 
-def autotuner(nt, nit, u, v, dt, dx, dy, p, rho, nu):
+def autotuner(nt, nit, u, v, dt, dx, dy, p, rho, nu, nx, ny):
     global _best_config
     if _best_config is not None:
         return
@@ -106,11 +106,11 @@ def autotuner(nt, nit, u, v, dt, dx, dy, p, rho, nu):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _cavity_flow.to_sdfg(),
-        {"nt": nt, "nit": nit, "u": u, "v": v, "dt": dt, "dx": dx, "dy": dy, "p": p, "rho": rho, "nu": nu},
+        {"nt": nt, "nit": nit, "u": u, "v": v, "dt": dt, "dx": dx, "dy": dy, "p": p, "rho": rho, "nu": nu, "nx":nx, "ny": ny},
         dims=get_max_ndim([nt, nit, u, v, dt, dx, dy, p, rho, nu])
     )
 
-def cavity_flow(nt, nit, u, v, dt, dx, dy, p, rho, nu):
+def cavity_flow(nt, nit, u, v, dt, dx, dy, p, rho, nu, nx, ny):
     global _best_config
-    _best_config(nt, nit, u, v, dt, dx, dy, p, rho, nu)
+    _best_config(nt=nt, nit=nit, u=u, v=v, dt=dt, dx=dx, dy=dy, p=p, rho=rho, nu=nu, nx=nx, ny=ny)
     return u

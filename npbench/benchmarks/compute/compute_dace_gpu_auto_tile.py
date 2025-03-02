@@ -31,5 +31,5 @@ def autotuner(array_1, array_2, a, b, c):
 
 def compute(array_1, array_2, a, b, c):
     global _best_config
-    r = _best_config(array_1, array_2, a, b, c)
+    r = _best_config(array_1=array_1, array_2=array_2, a=a, b=b, c=c)
     return r

@@ -29,7 +29,7 @@ def _spmv(A_row: dc.uint32[M + 1], A_col: dc.uint32[nnz],
 
 _best_config = None
 
-def autotuner(A_row, A_col, A_val, x):
+def autotuner(A_row, A_col, A_val, x, M, N, nnz):
     global _best_config
     if _best_config is not None:
         return
@@ -40,11 +40,11 @@ def autotuner(A_row, A_col, A_val, x):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _spmv.to_sdfg(),
-        {"A_row": A_row, "A_col": A_col, "A_val": A_val, "x": x},
+        {"A_row": A_row, "A_col": A_col, "A_val": A_val, "x": x, "M": M, "N":N, "nnz":nnz},
         dims=get_max_ndim([A_row, A_col, A_val, x])
     )
 
-def spmv(A_row, A_col, A_val, x):
+def spmv(A_row, A_col, A_val, x, M, N, nnz):
     global _best_config
-    y = _best_config(A_row, A_col, A_val, x)
+    y = _best_config(A_row, A_col, A_val, x, M, N, nnz)
     return y

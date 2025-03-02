@@ -17,7 +17,7 @@ def _kernel(ex: dc.float64[NX, NY], ey: dc.float64[NX, NY],
 
 _best_config = None
 
-def autotuner(ex, ey, hz, _fict_):
+def autotuner(ex, ey, hz, _fict_, TMAX, NX, NY):
     global _best_config
     if _best_config is not None:
         return
@@ -28,11 +28,11 @@ def autotuner(ex, ey, hz, _fict_):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
-        {"ex": ex, "ey": ey, "hz": hz, "_fict_": _fict_},
+        {"ex": ex, "ey": ey, "hz": hz, "_fict_": _fict_,"TMAX":TMAX, "NX":NX, "NY":NY},
         dims=get_max_ndim([ex, ey, hz, _fict_])
     )
 
-def kernel(ex, ey, hz, _fict_):
+def kernel(ex, ey, hz, _fict_,TMAX, NX, NY):
     global _best_config
-    _best_config(ex, ey, hz, _fict_)
+    _best_config(ex, ey, hz, _fict_,TMAX, NX, NY)
     return ex

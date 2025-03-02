@@ -12,7 +12,7 @@ def _kernel(L: dc.float64[N, N], x: dc.float64[N], b: dc.float64[N]):
 
 _best_config = None
 
-def autotuner(L, x, b):
+def autotuner(L, x, b, N):
     global _best_config
     if _best_config is not None:
         return
@@ -23,11 +23,11 @@ def autotuner(L, x, b):
     from npbench.infrastructure.dace_gpu_auto_tile_framework import DaceGPUAutoTileFramework
     _best_config = DaceGPUAutoTileFramework.autotune(
         _kernel.to_sdfg(),
-        {"L": L, "x": x, "b": b},
+        {"L": L, "x": x, "b": b, "N": N},
         dims=get_max_ndim([L, x, b])
     )
 
-def kernel(L, x, b):
+def kernel(L, x, b, N):
     global _best_config
-    _best_config(L, x, b)
+    _best_config(L, x, b, N)
     return b
