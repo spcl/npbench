@@ -161,9 +161,14 @@ class DaceGPUAutoTileFramework(Framework):
         memory_tiling = [(16,), (32,), (64,), (128,), (256,)]
 
         def copy_to_gpu(sdfg):
+            sdfg.simplify()
             for k, v in sdfg.arrays.items():
-                if not v.transient and isinstance(v, dace.data.Array):
+                if not v.transient and type(v) == dace.data.Array:
                     v.storage = dace.dtypes.StorageType.GPU_Global
+                if v.transient and type(v) == dace.data.Array and v.storage == dace.dtypes.StorageType.Default:
+                    v.storage = dace.dtypes.StorageType.GPU_Global
+
+            sdfg.apply_gpu_transformations(validate=True, simplify=True)
 
         #copy_to_gpu(_in_sdfg)
         if dims == 3:
@@ -197,17 +202,17 @@ class DaceGPUAutoTileFramework(Framework):
 
         copy_to_gpu(_in_sdfg)
         aopt_sdfg = opt.auto_optimize(sdfg=_in_sdfg, device=dace.dtypes.DeviceType.GPU,
-                                      validate=True, validate_all=True, use_gpu_storage=True)
-
+                                      validate=False, validate_all=False, use_gpu_storage=True)
+        aopt_sdfg.save("aopt.sdfg")
         #from dace.transformation.interstate import InlineSDFG, InlineMultistateSDFG
         #aopt_sdfg.apply_transformations_repeated(InlineSDFG)
         #aopt_sdfg.simplify()
-        #aopt_sdfg.validate()
+        aopt_sdfg.validate()
 
 
         dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
         dace.Config.set('compiler', 'cuda', 'args', value='-march=native --use_fast_math -O3 -std=c++17 --compiler-options=\"-Ofast\"')
-
+        aopt_sdfg.save("per.sdfg")
 
         tiled_sdfg, _ = auto_tile_gpu(
             sdfg=aopt_sdfg,
@@ -216,7 +221,7 @@ class DaceGPUAutoTileFramework(Framework):
             thread_coarsening_parameters=thread_coarsening,
             thread_block_parameters=block_sizes,
             apply_explicit_memory_transfers=[(True, False, True), (True, False, False), (True, True, True), (True, True, False), (False, False, False)],
-            apply_remainder_loop=[False],
+            apply_remainder_loop=[True],
             inputs=inputs,
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,
             re_apply=False,
