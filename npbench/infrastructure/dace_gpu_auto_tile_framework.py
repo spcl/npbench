@@ -158,7 +158,7 @@ class DaceGPUAutoTileFramework(Framework):
             warp_size = 64
             static_sram = 64*1024
 
-        memory_tiling = [(16,),]
+        memory_tiling = [(16,),(32,),(64,),(128,),]
 
         def copy_to_gpu(sdfg):
             sdfg.simplify()
@@ -191,8 +191,8 @@ class DaceGPUAutoTileFramework(Framework):
             thread_coarsening = thread_coarsening_2D
             block_sizes = block_sizes_2D
         elif dims == 1:
-            thread_coarsening_1D = [(x,) for x in [1, 2, 4, 8, 16, 32, 64]]
-            block_sizes_1D = [(x,) for x in [32, 64, 128, 256, 512, 1024]
+            thread_coarsening_1D = [(x,) for x in [8]]
+            block_sizes_1D = [(x,) for x in [32]
                 if x <= 1024 and (x) % (warp_size) == 0 and x >= warp_size
             ]
 
@@ -219,13 +219,13 @@ class DaceGPUAutoTileFramework(Framework):
             memory_tiling_parameters=memory_tiling,
             thread_coarsening_parameters=thread_coarsening,
             thread_block_parameters=block_sizes,
-            apply_explicit_memory_transfers=[(True, False, False), (True, True, False), (False, False, False)],
+            apply_explicit_memory_transfers=[(True, False, False),(True, False, True),(False, False, False)],
             apply_remainder_loop=[True],
             inputs=inputs,
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,
             re_apply=False,
             verbose=True,
-            timeout=99999,
+            timeout=500,
             random_iter=True,
             static_sram_limit=static_sram
         )
