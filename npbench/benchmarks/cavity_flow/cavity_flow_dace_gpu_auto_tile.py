@@ -50,7 +50,7 @@ def pressure_poisson(p: dc.float64[ny, nx], dx: dc.float64, dy: dc.float64,
 def _cavity_flow(nt: dc.int64, nit: dc.int64, u: dc.float64[ny, nx],
                 v: dc.float64[ny, nx], dt: dc.float64, dx: dc.float64,
                 dy: dc.float64, p: dc.float64[ny, nx], rho: dc.float64,
-                nu: dc.float64, un, vn, b):
+                nu: dc.float64):
     un = np.empty_like(u)
     vn = np.empty_like(v)
     b = np.zeros((ny, nx))

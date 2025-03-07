@@ -158,7 +158,7 @@ class DaceGPUAutoTileFramework(Framework):
             warp_size = 64
             static_sram = 64*1024
 
-        memory_tiling = [(16,), (32,), (64,), (128,), (256,)]
+        memory_tiling = [(16,),]
 
         def copy_to_gpu(sdfg):
             sdfg.simplify()
@@ -173,18 +173,19 @@ class DaceGPUAutoTileFramework(Framework):
         #copy_to_gpu(_in_sdfg)
         if dims == 3:
             thread_coarsening_3D = [(x, y, z) for x, y, z in list(itertools.product(
-                [1, 2, 4, 8], [1, 2, 4, 8], [1, 2, 4, 8]))]
+                [1, 2, 4, 8, 16], [1, 2, 4, 8, 16], [1, 2, 4, 8, 16]))]
             block_sizes_3D = [(x, y, z) for x, y, z in list(itertools.product(
                 [1, 2, 4, 8, 16, 32, 64, 128, 256], [1, 2, 4, 8, 16, 32], [1, 2, 4, 8, 16, 32]))
-                if x * y * z <= 1024 and (x * y * z) % (warp_size) == 0 and x * y * z >= warp_size]
+                if x * y * z <= 1024 and (x * y * z) % (warp_size) == 0 and x * y * z >= warp_size and
+                (x >= 16 or y >= 16 or z >= 16)]
             thread_coarsening = thread_coarsening_3D
             block_sizes = block_sizes_3D
         elif dims == 2:
 
             thread_coarsening_2D = [(x, y) for x, y in list(itertools.product(
-                [1, 2, 4, 8], [1, 2, 4, 8]))]
+                [1, 2, 4, 8, 16], [1, 2, 4, 8, 16]))]
             block_sizes_2D = [(x, y) for x, y in list(itertools.product(
-                [16, 32, 64, 128, 256], [1, 2, 4, 8, 16]))
+                [1, 2, 4, 8, 16, 32, 64, 128, 256], [1, 2, 4, 8, 16, 32, 64, 128, 256],))
                 if x * y <= 1024 and (x * y) % (warp_size) == 0 and x * y >= warp_size]
 
             thread_coarsening = thread_coarsening_2D
@@ -203,7 +204,6 @@ class DaceGPUAutoTileFramework(Framework):
         copy_to_gpu(_in_sdfg)
         aopt_sdfg = opt.auto_optimize(sdfg=_in_sdfg, device=dace.dtypes.DeviceType.GPU,
                                       validate=False, validate_all=False, use_gpu_storage=True)
-        aopt_sdfg.save("aopt.sdfg")
         #from dace.transformation.interstate import InlineSDFG, InlineMultistateSDFG
         #aopt_sdfg.apply_transformations_repeated(InlineSDFG)
         #aopt_sdfg.simplify()
@@ -212,7 +212,6 @@ class DaceGPUAutoTileFramework(Framework):
 
         dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -Ofast -std=c++17 -fPIC')
         dace.Config.set('compiler', 'cuda', 'args', value='-march=native --use_fast_math -O3 -std=c++17 --compiler-options=\"-Ofast\"')
-        aopt_sdfg.save("per.sdfg")
 
         tiled_sdfg, _ = auto_tile_gpu(
             sdfg=aopt_sdfg,
@@ -220,13 +219,13 @@ class DaceGPUAutoTileFramework(Framework):
             memory_tiling_parameters=memory_tiling,
             thread_coarsening_parameters=thread_coarsening,
             thread_block_parameters=block_sizes,
-            apply_explicit_memory_transfers=[(True, False, True), (True, False, False), (True, True, True), (True, True, False), (False, False, False)],
+            apply_explicit_memory_transfers=[(True, False, False), (True, True, False), (False, False, False)],
             apply_remainder_loop=[True],
             inputs=inputs,
             device_schedule = dace.dtypes.ScheduleType.GPU_Device,
             re_apply=False,
             verbose=True,
-            timeout=300,
+            timeout=99999,
             random_iter=True,
             static_sram_limit=static_sram
         )
