@@ -176,11 +176,3 @@ def generate_framework(fname: str, save_strict: bool = False, load_strict: bool 
     else:
         frmwrk = eval("{}(fname)".format(info["class"]))
     return frmwrk
-
-
-    exec("from npbench.infrastructure import {}".format(info["class"]))
-    if fname.startswith('dace'):
-        frmwrk = eval(f"{info['class']}(fname, {save_strict}, {load_strict})")
-    else:
-        frmwrk = eval("{}(fname)".format(info["class"]))
-    return frmwrk
