@@ -42,6 +42,11 @@ class Framework(object):
         """ Returns the copy-method that should be used 
         for copying the benchmark arguments. """
         return np.copy
+    
+    def copy_back_func(self) -> Callable:
+        """ Returns the copy-method that should be used 
+        for copying the benchmark outputs back to the host. """
+        return lambda x: x
 
     def impl_files(self, bench: Benchmark) -> Sequence[Tuple[str, str]]:
         """ Returns the framework's implementation files for a particular
@@ -164,6 +169,14 @@ def generate_framework(fname: str, save_strict: bool = False, load_strict: bool 
     except Exception as e:
         print("Framework JSON file {f} could not be opened.".format(f=frmwrk_filename))
         raise (e)
+
+    exec("from npbench.infrastructure import {}".format(info["class"]))
+    if fname.startswith('dace'):
+        frmwrk = eval(f"{info['class']}(fname, {save_strict}, {load_strict})")
+    else:
+        frmwrk = eval("{}(fname)".format(info["class"]))
+    return frmwrk
+
 
     exec("from npbench.infrastructure import {}".format(info["class"]))
     if fname.startswith('dace'):
