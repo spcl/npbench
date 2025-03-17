@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "dpnp_cpu",
+        "full_name": "Dpnp_CPU",
+        "prefix": "dpc",
+        "postfix": "dpnp_cpu",
+        "class": "DpnpFramework",
+        "arch": "cpu"
+    }
+}
