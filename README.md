@@ -23,12 +23,11 @@ Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
 - DaCe
 - JAX
+- Legate
 - Numba
 - NumPy
 - Pythran
 
-Support will also be added shortly for:
-- Legate
 
 Please note that the NPBench setup only installs NumPy.
 To run benchmarks with other frameworks, you have to install them separately.
