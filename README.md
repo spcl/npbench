@@ -3,7 +3,7 @@
 
 ## Quickstart
 
-IF Dpnp is critical to you, see below. Otherwise, to install NPBench, simply execute:
+To install NPBench, simply execute:
 
 ```
 python -m pip install -r requirements.txt
@@ -65,7 +65,7 @@ either `dace_cpu` or `dace_gpu`.
 With `dpnp` it is strongly recommended to use `conda` instead of `pip` for its dependency on intel packages. 
 Refer to this 
 [LINK](https://intelpython.github.io/dpnp/quick_start_guide.html#building-for-custom-sycl-targets) to know more 
-about building custom SYCL targets or installing `dpnp` package from intel channel.
+about building custom SYCL targets or installing `dpnp` package from the `intel` channel.
 
 Unlike the pip installation, with conda it is advisable to try installing all packages at once.
 Edit the `environment.yml` to include packages and optional dependencies (e.g. hardware-dependent frameworks
@@ -73,12 +73,14 @@ or utilities such as `ipython`). Then type:
 
 ``` bash
 $ conda env create -f environment.yml    # environment.yml contains all the right dependencies
+$ conda activate npb              # Activate the environment
 $ python -m pip install pygount          # Only dependency not distributed with conda
 ```
 If you are behind proxies, follow your system documentation. E.g. for pip you may have to specify:
 ``` bash
 $ python -m pip --proxy=http://localhost:1234 install <...> # where "localhost:1234" is the value of the env var "HTTP_PROXY"
 ```
+You must select a framework, either `dpnp_cpu` or `dpnp_gpu`, depending on your hardware. See details below.
 
 _DPNP only contains a subset of the benchmarks, selected on interest and best-effort basis._
 
@@ -162,15 +164,6 @@ Please cite NPBench as follows:
     doi = {10.1145/3447818.3460360},
     booktitle = {Proceedings of the ACM International Conference on Supercomputing},
     series = {ICS '21}
-}
-```
-
-```bibtex
-@inproceedings{
-    npbench-dpnp,
-    author = {Ranjith et al.},
-    year = {2021},
-    title = {In prep.}
 }
 ```
 
