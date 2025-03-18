@@ -76,17 +76,14 @@ $ conda env create -f environment.yml    # environment.yml contains all the righ
 $ conda activate npb              # Activate the environment
 $ python -m pip install pygount          # Only dependency not distributed with conda
 ```
-If you are behind proxies, follow your system documentation. E.g. for pip you may have to specify:
-``` bash
-$ python -m pip --proxy=http://localhost:1234 install <...> # where "localhost:1234" is the value of the env var "HTTP_PROXY"
-```
-You must select a framework, either `dpnp_cpu` or `dpnp_gpu`, depending on your hardware. See details below.
+
+To run NPBench with dpnp, You must select as framework, either `dpnp_cpu` or `dpnp_gpu`, depending on your hardware. See details below.
 
 _DPNP only contains a subset of the benchmarks, selected on interest and best-effort basis._
 
-** Important Note **
+**Note**
 
-For the DPNP framework, its preferred to use `python main.py` insted of `python quickstart.py`. which is designed to run the selected benchmarks specifically for the DPNP framework.
+To quickstart with the DPNP framework, use `python main.py`, which is designed to run the selected benchmarks specifically for the DPNP framework, which runs along with NumPy, Numba, Cupy and DaCe.
 
 ### Numba
 
