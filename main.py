@@ -42,7 +42,6 @@ if __name__ == "__main__":
 
     frameworks = ["numpy", "cupy", "dpnp_gpu", "dpnp_cpu", "numba"]
 #    frameworks = ["pythran"]
-#    frameworks = []
     if args['dace']:
         frameworks.append("dace_cpu")
 

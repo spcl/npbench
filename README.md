@@ -84,6 +84,10 @@ You must select a framework, either `dpnp_cpu` or `dpnp_gpu`, depending on your 
 
 _DPNP only contains a subset of the benchmarks, selected on interest and best-effort basis._
 
+** Important Note **
+
+For the DPNP framework, its preferred to use `python main.py` insted of `python quickstart.py`. which is designed to run the selected benchmarks specifically for the DPNP framework.
+
 ### Numba
 
 Numba can be installed with pip:
