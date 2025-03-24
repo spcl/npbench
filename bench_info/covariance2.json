@@ -9,10 +9,10 @@
         "domain": "Learning",
         "dwarf": "dense_linear_algebra",
         "parameters": {
-            "S": { "M": 5000, "N": 6000 },
-            "M": { "M": 14000, "N": 18000 },
-            "L": { "M": 32000, "N": 40000 },
-            "paper": { "M": 120000, "N": 140000 }
+            "S": { "M": 500, "N": 600 },
+            "M": { "M": 1400, "N": 1800 },
+            "L": { "M": 3200, "N": 4000 },
+            "paper": { "M": 1200, "N": 1400 }
         },
         "init": {
             "func_name": "initialize",
