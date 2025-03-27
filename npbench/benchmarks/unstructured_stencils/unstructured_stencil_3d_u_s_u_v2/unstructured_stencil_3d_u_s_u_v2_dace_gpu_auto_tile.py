@@ -26,22 +26,21 @@ def _kernel(
                 vals_A[i + 1, j + 1, k + 1]
                 + vals_A[i + 1, j + 1, k]
                 + vals_A[i + 1, j + 1, k + 2]
-                + vals_A[neighbors[i+1, j+1, 0], j + 1, neighbors[i+1, j+1, 4]]
-                + vals_A[neighbors[i+1, j+1, 1], j + 1, neighbors[i+1, j+1, 5]]
-                + vals_A[neighbors[i+1, j+1, 2], j + 1, neighbors[i+1, j+1, 6]]
-                + vals_A[neighbors[i+1, j+1, 3], j + 1, neighbors[i+1, j+1, 7]]
+                + vals_A[neighbors[i+1, k+1, 0], j + 1, neighbors[i+1, k+1, 4]]
+                + vals_A[neighbors[i+1, k+1, 1], j + 1, neighbors[i+1, k+1, 5]]
+                + vals_A[neighbors[i+1, k+1, 2], j + 1, neighbors[i+1, k+1, 6]]
+                + vals_A[neighbors[i+1, k+1, 3], j + 1, neighbors[i+1, k+1, 7]]
             )
         for i, j, k in dace.map[0 : N - 2, 0 : N - 2, 0 : N - 2]:
             vals_A[i + 1, j + 1, k + 1] = 0.2 * (
                 vals_B[i + 1, j + 1, k + 1]
                 + vals_B[i + 1, j + 1, k]
                 + vals_B[i + 1, j + 1, k + 2]
-                + vals_B[neighbors[i+1, j+1, 0], j + 1, neighbors[i+1, j+1, 4]]
-                + vals_B[neighbors[i+1, j+1, 1], j + 1, neighbors[i+1, j+1, 5]]
-                + vals_B[neighbors[i+1, j+1, 2], j + 1, neighbors[i+1, j+1, 6]]
-                + vals_B[neighbors[i+1, j+1, 3], j + 1, neighbors[i+1, j+1, 7]]
+                + vals_B[neighbors[i+1, k+1, 0], j + 1, neighbors[i+1, k+1, 4]]
+                + vals_B[neighbors[i+1, k+1, 1], j + 1, neighbors[i+1, k+1, 5]]
+                + vals_B[neighbors[i+1, k+1, 2], j + 1, neighbors[i+1, k+1, 6]]
+                + vals_B[neighbors[i+1, k+1, 3], j + 1, neighbors[i+1, k+1, 7]]
             )
-    return vals_A
 
 _best_config = None
 
