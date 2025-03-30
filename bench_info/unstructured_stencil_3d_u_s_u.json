@@ -1,0 +1,43 @@
+{
+    "benchmark": {
+        "name": "3D stemi-structured stencil computation",
+        "short_name": "unstructured stencil 3d (usu)",
+        "relative_path": "unstructured_stencils/unstructured_stencil_3d_u_s_u",
+        "module_name": "unstructured_stencil_3d_u_s_u",
+        "func_name": "kernel",
+        "autotuner_name": "autotuner",
+        "kind": "microbench",
+        "domain": "Physics",
+        "dwarf": "unstructured_grids",
+        "parameters": {
+            "S": {
+                "TSTEPS": 8,
+                "N": 50
+            },
+            "M": {
+                "TSTEPS": 15,
+                "N": 100
+            },
+            "L": {
+                "TSTEPS": 40,
+                "N": 200
+            },
+            "paper": {
+                "TSTEPS": 100,
+                "N": 400
+            },
+            "XL": {
+                "TSTEPS": 100,
+                "N": 1024
+            }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": ["N"],
+            "output_args": ["vals_A", "vals_B", "neighbors"]
+        },
+        "input_args": ["TSTEPS", "vals_A", "vals_B", "neighbors"],
+        "array_args": ["vals_A", "vals_B", "neighbors"],
+        "output_args": ["vals_A", "vals_B"]
+    }
+}

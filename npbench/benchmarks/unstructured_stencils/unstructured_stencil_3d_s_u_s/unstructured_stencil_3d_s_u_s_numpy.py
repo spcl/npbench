@@ -10,20 +10,20 @@ def kernel(TSTEPS, vals_A, vals_B, neighbors):
             vals_A[i, j, k]
             + vals_A[i, j, k - 1]
             + vals_A[i, j, k + 1]
-            + vals_A[i, j + neighbors[:-2, :-2, :-2, 0], k]
-            + vals_A[i, j + neighbors[:-2, :-2, :-2, 1], k]
-            + vals_A[i, j + neighbors[:-2, :-2, :-2, 2], k]
-            + vals_A[i, j + neighbors[:-2, :-2, :-2, 3], k]
+            + vals_A[i, j + neighbors[i, j, k, 0], k]
+            + vals_A[i, j + neighbors[i, j, k, 1], k]
+            + vals_A[i, j + neighbors[i, j, k, 2], k]
+            + vals_A[i, j + neighbors[i, j, k, 3], k]
         )
 
         vals_A[i, j, k] = 0.2 * (
             vals_B[i, j, k]
             + vals_B[i, j, k - 1]
             + vals_B[i, j, k + 1]
-            + vals_B[i, j + neighbors[:-2, :-2, :-2, 0], k]
-            + vals_B[i, j + neighbors[:-2, :-2, :-2, 1], k]
-            + vals_B[i, j + neighbors[:-2, :-2, :-2, 2], k]
-            + vals_B[i, j + neighbors[:-2, :-2, :-2, 3], k]
+            + vals_B[i, j + neighbors[i, j, k, 0], k]
+            + vals_B[i, j + neighbors[i, j, k, 1], k]
+            + vals_B[i, j + neighbors[i, j, k, 2], k]
+            + vals_B[i, j + neighbors[i, j, k, 3], k]
         )
 
     return vals_A
