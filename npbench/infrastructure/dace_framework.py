@@ -21,6 +21,9 @@ class DaceFramework(Framework):
         self.load_strict = load_strict
         import dace
         dace.Config.set('cache',value='unique')
+        dace.Config.set('compiler', 'cpu', 'args', value='-march=native -mtune=native -flto -O3 -std=c++17 -fPIC')
+        dace.Config.set('compiler', 'cuda', 'hip_args', value='--ofload-arch=gfx942 -march=native -mtune=native -flto -O3 -ffast-math -std=c++17 -fPIC')
+        dace.Config.set('compiler', 'cuda', 'default_block_size', value="64,1,1")
 
         import warnings
         warnings.filterwarnings("ignore")

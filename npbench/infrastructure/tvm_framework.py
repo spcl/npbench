@@ -7,7 +7,7 @@ import logging
 import sys
 import importlib
 
-from tvm import auto_scheduler
+
 
 
 class TVMFramework(Framework):
@@ -25,6 +25,7 @@ class TVMFramework(Framework):
 
     def imports(self) -> Dict[str, Any]:
         """ Import TVM-specific modules. """
+        from tvm import auto_scheduler
         import tvm
         from tvm import te
         import tvm.testing
@@ -88,7 +89,7 @@ class TVMFramework(Framework):
     def autotune(func, name, args, target):
         import tvm
         from tvm import autotvm
-
+        from tvm import auto_scheduler
 
         task = auto_scheduler.SearchTask(func=func, args=args, target=target)
 
