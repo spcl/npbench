@@ -81,10 +81,6 @@ To run NPBench with dpnp, You must select as framework, either `dpnp_cpu` or `dp
 
 _DPNP only contains a subset of the benchmarks, selected on interest and best-effort basis._
 
-**Note**
-
-To quickstart with the DPNP framework, use `python main.py`, which is designed to run the selected benchmarks specifically for the DPNP framework, which runs along with NumPy, Numba, Cupy and DaCe.
-
 ### Numba
 
 Numba can be installed with pip:
