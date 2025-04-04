@@ -26,6 +26,7 @@ Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
 - DaCe
 - Dpnp
+- JAX
 - Numba
 - NumPy
 - Pythran
@@ -59,7 +60,6 @@ However, you may want to install the latest version from the [GitHub repository]
 To run NPBench with DaCe, you have to select as framework (see details below)
 either `dace_cpu` or `dace_gpu`.
 
-
 ### DPNP
 
 With `dpnp` it is strongly recommended to use `conda` instead of `pip` for its dependency on intel packages. 
@@ -80,6 +80,23 @@ $ python -m pip install pygount          # Only dependency not distributed with 
 To run NPBench with dpnp, You must select as framework, either `dpnp_cpu` or `dpnp_gpu`, depending on your hardware. See details below.
 
 _DPNP only contains a subset of the benchmarks, selected on interest and best-effort basis._
+
+### Jax
+
+JAX can be installed with pip:
+- CPU-only (Linux/macOS/Windows)
+    ```sh
+    pip install -U jax
+    ```
+- GPU (NVIDIA, CUDA 12)
+    ```sh
+    pip install -U "jax[cuda12]"
+    ```
+- TPU (Google Cloud TPU VM)
+  ```sh
+  pip install -U "jax[tpu]" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+  ```
+For more installation options, please consult the JAX [installation guide](https://jax.readthedocs.io/en/latest/installation.html#installation).
 
 ### Numba
 
