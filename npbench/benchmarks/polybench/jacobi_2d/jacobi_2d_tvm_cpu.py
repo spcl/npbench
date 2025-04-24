@@ -6,7 +6,7 @@ import tvm.testing
 from tvm import autotvm
 from npbench.infrastructure.tvm_cpu_framework import TVMCPUFramework
 
-@auto_scheduler.register_workload("jacobi_2d_2_cpu")
+@auto_scheduler.register_workload("jacobi_2d_1_cpu")
 def jacobi_2d_1_cpu(N, dtype):
     A = te.placeholder((N, N), name="A", dtype=dtype)
 
