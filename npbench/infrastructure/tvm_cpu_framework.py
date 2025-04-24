@@ -28,9 +28,7 @@ class TVMCPUFramework(Framework):
         from tvm import auto_scheduler
         import tvm
         from tvm import te
-        import tvm.testing
-        from tvm import autotvm
-        return {'tvm': tvm, 'te': te, 'autotvm': autotvm}
+        return {'tvm': tvm, 'te': te, 'auto_scheduler': auto_scheduler}
 
     def copy_func(self) -> Callable:
         """ Returns a method to copy the benchmark arguments to TVM-compatible tensors. """
@@ -84,7 +82,6 @@ class TVMCPUFramework(Framework):
     @staticmethod
     def autotune(func, name, args, target):
         import tvm
-        from tvm import autotvm
         from tvm import auto_scheduler
 
         task = auto_scheduler.SearchTask(func=func, args=args, target=target)
@@ -101,6 +98,5 @@ class TVMCPUFramework(Framework):
 
         with tvm.target.Target(target):
             _kernel = tvm.build(sch, args)
-        _kernel(*copy.deepcopy(args))
 
         return _kernel
