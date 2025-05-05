@@ -1,0 +1,33 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+parameters:
+  timeout: 60
+  conda: "3.12"
+  partitions:
+    - zinnia
+
+steps:
+  build: |
+    conda install -c numba icc_rt
+    
+    # Install dependencies
+    pip install -r requirements.txt
+    pip install .
+
+    # Install DaCe
+    pip install dace
+
+    # Install CuPy
+    python -m pip install cupy-cuda12x
+
+  run:
+    spmv:
+      command: python run_benchmark.py -r 1 -b gemm -f cupy -p M
+      measurements: 1
+      profiler: nsys
+      kernels: true
