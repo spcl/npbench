@@ -1,0 +1,17 @@
+name: npb
+channels:
+  - conda-forge
+  - https://software.repos.intel.com/python/conda
+dependencies:
+  - python=3.10.14
+  - numpy=1.26.4    # dpnp theoretically requires numpy<=1.24.4, numba-dpex numpy>=1.26.4; seems that 1.26.4 works fine even for dpnp
+  - matplotlib
+  - pandas
+  - scipy
+  - dpnp
+  - dace
+  - numba
+  - pythran
+  - cupy
+  # pygount has to be installed via pip
+
