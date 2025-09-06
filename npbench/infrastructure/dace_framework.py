@@ -1,4 +1,5 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
+import importlib
 import os
 import pkg_resources
 import traceback
@@ -69,7 +70,9 @@ class DaceFramework(Framework):
             from dace.transformation.interstate import LoopToMap
             import dace.transformation.auto.auto_optimize as opt
 
-            exec("from {m} import {f} as ct_impl".format(m=module_str, f=func_str))
+            module = importlib.import_module(module_str)
+            ct_impl = getattr(module, func_str)
+
         except Exception as e:
             print("Failed to load the DaCe implementation.")
             raise (e)
