@@ -1,0 +1,26 @@
+{
+    "benchmark": {
+        "name": "hist",
+        "short_name": "hist",
+        "relative_path": "image_processing/hist",
+        "module_name": "hist",
+        "func_name": "hist",
+        "kind": "microbench",
+        "domain": "Image Processing",
+        "dwarf": "dense_linear_algebra",
+        "parameters": {
+            "S":  {  },
+            "M":  {  },
+            "L":  {  },
+            "paper": {  }
+        },
+        "init": {
+            "func_name": "initialize",
+            "input_args": [],
+            "output_args": ["image", "output"]
+        },
+        "input_args": ["image", "output"],
+        "array_args": ["image", "output"],
+        "output_args": ["output"]
+    }
+}
