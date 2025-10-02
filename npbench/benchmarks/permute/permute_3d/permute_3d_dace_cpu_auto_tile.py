@@ -1,29 +1,19 @@
 import dace
 import numpy as np
 from npbench.infrastructure.dace_cpu_auto_tile_framework import DaceCPUAutoTileFramework
-
-
-N = dace.symbol("N")
+N = dace.symbol('N')
 
 @dace.program
-def _kernel(A : dace.float64[N, N, N],
-            B : dace.float64[N, N, N]):
+def _kernel(A: dace.float64[N, N, N], B: dace.float64[N, N, N]):
     B = np.transpose(A, (2, 1, 0))
-
-
+    return (A, B)
 _best_config = None
-
 
 def autotuner(A, B, N):
     global _best_config
     if _best_config is not None:
         return
-
-    _best_config = DaceCPUAutoTileFramework.autotune(
-        _kernel.to_sdfg(),
-        {"N": N, "A": A, "B": B},
-        dims=3
-        )
+    _best_config = DaceCPUAutoTileFramework.autotune(_kernel.to_sdfg(), {'N': N, 'A': A, 'B': B}, dims=3)
 
 def kernel(A, B, N):
     global _best_config

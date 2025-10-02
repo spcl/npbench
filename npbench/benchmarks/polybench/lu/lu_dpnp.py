@@ -8,3 +8,4 @@ def kernel(A):
             A[i, j] /= A[j, j]
         for j in range(i, N):
             A[i, j] -= np.dot(A[i, :i], A[:i, j])
+    return A
