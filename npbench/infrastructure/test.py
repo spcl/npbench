@@ -43,8 +43,11 @@ class Test(object):
                 out = [out]
         else:
             out = []
-        if "out_args" in self.bench.info.keys():
-            out += [ldict[a] for a in self.frmwrk.args(self.bench)]
+        if "output_args" in self.bench.info.keys():
+            num_return_args = len(out)
+            num_output_args = len(self.bench.info["output_args"])
+            out += [ldict[a] for a in frmwrk.inout_args(self.bench)]
+            assert len(out) == num_return_args + num_output_args, "Number of output arguments does not match."
         return out, timelist
 
     def run(self, preset: str, validate: bool, repeat: int, timeout: float = 2000.0, ignore_errors: bool = True, skip_existing: bool = False):
@@ -117,6 +120,16 @@ class Test(object):
             # Validation
             valid = True
             if validate and np_out is not None:
+                try:
+                    if isinstance(frmwrk_out, (tuple, list)):
+                        frmwrk_out = [self.frmwrk.copy_back_func()(a) for a in frmwrk_out]
+                    else:
+                        frmwrk_out = self.frmwrk.copy_back_func()(frmwrk_out)
+
+                    frmwrk_name = self.frmwrk.info["full_name"] + " - " + impl_name
+                except Exception as e:
+                    frmwrk_name = self.frmwrk.info["full_name"]
+
 
                 frmwrk_name = self.frmwrk.info["full_name"]
 
@@ -165,3 +178,4 @@ class Test(object):
             }
             result = tuple(new_d.values())
             util.create_result(conn, util.sql_insert_into_results_table, result)
+

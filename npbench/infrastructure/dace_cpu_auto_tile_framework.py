@@ -9,7 +9,6 @@ import dace
 import dace.data
 import dace.transformation.auto.auto_optimize as opt
 
-from dace.transformation.auto_tile.auto_tile_cpu import auto_tile_cpu
 
 import os
 import subprocess
@@ -17,9 +16,7 @@ import subprocess
 import warnings
 
 from npbench.infrastructure import Framework, Benchmark
-from dace.transformation.passes.indirect_access_from_nested_sdfg_to_map import (
-    IndirectAccessFromNestedSDFGToMap,
-)
+
 
 # Run the shell command and capture the output
 class DaceCPUAutoTileFramework(Framework):
@@ -157,6 +154,10 @@ class DaceCPUAutoTileFramework(Framework):
 
     @staticmethod
     def autotune(_in_sdfg, inputs, dims):
+        from dace.transformation.auto_tile.auto_tile_cpu import auto_tile_cpu
+        from dace.transformation.passes.indirect_access_from_nested_sdfg_to_map import (
+            IndirectAccessFromNestedSDFGToMap,
+        )
         assert dims >= 0 and dims <= 3
 
         aopt_sdfg = opt.auto_optimize(_in_sdfg, dace.dtypes.DeviceType.CPU)

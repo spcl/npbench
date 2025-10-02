@@ -15,3 +15,6 @@ from .tvm_framework import *
 from .tvm_cpu_framework import *
 from .dace_gpu_auto_tile_framework import *
 from .dace_cpu_auto_tile_framework import *
+from .dpnp_framework import *
+from .appy_framework import *
+from .jax_framework import *

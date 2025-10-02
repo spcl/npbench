@@ -21,7 +21,8 @@ The base `Framework` class (found in [`npbench/infrastructure/framework.py`](npb
 - impl_files: Returns a list of the framework's implementation files for the input benchmark. Each element in the list is a tuple of the implementation filename and a description (e.g. `default` or `nopython-parallel`).
 - implementations: Returns a list of the framework's implementations for the input benchmark. Each element in the list is a tuple of the implementation method and a description (as above).
 - args: Returns a list with the names of the input arguments for running the input implementation of the input benchmark.
-- out_args: Returns a list with the input arguments for running the input implementation of the input benchmark **and** have to be copied(for example, because they may be modified during benchmark execution).
+- mutable_args: Returns a list with the input arguments for running the input implementation of the input benchmark **and** have to be copied(for example, because they may be modified during benchmark execution).
+- inout_args: Returns a list with the input arguments that are also output, i.e., they must be validated.
 - arg_str: Returns the argument-string needed to call the input implementation of the input benchmark.
 - out_arg_str: Returns the argument-string with the input arguments that must be copied.
 - setup_str: Returns the setup-string of the code that should be executed for, e.g., copying data, before executing the benchmark implementation.

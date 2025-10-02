@@ -143,16 +143,20 @@ def check_entry_exists(conn, benchmark, mode, framework, version):
 
 def benchmark(stmt, setup="pass", out_text="", repeat=1, context={}, output=None, verbose=True):
 
-    timeit.template = timeit_tmpl.format(init='{init}', setup='{setup}', stmt='{stmt}', output=output)
-
     ldict = {**context}
-    output = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
-    res = output[0][1]
-    raw_time_list = [a for a, _ in output]
+    raw_time_list = timeit.repeat(stmt, setup=setup, repeat=repeat, number=1, globals=ldict)
     raw_time = np.median(raw_time_list)
     ms_time = time_to_ms(raw_time)
     if verbose:
         print("{}: {}ms".format(out_text, ms_time))
+    
+    if output is not None:
+        exec(setup, context)
+        exec(stmt, context)
+        res = context[output]
+    else:
+        res = None
+
     return res, raw_time_list
 
 
@@ -176,6 +180,12 @@ def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-
             valid = np.allclose(r, vv, rtol=rtol, atol=atol)
         else:
             v_moved_to_cpu = False
+
+        if f"{type(v).__module__}.{type(v).__name__}" == "torch.Tensor":
+            v = v.cpu().numpy()
+            v_moved_to_cpu = True
+
+        if not np.allclose(r, v, rtol=rtol, atol=atol):
             try:
                 import cupy
                 if isinstance(v, cupy.ndarray):

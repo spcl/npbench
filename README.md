@@ -4,13 +4,16 @@
 ## Quickstart
 
 To install NPBench, simply execute:
+
 ```
 python -m pip install -r requirements.txt
 python -m pip install .
 ```
+
 You can then run a subset of the benchmarks with NumPy, Numba, and DaCe and plot
 the speedup of DaCe and Numba against NumPy:
-```
+
+``` bash
 python -m pip install numba
 python -m pip install dace
 python quickstart.py
@@ -22,6 +25,8 @@ python plot_results.py
 Currently, the following frameworks are supported (in alphabetical order):
 - CuPy
 - DaCe
+- Dpnp
+- JAX
 - Numba
 - NumPy
 - Pythran
@@ -54,6 +59,44 @@ python -m pip install dace
 However, you may want to install the latest version from the [GitHub repository](https://github.com/spcl/dace).
 To run NPBench with DaCe, you have to select as framework (see details below)
 either `dace_cpu` or `dace_gpu`.
+
+### DPNP
+
+With `dpnp` it is strongly recommended to use `conda` instead of `pip` for its dependency on intel packages. 
+Refer to this 
+[LINK](https://intelpython.github.io/dpnp/quick_start_guide.html#building-for-custom-sycl-targets) to know more 
+about building custom SYCL targets or installing `dpnp` package from the `intel` channel.
+
+Unlike the pip installation, with conda it is advisable to try installing all packages at once.
+Edit the `environment.yml` to include packages and optional dependencies (e.g. hardware-dependent frameworks
+or utilities such as `ipython`). Then type:
+
+``` bash
+$ conda env create -f environment.yml    # environment.yml contains all the right dependencies
+$ conda activate npb              # Activate the environment
+$ python -m pip install pygount          # Only dependency not distributed with conda
+```
+
+To run NPBench with dpnp, You must select as framework, either `dpnp_cpu` or `dpnp_gpu`, depending on your hardware. See details below.
+
+_DPNP only contains a subset of the benchmarks, selected on interest and best-effort basis._
+
+### Jax
+
+JAX can be installed with pip:
+- CPU-only (Linux/macOS/Windows)
+    ```sh
+    pip install -U jax
+    ```
+- GPU (NVIDIA, CUDA 12)
+    ```sh
+    pip install -U "jax[cuda12]"
+    ```
+- TPU (Google Cloud TPU VM)
+  ```sh
+  pip install -U "jax[tpu]" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+  ```
+For more installation options, please consult the JAX [installation guide](https://jax.readthedocs.io/en/latest/installation.html#installation).
 
 ### Numba
 
@@ -153,7 +196,3 @@ NPBench is a collection of scientific Python/NumPy codes from various domains th
 - Pythran [benchmarks](https://github.com/serge-sans-paille/numpy-benchmarks/)
 - [Stockham-FFT](http://urn.kb.se/resolve?urn=urn:nbn:se:kth:diva-287731)
 - Weather stencils from [gt4py](https://github.com/GridTools/gt4py)
-
-
-
-

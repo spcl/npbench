@@ -42,6 +42,11 @@ class Framework(object):
         """ Returns the copy-method that should be used
         for copying the benchmark arguments. """
         return np.copy
+    
+    def copy_back_func(self) -> Callable:
+        """ Returns the copy-method that should be used 
+        for copying the benchmark outputs back to the host. """
+        return lambda x: x
 
     def impl_files(self, bench: Benchmark) -> Sequence[Tuple[str, str]]:
         """ Returns the framework's implementation files for a particular
@@ -113,7 +118,7 @@ class Framework(object):
             for a in bench.info["input_args"]
         ]
 
-    def out_args(self, bench: Benchmark, impl: Callable = None):
+    def mutable_args(self, bench: Benchmark, impl: Callable = None):
         """ Generates the input/output arguments that should be copied during
         the setup.
         :param bench: A benchmark.
@@ -121,9 +126,17 @@ class Framework(object):
         """
 
         return ["__npb_{pr}_{a}".format(pr=self.info["prefix"], a=a) for a in bench.info["array_args"]]
+    
 
-    # def params(self, bench: Benchmark, impl: Callable = None):
-    #     return list(bench.info["input_params"])
+    def inout_args(self, bench: Benchmark, impl: Callable = None):
+        """ Generates the input/output arguments that should be checked during
+        validation.
+        :param bench: A benchmark.
+        :param impl: A benchmark implementation.
+        """
+
+        return ["__npb_{pr}_{a}".format(pr=self.info["prefix"], a=a) for a in bench.info["output_args"]]
+    
 
     def arg_str(self, bench: Benchmark, impl: Callable = None):
         """ Generates the argument-string that should be used for calling
@@ -141,7 +154,7 @@ class Framework(object):
         :param impl: A benchmark implementation.
         """
 
-        output_args = self.out_args(bench, impl)
+        output_args = self.mutable_args(bench, impl)
         return ", ".join(output_args)
 
     def setup_str(self, bench: Benchmark, impl: Callable = None):

@@ -3,7 +3,7 @@ import os
 import pkg_resources
 import traceback
 import numpy
-from dace.transformation.passes.indirect_access_from_nested_sdfg_to_map import IndirectAccessFromNestedSDFGToMap
+
 from npbench.infrastructure import Benchmark, Framework, utilities as util
 from typing import Callable, Sequence, Tuple
 import itertools
@@ -17,7 +17,6 @@ from dace.transformation.dataflow import MapFusion, Vectorization, MapCollapse
 from dace.transformation.interstate import LoopToMap
 import dace.transformation.auto.auto_optimize as opt
 
-from dace.transformation.auto_tile.auto_tile_gpu import auto_tile_gpu
 
 
 class DaceGPUAutoTileFramework(Framework):
@@ -134,6 +133,9 @@ class DaceGPUAutoTileFramework(Framework):
 
     @staticmethod
     def autotune(_in_sdfg, inputs, dims):
+        from dace.transformation.passes.indirect_access_from_nested_sdfg_to_map import IndirectAccessFromNestedSDFGToMap
+        from dace.transformation.auto_tile.auto_tile_gpu import auto_tile_gpu
+
         assert dims >= 0 and dims <= 3
         import torch
 
