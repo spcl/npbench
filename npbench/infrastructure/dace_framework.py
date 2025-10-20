@@ -42,6 +42,18 @@ class DaceFramework(Framework):
             return cp_copy_func
         return super().copy_func()
 
+    def copy_back_func(self) -> Callable:
+        """ Returns the copy-method that should be used 
+        for copying the benchmark outputs back to the host. """
+        if self.fname == "dace_gpu":
+            import cupy
+
+            def cp_copy_back_func(arr):
+                return cupy.asnumpy(arr)
+
+            return cp_copy_back_func
+        return super().copy_back_func()
+
     def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
         """ Returns the framework's implementations for a particular benchmark.
         :param bench: A benchmark.
