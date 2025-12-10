@@ -63,14 +63,35 @@ class DpnpFramework(Framework):
         if len(bench.info["array_args"]):
             arg_str = self.out_arg_str(bench, impl)
             copy_args = ["__npb_copy({})".format(a) for a in bench.info["array_args"]]
-            return arg_str + " = " + ", ".join(copy_args)
+            copy_str = arg_str + " = " + ", ".join(copy_args)
+
+            inout_args = self.mutable_args(bench, impl)
+            # print(inout_args)
+            sync_calls = [f"{a}.sycl_queue.wait()" for a in inout_args]
+            sync_str = "; ".join(sync_calls)
+            # print(sync_str)
+            # sync_str = ""
+
+            return copy_str + "; " + sync_str
         return "pass"
 
     def exec_str(self, bench: Benchmark, impl: Callable = None):
         """ Generates the execution-string for Dpnp, ensuring it runs on the selected device. """
         arg_str = self.arg_str(bench, impl)
         main_exec_str = "__npb_result = __npb_impl({a})".format(a=arg_str)
-        return main_exec_str
+
+        inout_args = self.mutable_args(bench, impl)
+        sync_calls = [f"{a}.sycl_queue.wait()" for a in inout_args]
+        sync_str = "; ".join(sync_calls)
+        sync_str2 = "sync = [res.sycl_queue.wait() for res in __npb_result if isinstance(res, dpnp.ndarray)] if __npb_result is not None else None"
+        if sync_str:
+            sync_str = sync_str + "; " + sync_str2
+        else:
+            sync_str = sync_str2
+        # print(sync_str)
+        # sync_str = ""
+
+        return main_exec_str + "; " + sync_str
 
     def implementations(self, bench: Benchmark) -> Sequence[Tuple[Callable, str]]:
         """ Returns the implementations specific to Dpnp for a particular benchmark. """
