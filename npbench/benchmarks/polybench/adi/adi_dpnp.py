@@ -50,3 +50,7 @@ def kernel(TSTEPS, N, u):
         u[1:N - 1, N - 1] = 1.0
         for j in range(N - 2, 0, -1):
             u[1:N - 1, j] = p[1:N - 1, j] * u[1:N - 1, j + 1] + q[1:N - 1, j]
+    
+    v.sycl_queue.wait()
+    p.sycl_queue.wait()
+    q.sycl_queue.wait()
