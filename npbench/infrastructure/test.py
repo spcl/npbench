@@ -1,8 +1,10 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 import time
+import traceback
+import numpy as np
 
 from npbench.infrastructure import (Benchmark, Framework, timeout_decorator as tout, utilities as util)
-from typing import Any, Callable, Dict, Sequence, Tuple
+from typing import Any, Callable, Dict, Sequence, Tuple, Optional
 
 
 class Test(object):
@@ -32,7 +34,7 @@ class Test(object):
                                            '__npb_result')
         except Exception as e:
             print("Failed to execute the {} implementation.".format(report_str))
-            print(e)
+            traceback.print_exception(e)
             if not ignore_errors:
                 raise
             return None, None
@@ -50,17 +52,37 @@ class Test(object):
             assert len(out) == num_return_args + num_output_args, "Number of output arguments does not match."
         return out, timelist
 
-    def run(self, preset: str, validate: bool, repeat: int, timeout: float = 200.0, ignore_errors: bool = True):
+    def run(self, preset: str, validate: bool, repeat: int, timeout: float = 200.0, ignore_errors: bool = True, datatype: Optional[str] = None):
         """ Tests the framework against the benchmark.
         :param preset: The preset to use for testing (S, M, L, paper).
         :param validate: If true, it validates the output against NumPy.
         :param repeat: The number of repeatitions.
         """
-        print("***** Testing {f} with {b} on the {p} dataset *****".format(b=self.bench.bname,
+        print("***** Testing {f} with {b} on the {p} dataset, datatype {d} *****".format(b=self.bench.bname,
                                                                            f=self.frmwrk.info["full_name"],
-                                                                           p=preset))
+                                                                           p=preset,
+                                                                           d=datatype if datatype is not None else "default"))
 
-        bdata = self.bench.get_data(preset)
+        self.frmwrk.set_datatype(datatype)
+        bdata = self.bench.get_data(preset, datatype)
+
+        # Some of the input data is taken from float constants defined in the benchmark JSON file.
+        # These constants are stored as Python floats.
+        # However, frameworks like DaCe generally expect scalars to be in a specific datatype (e.g., np.float32 or np.float64).
+        # Since we don't have any information about the expected datatype of these constants in the JSON file,
+        # we try to detect the expected datatype from the input data we got from the benchmark.
+        # Ideally, we would store the expected datatype information in the benchmark JSON file directly so we don't have to guess here.
+        dtypes = set(
+            type(v) for v in bdata.values() if type(v) in [np.float32, np.float64]
+        )
+        dtypes |= set(type(v.dtype.type()) for v in bdata.values() if type(v) is np.ndarray and v.dtype in [np.float32, np.float64])
+        if len(dtypes) > 1:
+            raise ValueError("Inconsistent datatypes detected in benchmark data: mixture of float32 and float64 values.")
+        if len(dtypes) == 1:
+            detected_dtype = dtypes.pop()
+            for k, v in bdata.items():
+                if type(v) is float:
+                    bdata[k] = detected_dtype(v)
 
         # Run NumPy for validation
         if validate and self.frmwrk.fname != "numpy" and self.numpy:
@@ -120,8 +142,9 @@ class Test(object):
                         print("{} - {} - validation: SUCCESS".format(frmwrk_name, impl_name))
                     elif not ignore_errors:
                         raise ValueError("{} did not validate!".format(frmwrk_name))
-                except Exception:
+                except Exception as e:
                     print("Failed to run {} validation.".format(self.frmwrk.info["full_name"]))
+                    traceback.print_exception(e)
                     if not ignore_errors:
                         raise
             # Main execution
@@ -161,4 +184,3 @@ class Test(object):
             result = tuple(new_d.values())
             # print(result)
             util.create_result(conn, util.sql_insert_into_results_table, result)
-

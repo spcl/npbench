@@ -5,8 +5,10 @@ import pathlib
 import pkg_resources
 
 from npbench.infrastructure import Benchmark
-from typing import Any, Callable, Dict, Sequence, Tuple
+from typing import Any, Callable, Dict, Sequence, Tuple, Union, Literal
 
+np_float = None
+np_complex = None
 
 class Framework(object):
     """ A class for reading and processing framework information. """
@@ -158,7 +160,18 @@ class Framework(object):
         arg_str = self.arg_str(bench, impl)
         # param_str = self.param_str(bench, impl)
         return "__npb_result = __npb_impl({a})".format(a=arg_str)
-
+    
+    def set_datatype(self, datatype: Union[Literal["float32"], Literal["float64"]]):
+        """ Sets the datatype for the framework.
+        :param datatype: The datatype to set (float32, float64).
+        """
+        global np_float, np_complex
+        if datatype == 'float32':
+            np_float = np.float32
+            np_complex = np.complex64
+        else:
+            np_float = np.float64
+            np_complex = np.complex128
 
 def generate_framework(fname: str, save_strict: bool = False, load_strict: bool = False) -> Framework:
     """ Generates a framework object with the correct class.

@@ -1,13 +1,14 @@
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 I, J, K = (dc.symbol(s, dtype=dc.int64) for s in ('I', 'J', 'K'))
 
 
 # Adapted from https://github.com/GridTools/gt4py/blob/1caca893034a18d5df1522ed251486659f846589/tests/test_integration/stencil_definitions.py#L194
 @dc.program
-def hdiff(in_field: dc.float64[I + 4, J + 4, K],
-          out_field: dc.float64[I, J, K], coeff: dc.float64[I, J, K]):
+def hdiff(in_field: dc_float[I + 4, J + 4, K],
+          out_field: dc_float[I, J, K], coeff: dc_float[I, J, K]):
     # I, J, K = out_field.shape[0], out_field.shape[1], out_field.shape[2]
     lap_field = 4.0 * in_field[1:I + 3, 1:J + 3, :] - (
         in_field[2:I + 4, 1:J + 3, :] + in_field[0:I + 2, 1:J + 3, :] +

@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def initialize(M, N, datatype=np.float64):
+def initialize(M, N, datatype=np.float32):
     from numpy.random import default_rng
     rng = default_rng(42)
 

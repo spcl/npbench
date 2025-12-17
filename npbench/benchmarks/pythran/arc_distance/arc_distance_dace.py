@@ -28,13 +28,14 @@
 
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 N = dc.symbol('N', dtype=dc.int64)
 
 
 @dc.program
-def arc_distance(theta_1: dc.float64[N], phi_1: dc.float64[N],
-                 theta_2: dc.float64[N], phi_2: dc.float64[N]):
+def arc_distance(theta_1: dc_float[N], phi_1: dc_float[N],
+                 theta_2: dc_float[N], phi_2: dc_float[N]):
     """
     Calculates the pairwise arc distance between all points in vector a and b.
     """
