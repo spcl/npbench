@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def initialize(N, datatype=np.float64):
+def initialize(N, datatype=np.float32):
     A = np.empty((N, N), dtype=datatype)
     for i in range(N):
         A[i, :i + 1] = np.fromfunction(lambda j: (-j % N) / N + 1, (i + 1, ),

@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "triton",
+        "full_name": "Triton",
+        "prefix": "tr",
+        "postfix": "triton",
+        "class": "TritonFramework",
+        "arch": "gpu"
+    }
+}

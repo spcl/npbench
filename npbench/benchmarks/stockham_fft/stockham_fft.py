@@ -3,16 +3,16 @@
 import numpy as np
 
 
-def rng_complex(shape, rng):
-    return (rng.random(shape) + rng.random(shape) * 1j)
+def rng_complex(shape, rng, datatype):
+    return (rng.random(shape, dtype=datatype) + rng.random(shape, dtype=datatype) * 1j)
 
 
-def initialize(R, K):
+def initialize(R, K, datatype=np.float32):
     from numpy.random import default_rng
     rng = default_rng(42)
 
     N = R**K
-    X = rng_complex((N, ), rng)
-    Y = np.zeros_like(X, dtype=np.complex128)
+    X = rng_complex((N,), rng, datatype)
+    Y = np.zeros_like(X, dtype=X.dtype)
 
     return N, X, Y

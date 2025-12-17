@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def initialize(N, datatype=np.float64):
+def initialize(N, datatype=np.float32):
     u = np.fromfunction(lambda i, j: (i + N - j) / N, (N, N), dtype=datatype)
 
     return u

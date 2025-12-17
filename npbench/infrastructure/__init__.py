@@ -13,3 +13,4 @@ from .pythran_framework import *
 from .dpnp_framework import *
 from .appy_framework import *
 from .jax_framework import *
+from .triton_framework import *

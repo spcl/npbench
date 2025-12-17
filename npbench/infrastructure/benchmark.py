@@ -1,8 +1,9 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
 import json
 import pathlib
+import numpy as np
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 
 class Benchmark(object):
@@ -28,7 +29,7 @@ class Benchmark(object):
             print("Benchmark JSON file {b} could not be opened.".format(b=bench_filename))
             raise (e)
 
-    def get_data(self, preset: str = 'L') -> Dict[str, Any]:
+    def get_data(self, preset: str = 'L', datatype: Optional[str] = None) -> Dict[str, Any]:
         """ Initializes the benchmark data.
         :param preset: The data-size preset (S, M, L, paper).
         """
@@ -44,6 +45,11 @@ class Benchmark(object):
         parameters = self.info["parameters"][preset]
         for k, v in parameters.items():
             data[k] = v
+        if datatype is not None:
+            all_datatypes = {"float32": np.float32, "float64": np.float64}
+            if datatype not in all_datatypes:
+                raise NotImplementedError("Datatype {} is not supported.".format(datatype))
+            data["datatype"] = all_datatypes[datatype]
         # 3. Import initialization function
         if "init" in self.info.keys() and self.info["init"]:
             module_filename = "{m}.py".format(m=self.info["module_name"])
@@ -56,9 +62,10 @@ class Benchmark(object):
                 print("Module Python file {m} could not be opened.".format(m=module_filename))
                 raise (e)
             # 4. Execute initialization
+            maybe_datatype = ["datatype"] if datatype is not None else []
             init_str = "{oargs} = {i}({iargs})".format(oargs=",".join(self.info["init"]["output_args"]),
                                                        i=self.info["init"]["func_name"],
-                                                       iargs=",".join(self.info["init"]["input_args"]))
+                                                       iargs=",".join(self.info["init"]["input_args"] + maybe_datatype))
             exec(init_str, data)
             del data[self.info["init"]["func_name"]]
 

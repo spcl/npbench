@@ -4,8 +4,10 @@ import pkg_resources
 import traceback
 
 from npbench.infrastructure import Benchmark, Framework, utilities as util
-from typing import Callable, Sequence, Tuple
+from typing import Callable, Literal, Sequence, Tuple, Union
 
+dc_float = None
+dc_complex_float = None
 
 class DaceFramework(Framework):
     """ A class for reading and processing framework information. """
@@ -314,3 +316,12 @@ class DaceFramework(Framework):
 
         input_params = self.params(bench, impl)
         return ", ".join(["{p}={p}".format(p=p) for p in input_params])
+    
+    def set_datatype(self, datatype: Union[Literal['float32'], Literal['float64'], None]):
+        # We might get None here if no datatype is specified. This is sad since we cannot know the exact datatype here
+        # and we are relying on the fact that frameworks have their default datatypes set to float32.
+        super().set_datatype(datatype)
+        global dc_float, dc_complex_float
+        from dace import float32, float64, complex64, complex128
+        dc_float = float64 if datatype == 'float64' else float32
+        dc_complex_float = complex128 if datatype == 'float64' else complex64
