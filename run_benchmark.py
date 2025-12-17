@@ -42,6 +42,12 @@ if __name__ == "__main__":
                         type=util.str2bool,
                         nargs="?",
                         default=False)
+    parser.add_argument("-d",
+                        "--datatype",
+                        type=str,
+                        help="datatype to use",
+                        choices=["float32", "float64"],
+                        required=False)
     args = vars(parser.parse_args())
 
     # print(args)
@@ -54,4 +60,4 @@ if __name__ == "__main__":
     lcount = LineCount(bench, frmwrk, numpy)
     lcount.count()
     test = Test(bench, frmwrk, numpy)
-    test.run(args["preset"], args["validate"], args["repeat"], args["timeout"])
+    test.run(args["preset"], args["validate"], args["repeat"], args["timeout"], datatype=args["datatype"])
