@@ -1,4 +1,5 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
+import importlib
 import pathlib
 
 from npbench.infrastructure import Benchmark, Framework
@@ -59,7 +60,8 @@ class NumbaFramework(Framework):
         for impl_name, impl_postfix in _impl.items():
             ldict = dict()
             try:
-                exec("from {m}_{p} import {f} as impl".format(m=module_str, p=impl_postfix, f=func_str), ldict)
+                module = importlib.import_module("{m}_{p}".format(m=module_str, p=impl_postfix))
+                ldict['impl'] = getattr(module, func_str)
                 implementations.append((ldict['impl'], impl_name))
             except ImportError:
                 continue

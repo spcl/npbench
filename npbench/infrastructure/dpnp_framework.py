@@ -1,3 +1,4 @@
+import importlib
 import os
 import pathlib
 import tempfile
@@ -87,7 +88,8 @@ class DpnpFramework(Framework):
         ldict = dict()
         try:
             # Load the same implementation regardless of CPU or GPU, and set device later
-            exec(f"from {module_str} import {func_str} as impl", ldict)
+            module = importlib.import_module(module_str)
+            ldict["impl"] = getattr(module, func_str)
         except Exception as e:
             print(f"Failed to load the {self.fname} implementation of {func_str}.")
             raise e

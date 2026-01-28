@@ -1,4 +1,5 @@
 # Copyright 2021 ETH Zurich and the NPBench authors. All rights reserved.
+import importlib
 import json
 import numpy as np
 import pathlib
@@ -77,7 +78,8 @@ class Framework(object):
 
         ldict = dict()
         try:
-            exec("from {m} import {f} as impl".format(m=module_str, f=func_str), ldict)
+            module = importlib.import_module(module_str)
+            ldict["impl"] = getattr(module, func_str)
         except Exception as e:
             print("Failed to load the {r} {f} implementation.".format(r=self.info["full_name"], f=func_str))
             raise e
@@ -178,9 +180,10 @@ def generate_framework(fname: str, save_strict: bool = False, load_strict: bool 
         print("Framework JSON file {f} could not be opened.".format(f=frmwrk_filename))
         raise (e)
 
-    exec("from npbench.infrastructure import {}".format(info["class"]))
+    module = importlib.import_module("npbench.infrastructure")
+    cls = getattr(module, info["class"])
     if fname.startswith('dace'):
-        frmwrk = eval(f"{info['class']}(fname, {save_strict}, {load_strict})")
+        frmwrk = cls(fname, save_strict, load_strict)
     else:
-        frmwrk = eval("{}(fname)".format(info["class"]))
+        frmwrk = cls(fname)
     return frmwrk
