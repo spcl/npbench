@@ -1,5 +1,6 @@
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 # Sample constants
 BET_M = 0.5
@@ -10,9 +11,9 @@ I, J, K = (dc.symbol(s, dtype=dc.int64) for s in ('I', 'J', 'K'))
 
 # Adapted from https://github.com/GridTools/gt4py/blob/1caca893034a18d5df1522ed251486659f846589/tests/test_integration/stencil_definitions.py#L111
 @dc.program
-def vadv(utens_stage: dc.float64[I, J, K], u_stage: dc.float64[I, J, K],
-         wcon: dc.float64[I + 1, J, K], u_pos: dc.float64[I, J, K],
-         utens: dc.float64[I, J, K], dtr_stage: dc.float64):
+def vadv(utens_stage: dc_float[I, J, K], u_stage: dc_float[I, J, K],
+         wcon: dc_float[I + 1, J, K], u_pos: dc_float[I, J, K],
+         utens: dc_float[I, J, K], dtr_stage: dc_float):
     ccol = np.ndarray((I, J, K), dtype=utens_stage.dtype)
     dcol = np.ndarray((I, J, K), dtype=utens_stage.dtype)
     data_col = np.ndarray((I, J), dtype=utens_stage.dtype)

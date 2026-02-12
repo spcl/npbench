@@ -9,13 +9,14 @@
 
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 nx, ny, nit = (dc.symbol(s, dc.int64) for s in ('nx', 'ny', 'nit'))
 
 
 @dc.program
-def build_up_b(rho: dc.float64, dt: dc.float64, dx: dc.float64, dy: dc.float64,
-               u: dc.float64[ny, nx], v: dc.float64[ny, nx]):
+def build_up_b(rho: dc_float, dt: dc_float, dx: dc_float, dy: dc_float,
+               u: dc_float[ny, nx], v: dc_float[ny, nx]):
     b = np.zeros_like(u)
     b[1:-1,
       1:-1] = (rho * (1 / dt * ((u[1:-1, 2:] - u[1:-1, 0:-2]) / (2 * dx) +
@@ -45,8 +46,8 @@ def build_up_b(rho: dc.float64, dt: dc.float64, dx: dc.float64, dy: dc.float64,
 
 
 @dc.program
-def pressure_poisson_periodic(p: dc.float64[ny, nx], dx: dc.float64,
-                              dy: dc.float64, b: dc.float64[ny, nx]):
+def pressure_poisson_periodic(p: dc_float[ny, nx], dx: dc_float,
+                              dy: dc_float, b: dc_float[ny, nx]):
     pn = np.empty_like(p)
 
     for q in range(nit):
@@ -74,10 +75,10 @@ def pressure_poisson_periodic(p: dc.float64[ny, nx], dx: dc.float64,
 
 
 @dc.program
-def channel_flow(nit: dc.int64, u: dc.float64[ny, nx], v: dc.float64[ny, nx],
-                 dt: dc.float64, dx: dc.float64, dy: dc.float64,
-                 p: dc.float64[ny, nx], rho: dc.float64, nu: dc.float64,
-                 F: dc.float64):
+def channel_flow(nit: dc.int64, u: dc_float[ny, nx], v: dc_float[ny, nx],
+                 dt: dc_float, dx: dc_float, dy: dc_float,
+                 p: dc_float[ny, nx], rho: dc_float, nu: dc_float,
+                 F: dc_float):
     udiff = 1.0
     stepcount = 0
 

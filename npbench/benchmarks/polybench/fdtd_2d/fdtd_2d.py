@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def initialize(TMAX, NX, NY, datatype=np.float64):
+def initialize(TMAX, NX, NY, datatype=np.float32):
     ex = np.fromfunction(lambda i, j: (i * (j + 1)) / NX, (NX, NY),
                          dtype=datatype)
     ey = np.fromfunction(lambda i, j: (i * (j + 2)) / NY, (NX, NY),

@@ -1,12 +1,13 @@
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 TMAX, NX, NY = (dc.symbol(s, dtype=dc.int64) for s in ('TMAX', 'NX', 'NY'))
 
 
 @dc.program
-def kernel(ex: dc.float64[NX, NY], ey: dc.float64[NX, NY],
-           hz: dc.float64[NX, NY], _fict_: dc.float64[TMAX]):
+def kernel(ex: dc_float[NX, NY], ey: dc_float[NX, NY],
+           hz: dc_float[NX, NY], _fict_: dc_float[TMAX]):
 
     for t in range(TMAX):
         ey[0, :] = _fict_[t]

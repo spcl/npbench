@@ -13,5 +13,6 @@ dependencies:
   - numba
   - pythran
   - cupy
+  - triton
   # pygount has to be installed via pip
 

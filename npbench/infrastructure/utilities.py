@@ -152,11 +152,15 @@ def benchmark(stmt, setup="pass", out_text="", repeat=1, context={}, output=None
 
 
 def validate(ref, val, framework="Unknown", rtol=1e-5, atol=1e-8, norm_error=1e-5):
+    valid = True
     if not isinstance(ref, (tuple, list)):
         ref = [ref]
     if not isinstance(val, (tuple, list)):
         val = [val]
-    valid = True
+    # We do this check instead of strict=True in zip to give a more informative error message
+    if len(ref) > len(val):
+        print(f"{framework} did not return enough elements. Maybe you forgot a return statement?")
+        valid = False
     for r, v in zip(ref, val):
         if f"{type(v).__module__}.{type(v).__name__}" == "torch.Tensor":
             v = v.cpu().numpy()

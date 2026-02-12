@@ -1,5 +1,6 @@
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 N, H, W, C_before_fc1, S0, S1, S2, S3, S4, S5 = (dc.symbol(
     s, dtype=dc.int64) for s in ('N', 'H', 'W', 'C_before_fc1', 'S0', 'S1',
@@ -7,18 +8,18 @@ N, H, W, C_before_fc1, S0, S1, S2, S3, S4, S5 = (dc.symbol(
 
 
 @dc.program
-def relu2(x: dc.float32[S0, S1]):
+def relu2(x: dc_float[S0, S1]):
     return np.maximum(x, 0)
 
 
 @dc.program
-def relu4(x: dc.float32[S0, S1, S2, S3]):
+def relu4(x: dc_float[S0, S1, S2, S3]):
     return np.maximum(x, 0)
 
 
 # Deep learning convolutional operator (stride = 1)
 @dc.program
-def conv2d(input: dc.float32[S0, S1, S2, S3], weights: dc.float32[S4, S4, S3,
+def conv2d(input: dc_float[S0, S1, S2, S3], weights: dc_float[S4, S4, S3,
                                                                   S5]):
     # K = weights.shape[0]  # Assuming square kernel
     # N = input.shape[0]
@@ -49,7 +50,7 @@ def conv2d(input: dc.float32[S0, S1, S2, S3], weights: dc.float32[S4, S4, S3,
 
 # 2x2 maxpool operator, as used in LeNet-5
 @dc.program
-def maxpool2d(x: dc.float32[S0, S1, S2, S3]):
+def maxpool2d(x: dc_float[S0, S1, S2, S3]):
     # output = np.empty(
     #     [x.shape[0], x.shape[1] // 2, x.shape[2] // 2, x.shape[3]],
     #     dtype=x.dtype)
@@ -66,12 +67,12 @@ def maxpool2d(x: dc.float32[S0, S1, S2, S3]):
 
 # LeNet-5 Convolutional Neural Network (inference mode)
 @dc.program
-def lenet5(input: dc.float32[N, H, W, 1], conv1: dc.float32[5, 5, 1, 6],
-           conv1bias: dc.float32[6], conv2: dc.float32[5, 5, 6, 16],
-           conv2bias: dc.float32[16], fc1w: dc.float32[C_before_fc1, 120],
-           fc1b: dc.float32[120], fc2w: dc.float32[120, 84],
-           fc2b: dc.float32[84], fc3w: dc.float32[84,
-                                                  10], fc3b: dc.float32[10]):
+def lenet5(input: dc_float[N, H, W, 1], conv1: dc_float[5, 5, 1, 6],
+           conv1bias: dc_float[6], conv2: dc_float[5, 5, 6, 16],
+           conv2bias: dc_float[16], fc1w: dc_float[C_before_fc1, 120],
+           fc1b: dc_float[120], fc2w: dc_float[120, 84],
+           fc2b: dc_float[84], fc3w: dc_float[84,
+                                                  10], fc3b: dc_float[10]):
     # x = relu(conv2d(input, conv1) + conv1bias)
     # x = maxpool2d(x)
     # x = relu(conv2d(x, conv2) + conv2bias)

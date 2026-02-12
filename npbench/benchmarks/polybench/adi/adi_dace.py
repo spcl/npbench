@@ -2,12 +2,13 @@
 
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 N = dc.symbol('N', dtype=dc.int64)
 
 
 @dc.program
-def kernel(TSTEPS: dc.int64, u: dc.float64[N, N]):
+def kernel(TSTEPS: dc.int64, u: dc_float[N, N]):
 
     v = np.empty(u.shape, dtype=u.dtype)
     p = np.empty(u.shape, dtype=u.dtype)
@@ -54,3 +55,4 @@ def kernel(TSTEPS: dc.int64, u: dc.float64[N, N]):
         u[1:N - 1, N - 1] = 1.0
         for j in range(N - 2, 0, -1):
             u[1:N - 1, j] = p[1:N - 1, j] * u[1:N - 1, j + 1] + q[1:N - 1, j]
+    return u
