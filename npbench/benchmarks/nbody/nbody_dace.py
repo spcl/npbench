@@ -3,6 +3,7 @@
 
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 """
 Create Your Own N-body Simulation (With Python)
 Philip Mocz (2020) Princeton Univeristy, @PMocz
@@ -21,8 +22,8 @@ N, Nt = (dc.symbol(s, dtype=dc.int64) for s in ('N', 'Nt'))
 
 
 @dc.program
-def getAcc(pos: dc.float64[N, 3], mass: dc.float64[N], G: dc.float64,
-           softening: dc.float64):
+def getAcc(pos: dc_float[N, 3], mass: dc_float[N], G: dc_float,
+           softening: dc_float):
     """
     Calculate the acceleration on each particle due to Newton's Law 
     pos  is an N x 3 matrix of positions
@@ -59,7 +60,7 @@ def getAcc(pos: dc.float64[N, 3], mass: dc.float64[N], G: dc.float64,
 
     # pack together the acceleration components
     # a = np.hstack((ax,ay,az))
-    a = np.ndarray((N, 3), dtype=np.float64)
+    a = np.ndarray((N, 3), dtype=dc_float)
     # hstack(a, ax, ay, az)
     a[:, 0] = ax
     a[:, 1] = ay
@@ -69,8 +70,8 @@ def getAcc(pos: dc.float64[N, 3], mass: dc.float64[N], G: dc.float64,
 
 
 @dc.program
-def getEnergy(pos: dc.float64[N, 3], vel: dc.float64[N, 3],
-              mass: dc.float64[N], G: dc.float64):
+def getEnergy(pos: dc_float[N, 3], vel: dc_float[N, 3],
+              mass: dc_float[N], G: dc_float):
     """
     Get kinetic energy (KE) and potential energy (PE) of simulation
     pos is N x 3 matrix of positions
@@ -123,8 +124,8 @@ def getEnergy(pos: dc.float64[N, 3], vel: dc.float64[N, 3],
 
 
 @dc.program
-def nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
-          dt: dc.float64, G: dc.float64, softening: dc.float64):
+def nbody(mass: dc_float[N], pos: dc_float[N, 3], vel: dc_float[N, 3],
+          dt: dc_float, G: dc_float, softening: dc_float):
 
     # Convert to Center-of-Mass frame
     # vel -= np.mean(mass * vel, axis=0) / np.mean(mass)
@@ -139,8 +140,8 @@ def nbody(mass: dc.float64[N], pos: dc.float64[N, 3], vel: dc.float64[N, 3],
     acc = getAcc(pos, mass, G, softening)
 
     # calculate initial energy of system
-    KE = np.ndarray(Nt + 1, dtype=np.float64)
-    PE = np.ndarray(Nt + 1, dtype=np.float64)
+    KE = np.ndarray(Nt + 1, dtype=dc_float)
+    PE = np.ndarray(Nt + 1, dtype=dc_float)
     KE[0], PE[0] = getEnergy(pos, vel, mass, G)
 
     t = 0.0

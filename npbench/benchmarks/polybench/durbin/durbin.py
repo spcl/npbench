@@ -3,6 +3,6 @@
 import numpy as np
 
 
-def initialize(N, datatype=np.float64):
+def initialize(N, datatype=np.float32):
     r = np.fromfunction(lambda i: N + 1 - i, (N, ), dtype=datatype)
     return r

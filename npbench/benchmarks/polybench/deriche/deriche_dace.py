@@ -1,11 +1,12 @@
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 W, H = (dc.symbol(s, dtype=dc.int64) for s in ('W', 'H'))
 
 
 @dc.program
-def kernel(alpha: dc.float64, imgIn: dc.float64[W, H]):
+def kernel(alpha: dc_float, imgIn: dc_float[W, H]):
 
     k = (1.0 - np.exp(-alpha)) * (1.0 - np.exp(-alpha)) / (
         1.0 + alpha * np.exp(-alpha) - np.exp(2.0 * alpha))

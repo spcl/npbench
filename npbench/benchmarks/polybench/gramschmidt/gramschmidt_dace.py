@@ -1,11 +1,12 @@
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 M, N, S = (dc.symbol(s, dtype=dc.int64) for s in ('M', 'N', 'S'))
 
 
 @dc.program
-def kernel(A: dc.float64[M, N]):
+def kernel(A: dc_float[M, N]):
 
     Q = np.zeros_like(A)
     R = np.zeros((N, N), dtype=A.dtype)

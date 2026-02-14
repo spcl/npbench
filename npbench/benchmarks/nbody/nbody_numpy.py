@@ -89,8 +89,8 @@ def nbody(mass, pos, vel, N, Nt, dt, G, softening):
     acc = getAcc(pos, mass, G, softening)
 
     # calculate initial energy of system
-    KE = np.ndarray(Nt + 1, dtype=np.float64)
-    PE = np.ndarray(Nt + 1, dtype=np.float64)
+    KE = np.ndarray(Nt + 1, dtype=mass.dtype)
+    PE = np.ndarray(Nt + 1, dtype=mass.dtype)
     KE[0], PE[0] = getEnergy(pos, vel, mass, G)
 
     t = 0.0

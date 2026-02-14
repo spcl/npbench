@@ -9,14 +9,15 @@
 
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 nx, ny, nit = (dc.symbol(s, dc.int64) for s in ('nx', 'ny', 'nit'))
 
 
 @dc.program
-def build_up_b(b: dc.float64[ny, nx], rho: dc.float64, dt: dc.float64,
-               u: dc.float64[ny, nx], v: dc.float64[ny, nx], dx: dc.float64,
-               dy: dc.float64):
+def build_up_b(b: dc_float[ny, nx], rho: dc_float, dt: dc_float,
+               u: dc_float[ny, nx], v: dc_float[ny, nx], dx: dc_float,
+               dy: dc_float):
 
     b[1:-1,
       1:-1] = (rho * (1 / dt * ((u[1:-1, 2:] - u[1:-1, 0:-2]) / (2 * dx) +
@@ -28,8 +29,8 @@ def build_up_b(b: dc.float64[ny, nx], rho: dc.float64, dt: dc.float64,
 
 
 @dc.program
-def pressure_poisson(p: dc.float64[ny, nx], dx: dc.float64, dy: dc.float64,
-                     b: dc.float64[ny, nx]):
+def pressure_poisson(p: dc_float[ny, nx], dx: dc_float, dy: dc_float,
+                     b: dc_float[ny, nx]):
     pn = np.empty_like(p)
     pn[:] = p.copy()
 
@@ -47,10 +48,10 @@ def pressure_poisson(p: dc.float64[ny, nx], dx: dc.float64, dy: dc.float64,
 
 
 @dc.program
-def cavity_flow(nt: dc.int64, nit: dc.int64, u: dc.float64[ny, nx],
-                v: dc.float64[ny, nx], dt: dc.float64, dx: dc.float64,
-                dy: dc.float64, p: dc.float64[ny, nx], rho: dc.float64,
-                nu: dc.float64):
+def cavity_flow(nt: dc.int64, nit: dc.int64, u: dc_float[ny, nx],
+                v: dc_float[ny, nx], dt: dc_float, dx: dc_float,
+                dy: dc_float, p: dc_float[ny, nx], rho: dc_float,
+                nu: dc_float):
     un = np.empty_like(u)
     vn = np.empty_like(v)
     b = np.zeros((ny, nx))

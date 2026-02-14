@@ -1,5 +1,6 @@
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 M, N, S = (dc.symbol(s, dtype=dc.int64) for s in ('M', 'N', 'S'))
 
@@ -9,7 +10,7 @@ M, N, S = (dc.symbol(s, dtype=dc.int64) for s in ('M', 'N', 'S'))
 
 
 @dc.program
-def kernel(alpha: dc.float64, A: dc.float64[M, M], B: dc.float64[M, N]):
+def kernel(alpha: dc_float, A: dc_float[M, M], B: dc_float[M, N]):
 
     for i in range(M):
         for j in range(N):

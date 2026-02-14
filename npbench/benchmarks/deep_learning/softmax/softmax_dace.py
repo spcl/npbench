@@ -1,12 +1,13 @@
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 N, H, SM = (dc.symbol(s, dc.int64) for s in ('N', 'H', 'SM'))
 
 
 # Numerically-stable version of softmax
 @dc.program
-def softmax(x: dc.float32[N, H, SM, SM]):
+def softmax(x: dc_float[N, H, SM, SM]):
     # tmp_max = np.max(x, axis=-1, keepdims=True)
     tmp_max = np.maximum.reduce(x, axis=-1, keepdims=True, initial=-9999)
     tmp_out = np.exp(x - tmp_max)
@@ -17,7 +18,7 @@ def softmax(x: dc.float32[N, H, SM, SM]):
 
 # Numerically-stable version of softmax
 @dc.program
-def softmax_gpu(x: dc.float32[N, H, SM, SM], out: dc.float32[N, H, SM, SM]):
+def softmax_gpu(x: dc_float[N, H, SM, SM], out: dc_float[N, H, SM, SM]):
     # tmp_max = np.max(x, axis=-1, keepdims=True)
     tmp_max = np.maximum.reduce(x, axis=-1, keepdims=True, initial=-9999)
     tmp_out = np.exp(x - tmp_max)

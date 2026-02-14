@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def initialize(N, datatype=np.float64):
+def initialize(N, datatype=np.float32):
     alpha = datatype(1.5)
     beta = datatype(1.2)
     fn = datatype(N)

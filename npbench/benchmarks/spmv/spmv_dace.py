@@ -1,6 +1,7 @@
 # Sparse Matrix-Vector Multiplication (SpMV)
 import numpy as np
 import dace as dc
+from npbench.infrastructure.dace_framework import dc_float
 
 M, N, nnz = (dc.symbol(s, dtype=dc.int64) for s in ('M', 'N', 'nnz'))
 
@@ -9,7 +10,7 @@ M, N, nnz = (dc.symbol(s, dtype=dc.int64) for s in ('M', 'N', 'nnz'))
 # (CSR) format
 @dc.program
 def spmv(A_row: dc.uint32[M + 1], A_col: dc.uint32[nnz],
-         A_val: dc.float64[nnz], x: dc.float64[N]):
+         A_val: dc_float[nnz], x: dc_float[N]):
     # y = np.empty(A_row.size - 1, A_val.dtype)
     y = np.empty(M, A_val.dtype)
 
