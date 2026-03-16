@@ -57,6 +57,10 @@ if __name__ == "__main__":
                         type=util.str2bool,
                         nargs="?",
                         default=False)
+    parser.add_argument("--expected-fail",
+                        type=str,
+                        nargs="?",
+                        default="")
     args = vars(parser.parse_args())
 
     parent_folder = pathlib.Path(__file__).parent.absolute()
@@ -64,7 +68,10 @@ if __name__ == "__main__":
     pathlist = pathlib.Path(bench_dir).rglob('*.json')
     benchnames = [os.path.basename(path)[:-5] for path in pathlist]
     benchnames.sort()
+
+    xfail = set(filter(None, args["expected_fail"].split(',')))
     failed = []
+    xpassed = []
     for benchname in benchnames:
         p = Process(target=run_benchmark,
                     args=(benchname, args["framework"], args["preset"],
@@ -74,10 +81,22 @@ if __name__ == "__main__":
         p.start()
         p.join()
         exit_code = p.exitcode
-        if exit_code != 0:
-            failed.append(benchname)
+        if benchname in xfail:
+            if exit_code == 0:
+                xpassed.append(benchname)
+        else:
+            if exit_code != 0:
+                failed.append(benchname)
 
     if len(failed) != 0:
         print(f"Failed: {len(failed)} out of {len(benchnames)}")
         for bench in failed:
             print(bench)
+
+    if len(xpassed) != 0:
+        print(f"Unexpectedly passed: {len(xpassed)} out of {len(benchnames)}")
+        for bench in xpassed:
+            print(bench)
+
+    if len(failed) != 0 or len(xpassed) != 0:
+        sys.exit(1)
