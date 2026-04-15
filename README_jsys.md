@@ -59,7 +59,8 @@ Here, `<framework>` should be replaced with the name of the framework you want t
 If you have a suitable GPU and sofware stack, you can also run `dpnp_gpu` and `cupy`.
 Please note that certain combinations of benchmarks and frameworks may not run successfully, and this is expected.
 After running the benchmarks, you can visualize the results with the following command:
-```bash$ python plot_results.py --preset paper
+```bash
+$ python plot_results.py --preset paper
 ```
 This will generate a heatmap of the results and save it as `heatmap.pdf` in the current directory.
 Please note that before visualization, you need to run the benchmarks with NumPy, as it is used as a reference for the speedups shown in the heatmap.
