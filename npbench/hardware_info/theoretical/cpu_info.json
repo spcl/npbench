@@ -1,0 +1,54 @@
+{
+    "Arm_0":{
+        "SP vector FMA tp": 4,
+        "DP vector FMA tp": 4,
+        "SIMD width": 128,
+        "Max mem bw (GB/s)": 512,
+        "Model name": "Arm Neoverse V2",
+        "Source": "https://developer.nvidia.com/blog/nvidia-grace-cpu-superchip-architecture-in-depth/"
+    },
+    "Intel_XC50":{
+        "Model name": "Intel® Xeon® E5-2690 v3",
+        "SIMD width": 256,
+        "SP vector FMA tp": 2,
+        "DP vector FMA tp": 2,
+        "Max Mem BW (GB/s)": 68,
+        "Model Generation": "Haswell",
+        "Source": ["https://uops.info/table.html", "https://www.intel.com/content/www/us/en/products/sku/81713/intel-xeon-processor-e52690-v3-30m-cache-2-60-ghz/specifications.html"]
+    },
+    "Intel_XC40":{
+        "Model name": "Intel® Xeon® E5-2695 v4",
+        "SIMD width": 256,
+        "SP vector FMA tp": 2,
+        "DP vector FMA tp": 2,
+        "Max Mem BW (GB/s)": 76.8,
+        "Model Generation": "Broadwell",
+        "Source": ["https://uops.info/table.html", "https://www.intel.com/content/www/us/en/products/sku/91316/intel-xeon-processor-e52695-v4-45m-cache-2-10-ghz/specifications.html"]
+    },
+    "Intel Xeon Gold 6154":{
+        "Model name": "Intel Xeon Gold 6154",
+        "SIMD width": 512,
+        "SP vector FMA tp": 2,
+        "DP vector FMA tp": 2,
+        "Max Mem BW (GB/s)": 128,
+        "Model Generation": "Skylake",
+        "Source": "https://www.intel.com/content/www/us/en/products/sku/120495/intel-xeon-gold-6154-processor-24-75m-cache-3-00-ghz/specifications.html"
+    },
+    "AuthenticAMD_49":{
+        "Model name": "AMD EPYC 7742",
+        "SIMD width": 256,
+        "SP vector FMA tp": 2,
+        "DP vector FMA tp": 2,
+        "Model Generation": "Zen 2 (Rome)",
+        "Source": "https://confluence.cscs.ch/spaces/KB/pages/850199543/CPU+configuration"
+    },
+    "GenuineIntel_158":{
+        "Model name": "Intel(R) Core(TM) i7-9750H CPU",
+        "SIMD width": 256,
+        "SP vector FMA tp": 2,
+        "DP vector FMA tp": 2,
+        "Max Mem BW (GB/s)": 48.6,
+        "Model Generation": "Coffee Lake",
+        "Source": "https://www.intel.com/content/www/us/en/products/sku/191045/intel-core-i79750h-processor-12m-cache-up-to-4-50-ghz/specifications.html"
+    }
+}

@@ -130,4 +130,8 @@ dmypy.json
 
 # dace
 .dacecache/
+_dacegraphs/
 *.csv
+
+# results
+npbench.db

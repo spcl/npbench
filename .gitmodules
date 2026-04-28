@@ -1,0 +1,3 @@
+[submodule "npbench/hardware_info/practical/stream"]
+	path = npbench/hardware_info/practical/stream
+	url = https://github.com/jeffhammond/STREAM.git
