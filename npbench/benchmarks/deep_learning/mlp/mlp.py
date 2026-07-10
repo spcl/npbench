@@ -9,7 +9,7 @@ def initialize(C_in, N, S0, S1, S2):
 
     mlp_sizes = [S0, S1, S2]  # [300, 100, 10]
     # Inputs
-    input = np.random.rand(N, C_in).astype(np.float32)
+    input = rng.random((N, C_in), dtype=np.float32)
     # Weights
     w1 = rng.random((C_in, mlp_sizes[0]), dtype=np.float32)
     b1 = rng.random((mlp_sizes[0], ), dtype=np.float32)

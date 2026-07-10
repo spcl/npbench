@@ -16,7 +16,7 @@ def build_up_b(b, rho, dt, u, v, dx, dy):
 
 @nb.jit(nopython=True, parallel=True, fastmath=True)
 def pressure_poisson(nit, p, dx, dy, b):
-    pn = np.empty_like(p)
+    pn = np.zeros_like(p)
     pn = p.copy()
 
     for q in range(nit):
@@ -34,8 +34,8 @@ def pressure_poisson(nit, p, dx, dy, b):
 
 @nb.jit(nopython=True, parallel=True, fastmath=True)
 def nopython_mode(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
-    un = np.empty_like(u)
-    vn = np.empty_like(v)
+    un = np.zeros_like(u)
+    vn = np.zeros_like(v)
     b = np.zeros((ny, nx))
 
     for n in range(nt):

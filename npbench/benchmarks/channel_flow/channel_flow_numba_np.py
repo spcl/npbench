@@ -43,7 +43,7 @@ def build_up_b(rho, dt, dx, dy, u, v):
 
 @nb.jit(nopython=True, parallel=True, fastmath=True)
 def pressure_poisson_periodic(nit, p, dx, dy, b):
-    pn = np.empty_like(p)
+    pn = np.zeros_like(p)
 
     for q in range(nit):
         pn = p.copy()
