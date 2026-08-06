@@ -8,7 +8,7 @@ M, N = (dc.symbol(s, dtype=dc.int64) for s in ('M', 'N'))
 def kernel(alpha: dc.float64, beta: dc.float64, C: dc.float64[M, N],
            A: dc.float64[M, M], B: dc.float64[M, N]):
 
-    temp2 = np.empty((N, ), dtype=C.dtype)
+    temp2 = np.zeros((N, ), dtype=C.dtype)
     C *= beta
     for i in range(M):
         for j in range(N):

@@ -8,8 +8,8 @@ import numpy as np
 
 
 def mgrid(xn, yn):
-    Xi = np.empty((xn, yn), dtype=np.int64)
-    Yi = np.empty((xn, yn), dtype=np.int64)
+    Xi = np.zeros((xn, yn), dtype=np.int64)
+    Yi = np.zeros((xn, yn), dtype=np.int64)
     for i in range(xn):
         Xi[i, :] = i
     for j in range(yn):

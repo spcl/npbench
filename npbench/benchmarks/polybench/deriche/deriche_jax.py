@@ -15,7 +15,7 @@ def kernel(alpha, imgIn):
     b2 = -jnp.exp(-2.0 * alpha)
     c1 = c2 = 1
 
-    y1 = jnp.empty_like(imgIn)
+    y1 = jnp.zeros_like(imgIn)
     y1 = y1.at[:, 0].set(a1 * imgIn[:, 0])
     y1 = y1.at[:, 1].set(a1 * imgIn[:, 1] + a2 * imgIn[:, 0] + b1 * y1[:, 0])
 
@@ -27,7 +27,7 @@ def kernel(alpha, imgIn):
 
     y1 = lax.fori_loop(2, imgIn.shape[1], horizontal_forward, y1)
 
-    y2 = jnp.empty_like(imgIn)
+    y2 = jnp.zeros_like(imgIn)
     y2 = y2.at[:, -1].set(0.0)
     y2 = y2.at[:, -2].set(a3 * imgIn[:, -1])
 
@@ -42,7 +42,7 @@ def kernel(alpha, imgIn):
 
     imgOut = c1 * (y1 + y2)
 
-    y1 = jnp.empty_like(imgOut)
+    y1 = jnp.zeros_like(imgOut)
     y1 = y1.at[0, :].set(a5 * imgOut[0, :])
     y1 = y1.at[1, :].set(a5 * imgOut[1, :] + a6 * imgOut[0, :] + b1 * y1[0, :])
 
@@ -54,7 +54,7 @@ def kernel(alpha, imgIn):
 
     y1 = lax.fori_loop(2, imgIn.shape[0], vertical_forward, y1)
 
-    y2 = jnp.empty_like(imgOut)
+    y2 = jnp.zeros_like(imgOut)
     y2 = y2.at[-1, :].set(0.0)
     y2 = y2.at[-2, :].set(a7 * imgOut[-1, :])
 

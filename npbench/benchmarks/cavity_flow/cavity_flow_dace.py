@@ -30,7 +30,7 @@ def build_up_b(b: dc.float64[ny, nx], rho: dc.float64, dt: dc.float64,
 @dc.program
 def pressure_poisson(p: dc.float64[ny, nx], dx: dc.float64, dy: dc.float64,
                      b: dc.float64[ny, nx]):
-    pn = np.empty_like(p)
+    pn = np.zeros_like(p)
     pn[:] = p.copy()
 
     for q in range(nit):
@@ -51,8 +51,8 @@ def cavity_flow(nt: dc.int64, nit: dc.int64, u: dc.float64[ny, nx],
                 v: dc.float64[ny, nx], dt: dc.float64, dx: dc.float64,
                 dy: dc.float64, p: dc.float64[ny, nx], rho: dc.float64,
                 nu: dc.float64):
-    un = np.empty_like(u)
-    vn = np.empty_like(v)
+    un = np.zeros_like(u)
+    vn = np.zeros_like(v)
     b = np.zeros((ny, nx))
 
     for n in range(nt):

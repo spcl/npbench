@@ -6,7 +6,7 @@ from jax import lax
 @jax.jit
 def kernel(r):
 
-    y = jnp.empty_like(r)
+    y = jnp.zeros_like(r)
     alpha = -r[0]
     beta = 1.0
     y = y.at[0].set(-r[0])

@@ -5,7 +5,7 @@ import numpy as np
 # Matrix-Vector Multiplication with the matrix given in Compressed Sparse Row
 # (CSR) format
 def spmv(A_row, A_col, A_val, x):
-    y = np.empty(A_row.size - 1, A_val.dtype)
+    y = np.zeros(A_row.size - 1, A_val.dtype)
 
     for i in range(A_row.size - 1):
         cols = A_col[A_row[i]:A_row[i + 1]]

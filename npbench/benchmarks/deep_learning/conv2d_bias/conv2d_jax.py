@@ -11,7 +11,7 @@ def conv2d(input, weights):
     H_out = input.shape[1] - K + 1
     W_out = input.shape[2] - K + 1
     C_out = weights.shape[3]
-    output = jnp.empty((N, H_out, W_out, C_out), dtype=jnp.float32)
+    output = jnp.zeros((N, H_out, W_out, C_out), dtype=jnp.float32)
 
     def row_update(output, i):
         def col_update(output, j):

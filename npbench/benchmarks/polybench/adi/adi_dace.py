@@ -9,9 +9,9 @@ N = dc.symbol('N', dtype=dc.int64)
 @dc.program
 def kernel(TSTEPS: dc.int64, u: dc.float64[N, N]):
 
-    v = np.empty(u.shape, dtype=u.dtype)
-    p = np.empty(u.shape, dtype=u.dtype)
-    q = np.empty(u.shape, dtype=u.dtype)
+    v = np.zeros(u.shape, dtype=u.dtype)
+    p = np.zeros(u.shape, dtype=u.dtype)
+    q = np.zeros(u.shape, dtype=u.dtype)
 
     DX = 1.0 / np.float64(N)
     DY = 1.0 / np.float64(N)

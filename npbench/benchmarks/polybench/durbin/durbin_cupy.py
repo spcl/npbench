@@ -3,7 +3,7 @@ import cupy as np
 
 def kernel(r):
 
-    y = np.empty_like(r)
+    y = np.zeros_like(r)
     alpha = -r[0]
     beta = 1.0
     y[0] = -r[0]

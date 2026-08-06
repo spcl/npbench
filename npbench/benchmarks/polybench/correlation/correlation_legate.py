@@ -29,7 +29,7 @@ def kernel(M, float_n, data):
 def init_data(M, N, datatype):
 
     float_n = datatype(N)
-    data = np.empty((N, M), dtype=datatype)
+    data = np.zeros((N, M), dtype=datatype)
     # for i in range(N):
     #     for j in range(M):
     #         data[i, j] = (i * j) / M + i

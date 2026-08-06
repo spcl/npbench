@@ -2,7 +2,7 @@ import numpy as np
 
 
 def flip(A):
-    B = np.empty_like(A)
+    B = np.zeros_like(A)
     for i in range(B.shape[0]):
         B[i] = A[-1 - i]
     return B
@@ -11,7 +11,7 @@ def flip(A):
 # pythran export kernel(float64[:])
 def kernel(r):
 
-    y = np.empty_like(r)
+    y = np.zeros_like(r)
     alpha = -r[0]
     beta = 1.0
     y[0] = -r[0]

@@ -16,12 +16,12 @@ def kernel(NR, NQ, NP, A, C4):
 
 def init_data(NR, NQ, NP, datatype):
 
-    A = onp.empty((NR, NQ, NP), dtype=datatype)
-    C4 = onp.empty((
+    A = onp.zeros((NR, NQ, NP), dtype=datatype)
+    C4 = onp.zeros((
         NP,
         NP,
     ), dtype=datatype)
-    sum = onp.empty((NP, ), dtype=datatype)
+    sum = onp.zeros((NP, ), dtype=datatype)
     for i in range(NR):
         for j in range(NQ):
             for k in range(NP):

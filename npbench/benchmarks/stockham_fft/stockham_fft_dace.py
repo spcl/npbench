@@ -35,7 +35,7 @@ def stockham_fft(x: dc.complex128[R**K], y: dc.complex128[R**K]):
     i_coord = np.ndarray((R, R), dtype=np.uint32)
     j_coord = np.ndarray((R, R), dtype=np.uint32)
     mgrid1(i_coord, j_coord)
-    dft_mat = np.empty((R, R), dtype=np.complex128)
+    dft_mat = np.zeros((R, R), dtype=np.complex128)
     dft_mat[:] = np.exp(-2.0j * np.pi * i_coord * j_coord / R)
     # Move input x to output y
     # to avoid overwriting the input.
@@ -46,9 +46,9 @@ def stockham_fft(x: dc.complex128[R**K], y: dc.complex128[R**K]):
     jj_coord = np.ndarray((R, N), dtype=np.uint32)
     mgrid2(ii_coord, jj_coord)
 
-    tmp_perm = np.empty_like(y)
-    D = np.empty_like(y)
-    tmp = np.empty_like(y)
+    tmp_perm = np.zeros_like(y)
+    D = np.zeros_like(y)
+    tmp = np.zeros_like(y)
 
     # Main Stockham loop
     for i in range(K):

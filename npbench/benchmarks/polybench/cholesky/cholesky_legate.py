@@ -19,7 +19,7 @@ def kernel2(A):
 
 def init_data(N, datatype):
 
-    A = np.empty((N, N), dtype=datatype)
+    A = np.zeros((N, N), dtype=datatype)
     # for i in range(N):
     #     for j in range(i + 1):
     #         A[i, j] = (-j % N) / N + 1

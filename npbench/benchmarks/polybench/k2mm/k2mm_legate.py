@@ -11,11 +11,11 @@ def init_data(NI, NJ, NK, NL, datatype):
 
     alpha = datatype(1.5)
     beta = datatype(1.2)
-    tmp = np.empty((NI, NJ), dtype=datatype)
-    A = np.empty((NI, NK), dtype=datatype)
-    B = np.empty((NK, NJ), dtype=datatype)
-    C = np.empty((NJ, NL), dtype=datatype)
-    D = np.empty((NI, NL), dtype=datatype)
+    tmp = np.zeros((NI, NJ), dtype=datatype)
+    A = np.zeros((NI, NK), dtype=datatype)
+    B = np.zeros((NK, NJ), dtype=datatype)
+    C = np.zeros((NJ, NL), dtype=datatype)
+    D = np.zeros((NI, NL), dtype=datatype)
     # for i in range(NI):
     #     for j in range(NK):
     #         A[i, j] = ((i * j + 1) % NI) / NI

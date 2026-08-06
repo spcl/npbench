@@ -13,17 +13,17 @@ def init_data(NI, NJ, NK, datatype):
 
     alpha = datatype(1.5)
     beta = datatype(1.2)
-    C = np.empty((NI, NJ), dtype=datatype)
+    C = np.zeros((NI, NJ), dtype=datatype)
     # for i in range(NI):
     #     for j in range(NJ):
     #         C[i, j] = ((i * j + 1) % NI) / NI
     C[:] = np.random.randn(NI, NJ)
-    A = np.empty((NI, NK), dtype=datatype)
+    A = np.zeros((NI, NK), dtype=datatype)
     # for i in range(NI):
     #     for k in range(NK):
     #         A[i, k] = (i * (k + 1) % NK) / NK
     A[:] = np.random.randn(NI, NK)
-    B = np.empty((NK, NJ), dtype=datatype)
+    B = np.zeros((NK, NJ), dtype=datatype)
     # for k in range(NK):
     #     for j in range(NJ):
     #         C[i, j] = (k * (j + 2) % NJ) / NJ

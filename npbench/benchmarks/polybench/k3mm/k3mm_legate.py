@@ -47,13 +47,13 @@ def kernel(A, B, C, D):
 
 def init_data(NI, NJ, NK, NL, NM, datatype):
 
-    E = np.empty((NI, NJ), dtype=datatype)
-    A = np.empty((NI, NK), dtype=datatype)
-    B = np.empty((NK, NJ), dtype=datatype)
-    F = np.empty((NJ, NL), dtype=datatype)
-    C = np.empty((NJ, NM), dtype=datatype)
-    D = np.empty((NM, NL), dtype=datatype)
-    G = np.empty((NI, NL), dtype=datatype)
+    E = np.zeros((NI, NJ), dtype=datatype)
+    A = np.zeros((NI, NK), dtype=datatype)
+    B = np.zeros((NK, NJ), dtype=datatype)
+    F = np.zeros((NJ, NL), dtype=datatype)
+    C = np.zeros((NJ, NM), dtype=datatype)
+    D = np.zeros((NM, NL), dtype=datatype)
+    G = np.zeros((NI, NL), dtype=datatype)
     # for i in range(NI):
     #     for j in range(NK):
     #         A[i, j] = ((i * j + 1) % NI) / (5 * NI)

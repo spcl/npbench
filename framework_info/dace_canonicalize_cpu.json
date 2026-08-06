@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "dace_canonicalize_cpu",
+        "full_name": "DaCe Canonicalize CPU",
+        "prefix": "dc",
+        "postfix": "dace",
+        "class": "DaceCanonicalizeFramework",
+        "arch": "cpu"
+    }
+}

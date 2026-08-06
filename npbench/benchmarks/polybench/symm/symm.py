@@ -10,7 +10,7 @@ def initialize(M, N, datatype=np.float64):
                         dtype=datatype)
     B = np.fromfunction(lambda i, j: ((N + i - j) % 100) / M, (M, N),
                         dtype=datatype)
-    A = np.empty((M, M), dtype=datatype)
+    A = np.zeros((M, M), dtype=datatype)
     for i in range(M):
         A[i, :i + 1] = np.fromfunction(lambda j: ((i + j) % 100) / M,
                                        (i + 1, ),

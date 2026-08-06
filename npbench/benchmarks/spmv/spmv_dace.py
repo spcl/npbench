@@ -11,7 +11,7 @@ M, N, nnz = (dc.symbol(s, dtype=dc.int64) for s in ('M', 'N', 'nnz'))
 def spmv(A_row: dc.uint32[M + 1], A_col: dc.uint32[nnz],
          A_val: dc.float64[nnz], x: dc.float64[N]):
     # y = np.empty(A_row.size - 1, A_val.dtype)
-    y = np.empty(M, A_val.dtype)
+    y = np.zeros(M, A_val.dtype)
 
     # for i in range(A_row.size - 1):
     for i in range(M):

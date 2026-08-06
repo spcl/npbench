@@ -13,9 +13,9 @@ def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     # ccol = np.ndarray((I, J, K), dtype=utens_stage.dtype)
     # dcol = np.ndarray((I, J, K), dtype=utens_stage.dtype)
     # data_col = np.ndarray((I, J), dtype=utens_stage.dtype)
-    ccol = np.empty((I, J, K), dtype=utens_stage.dtype)
-    dcol = np.empty((I, J, K), dtype=utens_stage.dtype)
-    data_col = np.empty((I, J), dtype=utens_stage.dtype)
+    ccol = np.zeros((I, J, K), dtype=utens_stage.dtype)
+    dcol = np.zeros((I, J, K), dtype=utens_stage.dtype)
+    data_col = np.zeros((I, J), dtype=utens_stage.dtype)
 
     for k in range(1):
         gcv = 0.25 * (wcon[1:, :, k + 1] + wcon[:-1, :, k + 1])

@@ -5,7 +5,7 @@ import numba as nb
 @nb.jit(nopython=True, parallel=True, fastmath=True)
 def kernel(alpha, beta, C, A, B):
 
-    temp2 = np.empty((C.shape[1], ), dtype=C.dtype)
+    temp2 = np.zeros((C.shape[1], ), dtype=C.dtype)
     C *= beta
     for i in range(C.shape[0]):
         for j in nb.prange(C.shape[1]):

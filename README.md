@@ -58,7 +58,11 @@ python -m pip install dace
 ```
 However, you may want to install the latest version from the [GitHub repository](https://github.com/spcl/dace).
 To run NPBench with DaCe, you have to select as framework (see details below)
-either `dace_cpu` or `dace_gpu`.
+either `dace_cpu` or `dace_gpu` (which build the SDFG and `auto_optimize` it), or
+`dace_canonicalize_cpu` / `dace_canonicalize_gpu` (which instead run DaCe's
+`canonicalize` pipeline, leaving `sdfg.openmp_array_reductions` on so whole-buffer
+WCR accumulators lower to OpenMP array-section reductions rather than per-element
+atomics).
 
 ### DPNP
 

@@ -7,7 +7,7 @@ import numba as nb
 # (CSR) format
 @nb.jit(nopython=True, parallel=True, fastmath=True)
 def spmv(A_row, A_col, A_val, x):
-    y = np.empty(A_row.size - 1, A_val.dtype)
+    y = np.zeros(A_row.size - 1, A_val.dtype)
 
     for i in nb.prange(A_row.size - 1):
         cols = A_col[A_row[i]:A_row[i + 1]]

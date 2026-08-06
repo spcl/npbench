@@ -1,0 +1,10 @@
+{
+    "framework": {
+        "simple_name": "dace_canonicalize_gpu",
+        "full_name": "DaCe Canonicalize GPU",
+        "prefix": "dc",
+        "postfix": "dace",
+        "class": "DaceCanonicalizeFramework",
+        "arch": "gpu"
+    }
+}

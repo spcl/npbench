@@ -13,7 +13,7 @@ def build_up_b(b, rho, dt, u, v, dx, dy):
     )
 
 def pressure_poisson(nit, p, dx, dy, b):
-    pn = np.empty_like(p)
+    pn = np.zeros_like(p)
     for q in range(nit):
         pn[:] = p.copy()
         p[1:-1, 1:-1] = (
@@ -29,8 +29,8 @@ def pressure_poisson(nit, p, dx, dy, b):
         p[-1, :] = 0  # p = 0 at y = 2
 
 def cavity_flow(nx, ny, nt, nit, u, v, dt, dx, dy, p, rho, nu):
-    un = np.empty_like(u)
-    vn = np.empty_like(v)
+    un = np.zeros_like(u)
+    vn = np.zeros_like(v)
     b = np.zeros((ny, nx))
 
     for n in range(nt):

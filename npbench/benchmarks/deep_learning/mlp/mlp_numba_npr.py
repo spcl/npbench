@@ -12,7 +12,7 @@ def relu(x):
 def softmax(x):
     new_shape = (x.shape[0], 1)
     # tmp_max = np.max(x, axis=-1, keepdims=True)
-    tmp_max = np.empty(new_shape, dtype=x.dtype)
+    tmp_max = np.zeros(new_shape, dtype=x.dtype)
     for i in nb.prange(x.shape[1]):
         tmp_max[:, 0] = np.max(x[:, i])
     tmp_out = np.exp(x - tmp_max)

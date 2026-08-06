@@ -7,9 +7,9 @@ BET_P = 0.5
 # Adapted and optimized for runtime efficiency
 def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     I, J, K = utens_stage.shape[0], utens_stage.shape[1], utens_stage.shape[2]
-    ccol = np.empty((I, J, K), dtype=utens_stage.dtype)
-    dcol = np.empty((I, J, K), dtype=utens_stage.dtype)
-    data_col = np.empty((I, J), dtype=utens_stage.dtype)
+    ccol = np.zeros((I, J, K), dtype=utens_stage.dtype)
+    dcol = np.zeros((I, J, K), dtype=utens_stage.dtype)
+    data_col = np.zeros((I, J), dtype=utens_stage.dtype)
 
     # Use np.sum for slicing and cumulative operations
     for k in range(1):

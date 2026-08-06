@@ -5,7 +5,7 @@ from jax import lax
 @jax.jit
 def kernel(alpha, beta, C: jax.Array, A: jax.Array, B: jax.Array):
 
-    temp2 = jnp.empty((C.shape[1], ), dtype=C.dtype)
+    temp2 = jnp.zeros((C.shape[1], ), dtype=C.dtype)
     C *= beta
 
     def row_update(i, arrays):

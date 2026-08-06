@@ -10,9 +10,9 @@ BET_P = 0.5
 @jax.jit
 def vadv(utens_stage, u_stage, wcon, u_pos, utens, dtr_stage):
     I, J, K = utens_stage.shape[0], utens_stage.shape[1], utens_stage.shape[2]
-    ccol = jnp.empty((I, J, K), dtype=utens_stage.dtype)
-    dcol = jnp.empty((I, J, K), dtype=utens_stage.dtype)
-    data_col = jnp.empty((I, J), dtype=utens_stage.dtype)
+    ccol = jnp.zeros((I, J, K), dtype=utens_stage.dtype)
+    dcol = jnp.zeros((I, J, K), dtype=utens_stage.dtype)
+    data_col = jnp.zeros((I, J), dtype=utens_stage.dtype)
 
     def loop1(k, loop_vars):
         ccol, dcol = loop_vars

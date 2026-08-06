@@ -22,14 +22,14 @@ def kernel(alpha: dc.float64, imgIn: dc.float64[W, H]):
     c1 = 1
     c2 = 1
 
-    y1 = np.empty_like(imgIn)
+    y1 = np.zeros_like(imgIn)
     y1[:, 0] = a1 * imgIn[:, 0]
     y1[:, 1] = a1 * imgIn[:, 1] + a2 * imgIn[:, 0] + b1 * y1[:, 0]
     for j in range(2, H):
         y1[:, j] = (a1 * imgIn[:, j] + a2 * imgIn[:, j - 1] +
                     b1 * y1[:, j - 1] + b2 * y1[:, j - 2])
 
-    y2 = np.empty_like(imgIn)
+    y2 = np.zeros_like(imgIn)
     y2[:, -1] = 0.0
     y2[:, -2] = a3 * imgIn[:, -1]
     for j in range(H - 3, -1, -1):

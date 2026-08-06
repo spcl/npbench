@@ -10,8 +10,8 @@ import numba as nb
 
 @nb.jit(nopython=True, parallel=False, fastmath=True)
 def mgrid(xn, yn):
-    Xi = np.empty((xn, yn), dtype=np.int64)
-    Yi = np.empty((xn, yn), dtype=np.int64)
+    Xi = np.zeros((xn, yn), dtype=np.int64)
+    Yi = np.zeros((xn, yn), dtype=np.int64)
     for i in range(xn):
         Xi[i, :] = i
     for j in range(yn):
@@ -21,7 +21,7 @@ def mgrid(xn, yn):
 
 @nb.jit(nopython=True, parallel=False, fastmath=True)
 def linspace(start, stop, num, dtype):
-    X = np.empty((num, ), dtype=dtype)
+    X = np.zeros((num, ), dtype=dtype)
     dist = (stop - start) / (num - 1)
     for i in range(num):
         X[i] = start + i * dist

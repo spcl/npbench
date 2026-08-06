@@ -7,7 +7,7 @@ def conv2d(input, weights):
     C_out = weights.shape[3]  # Output channels
     H_out = H - K + 1
     W_out = W - K + 1
-    output = np.empty((N, H_out, W_out, C_out), dtype=np.float32)
+    output = np.zeros((N, H_out, W_out, C_out), dtype=np.float32)
 
     # Perform convolution manually by iterating over the kernel dimensions
     for i in range(K):

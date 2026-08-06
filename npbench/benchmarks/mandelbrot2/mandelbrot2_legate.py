@@ -8,7 +8,7 @@ import legate.numpy as np
 
 
 def linspace(start, stop, num, dtype):
-    X = np.empty((num, ), dtype=dtype)
+    X = np.zeros((num, ), dtype=dtype)
     dist = (stop - start) / (num - 1)
     for i in range(num):
         X[i] = start + i * dist

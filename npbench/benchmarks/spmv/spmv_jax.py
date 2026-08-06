@@ -7,7 +7,7 @@ from jax import lax
 # (CSR) format
 @jax.jit
 def spmv(A_row, A_col, A_val, x):
-    y = jnp.empty(A_row.size - 1, dtype=A_val.dtype)
+    y = jnp.zeros(A_row.size - 1, dtype=A_val.dtype)
 
     def row_update(i, y):
 

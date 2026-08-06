@@ -6,9 +6,9 @@ import numpy as np
 # pythran export kernel(int, int, float64[:,:])
 def kernel(TSTEPS, N, u):
 
-    v = np.empty(u.shape, dtype=u.dtype)
-    p = np.empty(u.shape, dtype=u.dtype)
-    q = np.empty(u.shape, dtype=u.dtype)
+    v = np.zeros(u.shape, dtype=u.dtype)
+    p = np.zeros(u.shape, dtype=u.dtype)
+    q = np.zeros(u.shape, dtype=u.dtype)
 
     DX = 1.0 / N
     DY = 1.0 / N

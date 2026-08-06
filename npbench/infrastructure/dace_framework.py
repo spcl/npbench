@@ -274,6 +274,11 @@ class DaceFramework(Framework):
                 else:
                     gpu_time1 = [0]
                 fe_time += gpu_time1[0]
+            # WCR-config OFF: dace_cpu / dace_gpu keep the default per-element atomic WCR
+            # lowering (contrast dace_canonicalize_cpu / dace_canonicalize_gpu, which turn ON
+            # OpenMP array-section reductions). Set it explicitly for clarity before compile.
+            for nested in sdfg.all_sdfgs_recursive():
+                nested.openmp_array_reductions = False
             try:
                 dc_exec, compile_time = util.benchmark("__npb_result = sdfg.compile()",
                                                        out_text="DaCe compilation time",

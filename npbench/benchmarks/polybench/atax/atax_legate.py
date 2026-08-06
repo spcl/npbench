@@ -10,10 +10,10 @@ def kernel(A, x):
 def init_data(M, N, datatype):
 
     fn = datatype(N)
-    A = np.empty((M, N), dtype=datatype)
-    x = np.empty((N, ), dtype=datatype)
-    y = np.empty((N, ), dtype=datatype)
-    tmp = np.empty((M, ), dtype=datatype)
+    A = np.zeros((M, N), dtype=datatype)
+    x = np.zeros((N, ), dtype=datatype)
+    y = np.zeros((N, ), dtype=datatype)
+    tmp = np.zeros((M, ), dtype=datatype)
     # for i in range(N):
     #     x[i] = 1 + (i / fn)
     # for i in range(M):

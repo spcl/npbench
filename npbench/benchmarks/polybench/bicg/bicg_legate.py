@@ -9,11 +9,11 @@ def kernel(A, p, r):
 
 def init_data(M, N, datatype):
 
-    A = np.empty((N, M), dtype=datatype)
-    s = np.empty((M, ), dtype=datatype)
-    q = np.empty((N, ), dtype=datatype)
-    p = np.empty((M, ), dtype=datatype)
-    r = np.empty((N, ), dtype=datatype)
+    A = np.zeros((N, M), dtype=datatype)
+    s = np.zeros((M, ), dtype=datatype)
+    q = np.zeros((N, ), dtype=datatype)
+    p = np.zeros((M, ), dtype=datatype)
+    r = np.zeros((N, ), dtype=datatype)
     # for i in range(M):
     #     p[i] = (i % M) / M
     # for i in range(N):

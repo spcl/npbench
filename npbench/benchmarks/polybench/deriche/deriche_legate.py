@@ -17,7 +17,7 @@ def kernel(alpha, imgIn):
     b2 = -np.exp(-2.0 * alpha)
     c1 = c2 = 1
 
-    y1 = np.empty_like(imgIn)
+    y1 = np.zeros_like(imgIn)
     y1[:, 0] = a1 * imgIn[:, 0]
     # y1[:, 1] = a1 * imgIn[:, 1] + a2 * imgIn[:, 0] + b1 * y1[:, 0]
     y1[:, 1] = b1 * y1[:, 0]
@@ -26,7 +26,7 @@ def kernel(alpha, imgIn):
         y1[:, j] = (a1 * imgIn[:, j] + a2 * imgIn[:, j - 1] +
                     b1 * y1[:, j - 1] + b2 * y1[:, j - 2])
 
-    y2 = np.empty_like(imgIn)
+    y2 = np.zeros_like(imgIn)
     y2[:, -1] = 0.0
     y2[:, -2] = a3 * imgIn[:, -1]
     for j in range(imgIn.shape[1] - 3, -1, -1):
@@ -55,10 +55,10 @@ def kernel(alpha, imgIn):
 def init_data(W, H, datatype):
 
     alpha = datatype(0.25)
-    imgIn = onp.empty((W, H), dtype=datatype)
-    imgOut = onp.empty((W, H), dtype=datatype)
-    y1 = onp.empty((W, H), dtype=datatype)
-    y2 = onp.empty((W, H), dtype=datatype)
+    imgIn = onp.zeros((W, H), dtype=datatype)
+    imgOut = onp.zeros((W, H), dtype=datatype)
+    y1 = onp.zeros((W, H), dtype=datatype)
+    y2 = onp.zeros((W, H), dtype=datatype)
     for i in range(W):
         for j in range(H):
             imgIn[i, j] = ((313 * i + 991 * j) % 65536) / 65535.0

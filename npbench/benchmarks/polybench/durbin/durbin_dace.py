@@ -15,7 +15,7 @@ def flip(A: dc.float64[M]):
 @dc.program
 def kernel(r: dc.float64[N]):
 
-    y = np.empty_like(r)
+    y = np.zeros_like(r)
     alpha = -r[0]
     beta = 1.0
     y[0] = -r[0]

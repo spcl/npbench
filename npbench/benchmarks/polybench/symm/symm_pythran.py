@@ -4,7 +4,7 @@ import numpy as np
 # pythran export kernel(float64, float64, float64[:,:], float64[:,:], float64[:,:])
 def kernel(alpha, beta, C, A, B):
 
-    temp2 = np.empty((C.shape[1], ), dtype=C.dtype)
+    temp2 = np.zeros((C.shape[1], ), dtype=C.dtype)
     C *= beta
     for i in range(C.shape[0]):
         for j in range(C.shape[1]):

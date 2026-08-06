@@ -10,7 +10,7 @@ import numba as nb
 
 @nb.jit(nopython=True, parallel=True, fastmath=True)
 def linspace(start, stop, num, dtype):
-    X = np.empty((num, ), dtype=dtype)
+    X = np.zeros((num, ), dtype=dtype)
     dist = (stop - start) / (num - 1)
     for i in nb.prange(num):
         X[i] = start + i * dist

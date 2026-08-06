@@ -7,7 +7,7 @@ import durbin_numpy as np_impl
 
 def kernel(r):
 
-    y = np.empty_like(r)
+    y = np.zeros_like(r)
     alpha = -r[0]
     beta = 1.0
     y[0] = -r[0]
@@ -25,8 +25,8 @@ def kernel(r):
 
 def init_data(N, datatype):
 
-    r = onp.empty((N, ), dtype=datatype)
-    y = onp.empty((N, ), dtype=datatype)
+    r = onp.zeros((N, ), dtype=datatype)
+    y = onp.zeros((N, ), dtype=datatype)
     for i in range(N):
         r[i] = N + 1 - i
 

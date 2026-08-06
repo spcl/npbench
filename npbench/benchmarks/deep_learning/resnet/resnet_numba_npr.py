@@ -16,7 +16,7 @@ def conv2d(input, weights):
     W_out = input.shape[2] - K + 1
     C_in = input.shape[3]
     C_out = weights.shape[3]
-    output = np.empty((N, H_out, W_out, C_out), dtype=np.float32)
+    output = np.zeros((N, H_out, W_out, C_out), dtype=np.float32)
 
     # Loop structure adapted from https://github.com/SkalskiP/ILearnDeepLearning.py/blob/ba0b5ba589d4e656141995e8d1a06d44db6ce58d/01_mysteries_of_neural_networks/06_numpy_convolutional_neural_net/src/layers/convolutional.py#L88
     for i in nb.prange(H_out):
@@ -43,10 +43,10 @@ def conv2d(input, weights):
 @nb.jit(nopython=True, parallel=True, fastmath=True)
 def batchnorm2d(x, eps=1e-5):
     # mean = np.mean(x, axis=0, keepdims=True)
-    mean = np.empty(x.shape, dtype=x.dtype)
+    mean = np.zeros(x.shape, dtype=x.dtype)
     mean[:] = np.sum(x, axis=0) / x.shape[0]
     # std = np.std(x, axis=0, keepdims=True)
-    std = np.empty(x.shape, dtype=x.dtype)
+    std = np.zeros(x.shape, dtype=x.dtype)
     std[:] = np.sqrt(np.sum((x - mean)**2, axis=0) / x.shape[0])
     return (x - mean) / np.sqrt(std + eps)
 

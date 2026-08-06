@@ -7,9 +7,9 @@ def kernel(TSTEPS, N, np_u):
 
     u = np.from_array(np_u, chunks='auto')
 
-    v = np.empty(u.shape, dtype=u.dtype)
-    p = np.empty(u.shape, dtype=u.dtype)
-    q = np.empty(u.shape, dtype=u.dtype)
+    v = np.zeros(u.shape, dtype=u.dtype)
+    p = np.zeros(u.shape, dtype=u.dtype)
+    q = np.zeros(u.shape, dtype=u.dtype)
 
     DX = 1.0 / N
     DY = 1.0 / N
